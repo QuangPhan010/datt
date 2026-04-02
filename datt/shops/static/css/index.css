@@ -1,0 +1,36 @@
+/* ===== TEXT IMPROVEMENT ===== */
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-weight: 600;
+}
+
+p {
+    color: #ccc;
+}
+
+/* ===== CARD STYLE ===== */
+.service-card {
+    background: #111;
+    border: 1px solid #222;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    border-color: #ff0000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+/* ===== BUTTON ===== */
+.btn-danger {
+    background: #ff0000;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #cc0000;
+}

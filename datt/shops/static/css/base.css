@@ -1,0 +1,104 @@
+body {
+    background: radial-gradient(circle at top, #0a0a0a, #000);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.navbar-brand {
+    color: #ff0000 !important;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.nav-link {
+    color: #ccc !important;
+    position: relative;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: #ff0000;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: #fff !important;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Hero */
+.hero {
+    background: radial-gradient(circle at center, #111, #000);
+    position: relative;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: rgba(255, 0, 0, 0.1);
+    filter: blur(150px);
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hero h1 {
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+/* Button */
+.btn-danger {
+    background: linear-gradient(45deg, #ff0000, #ff4d4d);
+    border: none;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+}
+
+/* Card */
+.card {
+    background: rgba(20, 20, 20, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border: 1px solid rgba(255, 0, 0, 0.5) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+/* Section title */
+h2 {
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Footer */
+footer {
+    background: #050505;
+    border-top: 1px solid rgba(255, 0, 0, 0.2);
+    color: #aaa;
+}
