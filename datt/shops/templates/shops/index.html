@@ -1,98 +1,236 @@
-{% extends 'shops/base.html' %}
+{% extends "shops/base.html" %}
 {% load static %}
+{% block title %}Công nghệ & Bảo mật | Nexora{% endblock %}
+
 {% block body_block %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}" />
 
-<!-- ===== CAROUSEL ===== -->
-<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
-
-    <div class="carousel-item active">
-      <div class="d-flex align-items-center justify-content-center text-center"
-           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover;">
-        <div>
-          <h1 class="display-3 fw-bold text-danger">NEXORA SECURITY</h1>
-          <p class="lead text-light">Giải pháp bảo mật & công nghệ toàn diện</p>
-          <a href="#services" class="btn btn-danger px-4 py-2 mt-3">Bắt đầu ngay</a>
-        </div>
-      </div>
+<!-- ===== HERO CAROUSEL ===== -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
     </div>
-
-    <div class="carousel-item">
-      <div class="d-flex align-items-center justify-content-center text-center"
-           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b') center/cover;">
-        <div>
-          <h1 class="display-4 fw-bold text-danger">Pentest & Cyber Security</h1>
-          <p class="text-light">Kiểm thử hệ thống như hacker thực thụ</p>
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 100vh;">
+            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
+                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070') center/cover;">
+                <div class="px-3" style="max-width: 800px;">
+                    <h1 class="display-2 fw-bold text-danger mb-3 tracking-tighter">CYBER DEFENSE</h1>
+                    <p class="lead text-light mb-4 text-uppercase fw-semibold tracking-widest" style="letter-spacing: 3px;">Protecting your infrastructure with AI-driven security.</p>
+                    <a href="#security" class="btn btn-danger btn-lg px-5 py-3 rounded-pill shadow-lg border-0">Khám phá ngay</a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <div class="d-flex align-items-center justify-content-center text-center"
-           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085') center/cover;">
-        <div>
-          <h1 class="display-4 fw-bold text-danger">Software Solutions</h1>
-          <p class="text-light">Xây dựng hệ thống & ứng dụng chuyên nghiệp</p>
+        <div class="carousel-item" style="height: 100vh;">
+            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
+                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072') center/cover;">
+                <div class="px-3" style="max-width: 800px;">
+                    <h1 class="display-3 fw-bold text-danger mb-3 tracking-tighter">NEXT-GEN SOFTWARE</h1>
+                    <p class="lead text-light mb-4 text-uppercase fw-semibold tracking-widest" style="letter-spacing: 2px;">Xây dựng hệ thống phần mềm quy mô lớn cho tương lai.</p>
+                    <a href="#software" class="btn btn-outline-danger btn-lg px-5 py-3 rounded-pill">Xem dự án</a>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="carousel-item" style="height: 100vh;">
+            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
+                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=2072') center/cover;">
+                <div class="px-3" style="max-width: 800px;">
+                    <h1 class="display-3 fw-bold text-danger mb-3 tracking-tighter">MANAGED IT</h1>
+                    <p class="lead text-light mb-4 text-uppercase tracking-widest" style="letter-spacing: 2px;">Dịch vụ vận hành & tối ưu hóa hạ tầng số toàn cầu.</p>
+                    <a href="#services" class="btn btn-danger btn-lg px-5 py-3 rounded-pill border-0 shadow-lg">Tìm hiểu thêm</a>
+                </div>
+            </div>
+        </div>
     </div>
-
-  </div>
-
-  <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-
-  <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
 </div>
 
-<!-- ===== SERVICES ===== -->
-<section id="services" class="py-5">
-  <div class="container text-center">
-    <h2 class="text-danger fw-bold mb-5">DỊCH VỤ CỦA NEXORA</h2>
-
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3">
-        <div class="card service-card p-4 h-100">
-          <h5>Bảo mật hệ thống</h5>
-          <p>Penetration testing, audit và bảo vệ dữ liệu.</p>
+<!-- ===== TECHNOLOGY STACK ===== -->
+<section id="tech" class="py-5">
+    <div class="container py-lg-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold text-danger mb-4">CÔNG NGHỆ TIÊN PHONG</h2>
+                <p class="text-secondary lead">Chúng tôi áp dụng những xu hướng công nghệ mới nhất để giải quyết mọi thách thức của doanh nghiệp.</p>
+            </div>
         </div>
-      </div>
-
-      <div class="col-md-6 col-lg-3">
-        <div class="card service-card p-4 h-100">
-          <h5>Phát triển phần mềm</h5>
-          <p>Website, mobile app và hệ thống quản lý.</p>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="mb-4">
+                        <i class="bi bi-cpu display-4 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">AI & Machine Learning</h5>
+                    <p class=" small">Tích hợp trí tuệ nhân tạo để tối ưu hóa quy trình và đưa ra quyết định thông minh.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="mb-4">
+                        <i class="bi bi-cloud-check display-4 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">Cloud Computing</h5>
+                    <p class=" small">Hạ tầng đám mây linh hoạt, ổn định và có khả năng mở rộng không giới hạn.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="mb-4">
+                        <i class="bi bi-hdd-network display-4 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">IoT & Edge</h5>
+                    <p class=" small">Kết nối vạn vật và xử lý dữ liệu tại biên để đạt tốc độ phản hồi cực nhanh.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="mb-4">
+                        <i class="bi bi-infinity display-4 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">High Performance</h5>
+                    <p class=" small">Tối ưu hiệu năng cho các hệ thống yêu cầu khắt khe về băng thông & tốc độ.</p>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="col-md-6 col-lg-3">
-        <div class="card service-card p-4 h-100">
-          <h5>Dịch vụ automation</h5>
-          <p>Bot, API, hệ thống tự động hóa.</p>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-lg-3">
-        <div class="card service-card p-4 h-100">
-          <h5>Cloud & Server</h5>
-          <p>Triển khai VPS, server & tối ưu hiệu năng.</p>
-        </div>
-      </div>
     </div>
-  </div>
+</section>
+
+<!-- ===== SECURITY PILLAR ===== -->
+<section id="security" class="py-5" style="background: rgba(0,0,0,0.3);">
+    <div class="container py-lg-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-danger">BẢO MẬT TUYỆT ĐỐI</h2>
+            <div class="mx-auto bg-danger mt-3" style="width: 80px; height: 3px;"></div>
+        </div>
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="d-flex mb-5">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
+                            <i class="bi bi-shield-lock-fill text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold">Pentesting & Red Teaming</h4>
+                        <p class="text-secondary">Kiểm thử xâm nhập giả lập hacker thực thụ để tìm lỗ hổng trước khi chúng bị khai thác.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-5">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
+                            <i class="bi bi-fingerprint text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold">Zero Trust Architecture</h4>
+                        <p class="text-secondary">Xây dựng hệ thống với triết lý "không bao giờ tin tưởng, luôn kiểm tra" mọi kết nối.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex mb-5">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
+                            <i class="bi bi-key-fill text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold">Data Encryption</h4>
+                        <p class="text-secondary">Mã hóa dữ liệu cấp cao (AES-256) đảm bảo an toàn tuyệt đối cho thông tin nhạy cảm.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-5">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
+                            <i class="bi bi-activity text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold">24/7 Monitoring (SOC)</h4>
+                        <p class="text-secondary">Trung tâm điều hành bảo mật giám sát hệ thống liên tục, phản ứng tức thì khi có sự cố.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SOFTWARE SOLUTIONS ===== -->
+<section id="software" class="py-5">
+    <div class="container py-lg-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-5 order-lg-2">
+                <h2 class="display-6 fw-bold text-danger mb-4">PHẦN MỀM CHUYÊN NGHIỆP</h2>
+                <p class="text-light mb-4">Kiến trúc phần mềm bền vững, dễ mở rộng và thân thiện với người dùng.</p>
+                <ul class="list-unstyled text-secondary">
+                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Cloud-Native Development</li>
+                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Enterprise Resource Planning (ERP)</li>
+                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Mobile Application (iOS/Android)</li>
+                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> DevOps & CI/CD Pipelines</li>
+                </ul>
+                <button class="btn btn-danger px-4 py-2 mt-4">Liên hệ báo giá</button>
+            </div>
+            <div class="col-lg-7 order-lg-1 pe-lg-5">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2426" class="img-fluid rounded-4 shadow" alt="Dashboard content">
+                    </div>
+                    <div class="col-6 pt-5">
+                        <img src="https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=2070" class="img-fluid rounded-4 shadow" alt="Analytics content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ONLINE SERVICES ===== -->
+<section id="services" class="py-5" style="border-top: 1px solid rgba(255,0,0,0.1);">
+    <div class="container py-lg-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-danger text-uppercase tracking-widest">DỊCH VỤ TRỰC TUYẾN</h2>
+            <p class="text-secondary mt-2">Hỗ trợ doanh nghiệp hiện diện mạnh mẽ trên không gian số.</p>
+        </div>
+        <div class="row g-4 mt-2">
+            <div class="col-lg-4">
+                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
+                    <div class="mb-3">
+                        <i class="bi bi-globe2 fs-2 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">Domain & Hosting</h5>
+                    <p class="small">Cung cấp tên miền quốc tế và hạ tầng hosting tốc độ cao, băng thông không giới hạn.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
+                    <div class="mb-3">
+                        <i class="bi bi-envelope-at fs-2 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">Enterprise Email</h5>
+                    <p class=" small">Hệ thống email dành riêng cho doanh nghiệp, bảo mật cao, chống spam tuyệt đối.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
+                    <div class="mb-3">
+                        <i class="bi bi-graph-up-arrow fs-2 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">SEO & Digital Marketing</h5>
+                    <p class=" small">Tối ưu hóa công cụ tìm kiếm và chiến dịch marketing để tăng trưởng doanh số bền vững.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- ===== CTA ===== -->
-<section id="contact" class="text-center py-5" style="background:#111;">
-  <div class="container">
-    <h2 class="text-danger fw-bold">Sẵn sàng nâng cấp hệ thống của bạn?</h2>
-    <p class="text-light">Liên hệ Nexora để được tư vấn miễn phí</p>
-    <button class="btn btn-outline-danger px-4 mt-3">Liên hệ ngay</button>
-  </div>
+<section class="py-5 text-center mt-5" style="background: linear-gradient(rgba(255,0,0,0.15), rgba(0,0,0,0.9));">
+    <div class="container py-4">
+        <h2 class="fw-bold mb-3 mt-4">BẠN CÓ DỰ ÁN CẦN TRIỂN KHAI?</h2>
+        <p class="text-light-50 mb-4 opacity-75">Hãy để Nexora đồng hành cùng sự đột phá của bạn trong kỷ nguyên số.</p>
+        <button class="btn btn-danger btn-lg px-5 mb-4">Gửi yêu cầu ngay</button>
+    </div>
 </section>
 
 {% endblock %}
