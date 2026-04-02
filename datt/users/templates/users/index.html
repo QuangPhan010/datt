@@ -91,6 +91,8 @@
   border-radius:12px;
   transition:.2s;
   cursor:pointer;
+  text-decoration:none;
+  color:inherit;
 }
 
 .quick-link:hover{
@@ -119,7 +121,7 @@
       <!-- CATEGORY -->
       <div class="category-grid">
 
-        <a href="{% url 'shops:product' %}" class="text-decoration-none text-dark">
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
           <div class="category-item">
             <i class="bi bi-phone-fill"></i>
             <h6 class="mt-2">Điện thoại</h6>
@@ -129,45 +131,55 @@
           </div>
         </a>
 
-        <div class="category-item">
-          <i class="bi bi-laptop"></i>
-          <h6 class="mt-2">Laptop</h6>
-          <p class="small text-muted mb-0">
-            Học tập & làm việc
-          </p>
-        </div>
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-laptop"></i>
+            <h6 class="mt-2">Laptop</h6>
+            <p class="small text-muted mb-0">
+              Học tập & làm việc
+            </p>
+          </div>
+        </a>
 
-        <div class="category-item">
-          <i class="bi bi-headphones"></i>
-          <h6 class="mt-2">Phụ kiện</h6>
-          <p class="small text-muted mb-0">
-            Tai nghe, sạc, chuột
-          </p>
-        </div>
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-headphones"></i>
+            <h6 class="mt-2">Phụ kiện</h6>
+            <p class="small text-muted mb-0">
+              Tai nghe, sạc, chuột
+            </p>
+          </div>
+        </a>
 
-        <div class="category-item">
-          <i class="bi bi-cpu-fill"></i>
-          <h6 class="mt-2">PC & Linh kiện</h6>
-          <p class="small text-muted mb-0">
-            Gaming & đồ họa
-          </p>
-        </div>
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-cpu-fill"></i>
+            <h6 class="mt-2">PC & Linh kiện</h6>
+            <p class="small text-muted mb-0">
+              Gaming & đồ họa
+            </p>
+          </div>
+        </a>
 
-        <div class="category-item">
-          <i class="bi bi-watch"></i>
-          <h6 class="mt-2">Thiết bị đeo</h6>
-          <p class="small text-muted mb-0">
-            Smartwatch, band
-          </p>
-        </div>
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-watch"></i>
+            <h6 class="mt-2">Thiết bị đeo</h6>
+            <p class="small text-muted mb-0">
+              Smartwatch, band
+            </p>
+          </div>
+        </a>
 
-        <div class="category-item">
-          <i class="bi bi-fire"></i>
-          <h6 class="mt-2">Hot Deals</h6>
-          <p class="small text-muted mb-0">
-            Khuyến mãi hôm nay
-          </p>
-        </div>
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-fire"></i>
+            <h6 class="mt-2">Hot Deals</h6>
+            <p class="small text-muted mb-0">
+              Khuyến mãi hôm nay
+            </p>
+          </div>
+        </a>
 
       </div>
     </div>
@@ -192,29 +204,29 @@
 
       <hr>
 
-      <div class="quick-link">
-        <i class="bi bi-cart3"></i>
-        <div>
-          <strong>Giỏ hàng</strong>
-          <div class="small text-muted">Xem sản phẩm đã chọn</div>
-        </div>
-      </div>
-
-      <div class="quick-link">
-        <i class="bi bi-receipt"></i>
-        <div>
-          <strong>Đơn mua</strong>
-          <div class="small text-muted">Theo dõi trạng thái</div>
-        </div>
-      </div>
-
-      <div class="quick-link">
+      <a class="quick-link" href="{% url 'users:profile' %}">
         <i class="bi bi-person-circle"></i>
         <div>
           <strong>Tài khoản</strong>
           <div class="small text-muted">Bảo mật & thông tin</div>
         </div>
-      </div>
+      </a>
+
+      <a class="quick-link" href="{% url 'users:edit' %}">
+        <i class="bi bi-gear"></i>
+        <div>
+          <strong>Cài đặt</strong>
+          <div class="small text-muted">Cập nhật hồ sơ</div>
+        </div>
+      </a>
+
+      <a class="quick-link" href="{% url 'users:password_change' %}">
+        <i class="bi bi-shield-lock"></i>
+        <div>
+          <strong>Mật khẩu</strong>
+          <div class="small text-muted">Đổi mật khẩu</div>
+        </div>
+      </a>
 
     </div>
 

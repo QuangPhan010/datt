@@ -1,24 +1,41 @@
 {% extends "users/base.html" %}
-{% block title %}Đã đăng xuất | TechStore{% endblock %}
+{% block title %}Đã đăng xuất | Nexora{% endblock %}
 
 {% block content %}
 <style>
-.logout-card{
-  max-width:480px;
-  padding:36px;
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 14px 40px rgba(229,57,53,.25);
-  text-align:center;
-}
+  .logout-wrap {
+    min-height: 75vh;
+    display: grid;
+    place-items: center;
+  }
 
-.logout-icon{
-  font-size:56px;
-  color:#22c55e;
-}
+  .logout-card {
+    max-width: 520px;
+    width: 100%;
+    padding: 36px;
+    border-radius: 20px;
+    background: rgba(15, 15, 15, 0.92);
+    border: 1px solid rgba(255, 0, 0, 0.18);
+    box-shadow: 0 20px 45px rgba(255, 0, 0, 0.25);
+    text-align: center;
+  }
+
+  .logout-icon {
+    font-size: 58px;
+    color: #22c55e;
+  }
+
+  .logout-card h3 {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .logout-card p {
+    color: #b9b9b9;
+  }
 </style>
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height:75vh;">
+<div class="logout-wrap">
   <div class="logout-card">
 
     <div class="logout-icon mb-3">
@@ -27,9 +44,9 @@
 
     <h3 class="mb-2">Đăng xuất thành công</h3>
 
-    <p class="text-muted mb-4">
+    <p class="mb-4">
       Bạn đã đăng xuất khỏi
-      <strong class="text-danger">TechStore</strong>.
+      <strong class="text-danger">NEXORA</strong>.
       Hẹn gặp lại bạn!
     </p>
 

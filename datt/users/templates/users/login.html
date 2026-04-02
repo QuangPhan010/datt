@@ -1,109 +1,111 @@
 {% extends "users/base.html" %}
-{% block title %}Đăng nhập | TechStore{% endblock %}
+{% block title %}Đăng nhập | Nexora{% endblock %}
 
 {% block content %}
 <style>
-  .login-container {
+  .auth-section {
     min-height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    place-items: center;
+    padding: 40px 0;
   }
 
-  .login-card {
+  .auth-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     padding: 36px;
-    border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 12px 35px rgba(229, 57, 53, 0.25);
+    border-radius: 20px;
+    background: rgba(15, 15, 15, 0.92);
+    border: 1px solid rgba(255, 0, 0, 0.18);
+    box-shadow: 0 20px 45px rgba(255, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
   }
 
-  .login-header {
+  .auth-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
   }
 
-  .login-header i {
-    font-size: 42px;
-    color: #e53935;
+  .auth-header i {
+    font-size: 44px;
+    color: #ff0000;
   }
 
-  .login-header h2 {
-    margin-top: 10px;
+  .auth-header h2 {
+    margin-top: 8px;
     font-weight: 800;
-    color: #e53935;
-    letter-spacing: 0.5px;
+    color: #fff;
+    letter-spacing: 1px;
   }
 
-  .login-desc {
+  .auth-desc {
     font-size: 14px;
-    color: #777;
+    color: #b9b9b9;
   }
 
-  /* FORM */
-  .login-card form p {
-    margin-bottom: 16px;
+  .auth-card form p {
+    margin-bottom: 14px;
   }
 
-  .login-card input[type="text"],
-  .login-card input[type="password"],
-  .login-card input[type="email"] {
+  .auth-card input[type="text"],
+  .auth-card input[type="password"],
+  .auth-card input[type="email"] {
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0f0f0f;
+    color: #fff;
     outline: none;
     transition: 0.2s;
   }
 
-  .login-card input:focus {
-    border-color: #e53935;
-    box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.15);
+  .auth-card input:focus {
+    border-color: rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
   }
 
-  .login-card input[type="submit"] {
+  .auth-card input[type="submit"] {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #e53935, #c62828);
+    background: linear-gradient(45deg, #ff0000, #ff4d4d);
     border: none;
     color: #fff;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: 0.3s;
   }
 
-  .login-card input[type="submit"]:hover {
+  .auth-card input[type="submit"]:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(229, 57, 53, 0.45);
+    box-shadow: 0 12px 26px rgba(255, 0, 0, 0.45);
   }
 
-  /* LINKS */
-  .login-links {
-    margin-top: 20px;
+  .auth-links {
+    margin-top: 18px;
     text-align: center;
     font-size: 14px;
   }
 
-  .login-links a {
-    color: #e53935;
+  .auth-links a {
+    color: #ff4d4d;
     text-decoration: none;
     font-weight: 600;
   }
 
-  .login-links a:hover {
+  .auth-links a:hover {
     text-decoration: underline;
   }
 </style>
 
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <i class="bi bi-cpu-fill"></i>
-      <h2>TechStore</h2>
-      <div class="login-desc">
-        Đăng nhập để mua sắm thiết bị công nghệ
+<div class="auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <i class="bi bi-shield-lock-fill"></i>
+      <h2>NEXORA</h2>
+      <div class="auth-desc">
+        Đăng nhập để truy cập hệ thống bảo mật & công nghệ
       </div>
     </div>
 
@@ -115,15 +117,13 @@
       </p>
     </form>
 
-    <div class="login-links">
+    <div class="auth-links">
       <p>
-        <a href="{% url 'users:password_reset' %}">
-          Quên mật khẩu?
-        </a>
+        <a href="{% url 'users:password_reset' %}">Quên mật khẩu?</a>
       </p>
       <p>
         Chưa có tài khoản?
-        <a href="{% url 'users:register' %}">Đăng ký ngay</a>
+        <a href="{% url 'users:register' %}">Tạo ngay</a>
       </p>
     </div>
   </div>
