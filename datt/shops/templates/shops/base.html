@@ -47,6 +47,13 @@
             </div>
           </a>
         </li>
+        <li class="nav-item ms-lg-2">
+          <a class="nav-link" href="{% url 'shops:products' %}">
+            <div class="cms-edit cms-inline" data-page="global" data-key="nav_products">
+              <span class="cms-edit__content">{{ cms.global_nav_products|default:"Sản phẩm"|safe }}</span>
+            </div>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'shops:index' %}#contact">
             <div class="cms-edit cms-inline" data-page="global" data-key="nav_contact">
