@@ -1,0 +1,98 @@
+{% extends 'shops/base.html' %}
+{% load static %}
+{% block body_block %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+
+<!-- ===== CAROUSEL ===== -->
+<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+
+    <div class="carousel-item active">
+      <div class="d-flex align-items-center justify-content-center text-center"
+           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover;">
+        <div>
+          <h1 class="display-3 fw-bold text-danger">NEXORA SECURITY</h1>
+          <p class="lead text-light">Giải pháp bảo mật & công nghệ toàn diện</p>
+          <a href="#" class="btn btn-danger px-4 py-2 mt-3">Bắt đầu ngay</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="d-flex align-items-center justify-content-center text-center"
+           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b') center/cover;">
+        <div>
+          <h1 class="display-4 fw-bold text-danger">Pentest & Cyber Security</h1>
+          <p class="text-light">Kiểm thử hệ thống như hacker thực thụ</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="d-flex align-items-center justify-content-center text-center"
+           style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085') center/cover;">
+        <div>
+          <h1 class="display-4 fw-bold text-danger">Software Solutions</h1>
+          <p class="text-light">Xây dựng hệ thống & ứng dụng chuyên nghiệp</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+<!-- ===== SERVICES ===== -->
+<section class="py-5">
+  <div class="container text-center">
+    <h2 class="text-danger fw-bold mb-5">DỊCH VỤ CỦA NEXORA</h2>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card p-4 h-100">
+          <h5>Bảo mật hệ thống</h5>
+          <p>Penetration testing, audit và bảo vệ dữ liệu.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card p-4 h-100">
+          <h5>Phát triển phần mềm</h5>
+          <p>Website, mobile app và hệ thống quản lý.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card p-4 h-100">
+          <h5>Dịch vụ automation</h5>
+          <p>Bot, API, hệ thống tự động hóa.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card p-4 h-100">
+          <h5>Cloud & Server</h5>
+          <p>Triển khai VPS, server & tối ưu hiệu năng.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="text-center py-5" style="background:#111;">
+  <div class="container">
+    <h2 class="text-danger fw-bold">Sẵn sàng nâng cấp hệ thống của bạn?</h2>
+    <p class="text-light">Liên hệ Nexora để được tư vấn miễn phí</p>
+    <button class="btn btn-outline-danger px-4 mt-3">Liên hệ ngay</button>
+  </div>
+</section>
+
+{% endblock %}
