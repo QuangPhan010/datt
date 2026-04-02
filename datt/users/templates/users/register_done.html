@@ -1,0 +1,43 @@
+{% extends "users/base.html" %}
+{% block title %}Đăng kí thành công | TechStore{% endblock %}
+
+{% block content %}
+<style>
+.password-done-card{
+  max-width:480px;
+  width:100%;
+  padding:36px;
+  border-radius:18px;
+  text-align:center;
+  background:#fff;
+  box-shadow:0 14px 40px rgba(229,57,53,.25);
+}
+
+.password-done-icon{
+  font-size:56px;
+  color:#22c55e;
+}
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+  <div class="password-done-card">
+
+    <div class="password-done-icon mb-3">
+      <i class="bi bi-check-circle-fill"></i>
+    </div>
+
+    <h3 class="mb-2">Đổi mật khẩu thành công</h3>
+
+    <p class="text-muted mt-2">
+      Mật khẩu của bạn đã được cập nhật an toàn.<br>
+      Vui lòng đăng nhập lại để tiếp tục mua sắm tại
+      <strong class="text-danger">TechStore</strong>.
+    </p>
+
+    <a href="{% url 'users:login' %}" class="btn btn-danger mt-3">
+      Đăng nhập lại
+    </a>
+
+  </div>
+</div>
+{% endblock %}

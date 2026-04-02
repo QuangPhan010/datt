@@ -1,0 +1,141 @@
+{% extends "users/base.html" %}
+{% block title %}Đăng ký | TechStore{% endblock %}
+
+{% block content %}
+<style>
+.register-container {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 36px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 40px rgba(229,57,53,0.25);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.register-header i {
+  font-size: 44px;
+  color: #e53935;
+}
+
+.register-header h2 {
+  margin-top: 8px;
+  font-weight: 800;
+  color: #e53935;
+}
+
+.register-desc {
+  font-size: 14px;
+  color: #777;
+}
+
+.register-card label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.register-card input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.2s;
+}
+
+.register-card input:focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229,57,53,0.15);
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: linear-gradient(135deg,#e53935,#c62828);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.register-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(229,57,53,0.45);
+}
+
+.register-footer {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.register-footer a {
+  color: #e53935;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #dc3545;
+}
+</style>
+
+<div class="register-container">
+  <div class="register-card">
+
+    <div class="register-header">
+      <i class="bi bi-cpu-fill"></i>
+      <h2>TechStore</h2>
+      <div class="register-desc">
+        Tạo tài khoản để mua sắm thiết bị công nghệ
+      </div>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% for field in user_form %}
+        <div class="mb-3">
+          <label>{{ field.label }}</label>
+          {{ field }}
+
+          {% if field.errors %}
+            <div class="error-text">
+              {{ field.errors|striptags }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="register-btn">
+        Tạo tài khoản
+      </button>
+    </form>
+
+    <div class="register-footer">
+      Đã có tài khoản?
+      <a href="{% url 'users:login' %}">Đăng nhập</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

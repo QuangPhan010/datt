@@ -1,0 +1,224 @@
+{% extends "users/base.html" %}
+{% block title %}Trang chủ | TechStore{% endblock %}
+
+{% block content %}
+<style>
+/* LAYOUT */
+.tech-layout{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap:24px;
+}
+
+@media(max-width:992px){
+  .tech-layout{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* LEFT */
+.tech-panel{
+  background:#fff;
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.tech-title{
+  font-weight:800;
+  color:#e53935;
+}
+
+/* CATEGORY GRID */
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-top:20px;
+}
+
+@media(max-width:768px){
+  .category-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.category-item{
+  border-radius:14px;
+  padding:20px;
+  border:1px solid #eee;
+  transition:.25s;
+  cursor:pointer;
+}
+
+.category-item:hover{
+  border-color:#e53935;
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(229,57,53,.2);
+}
+
+.category-item i{
+  font-size:34px;
+  color:#e53935;
+}
+
+/* RIGHT */
+.side-panel{
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.stat-box{
+  border-radius:14px;
+  padding:16px;
+  background:#fff5f5;
+  margin-bottom:14px;
+}
+
+.stat-box h4{
+  margin:0;
+  font-weight:800;
+  color:#e53935;
+}
+
+.quick-link{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:12px;
+  transition:.2s;
+  cursor:pointer;
+}
+
+.quick-link:hover{
+  background:#ffecec;
+}
+
+.quick-link i{
+  font-size:22px;
+  color:#e53935;
+}
+</style>
+
+<div class="container mt-4 mb-5">
+
+  <div class="tech-layout">
+
+    <!-- LEFT MAIN -->
+    <div class="tech-panel">
+      <h4 class="tech-title mb-1">
+        TechStore Control Center
+      </h4>
+      <p class="text-muted small">
+        Trung tâm mua sắm & quản lý thiết bị công nghệ
+      </p>
+
+      <!-- CATEGORY -->
+      <div class="category-grid">
+
+        <a href="{% url 'shops:product' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-phone-fill"></i>
+            <h6 class="mt-2">Điện thoại</h6>
+            <p class="small text-muted mb-0">
+              iPhone, Samsung, OPPO
+            </p>
+          </div>
+        </a>
+
+        <div class="category-item">
+          <i class="bi bi-laptop"></i>
+          <h6 class="mt-2">Laptop</h6>
+          <p class="small text-muted mb-0">
+            Học tập & làm việc
+          </p>
+        </div>
+
+        <div class="category-item">
+          <i class="bi bi-headphones"></i>
+          <h6 class="mt-2">Phụ kiện</h6>
+          <p class="small text-muted mb-0">
+            Tai nghe, sạc, chuột
+          </p>
+        </div>
+
+        <div class="category-item">
+          <i class="bi bi-cpu-fill"></i>
+          <h6 class="mt-2">PC & Linh kiện</h6>
+          <p class="small text-muted mb-0">
+            Gaming & đồ họa
+          </p>
+        </div>
+
+        <div class="category-item">
+          <i class="bi bi-watch"></i>
+          <h6 class="mt-2">Thiết bị đeo</h6>
+          <p class="small text-muted mb-0">
+            Smartwatch, band
+          </p>
+        </div>
+
+        <div class="category-item">
+          <i class="bi bi-fire"></i>
+          <h6 class="mt-2">Hot Deals</h6>
+          <p class="small text-muted mb-0">
+            Khuyến mãi hôm nay
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="side-panel">
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">Tài khoản</p>
+        <h4>{{ request.user.username }}</h4>
+      </div>
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">Giỏ hàng</p>
+        <h4>3 sản phẩm</h4>
+      </div>
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">Đơn hàng</p>
+        <h4>1 đang xử lý</h4>
+      </div>
+
+      <hr>
+
+      <div class="quick-link">
+        <i class="bi bi-cart3"></i>
+        <div>
+          <strong>Giỏ hàng</strong>
+          <div class="small text-muted">Xem sản phẩm đã chọn</div>
+        </div>
+      </div>
+
+      <div class="quick-link">
+        <i class="bi bi-receipt"></i>
+        <div>
+          <strong>Đơn mua</strong>
+          <div class="small text-muted">Theo dõi trạng thái</div>
+        </div>
+      </div>
+
+      <div class="quick-link">
+        <i class="bi bi-person-circle"></i>
+        <div>
+          <strong>Tài khoản</strong>
+          <div class="small text-muted">Bảo mật & thông tin</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

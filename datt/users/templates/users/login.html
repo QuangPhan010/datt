@@ -1,0 +1,131 @@
+{% extends "users/base.html" %}
+{% block title %}Đăng nhập | TechStore{% endblock %}
+
+{% block content %}
+<style>
+  .login-container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 36px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 12px 35px rgba(229, 57, 53, 0.25);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .login-header i {
+    font-size: 42px;
+    color: #e53935;
+  }
+
+  .login-header h2 {
+    margin-top: 10px;
+    font-weight: 800;
+    color: #e53935;
+    letter-spacing: 0.5px;
+  }
+
+  .login-desc {
+    font-size: 14px;
+    color: #777;
+  }
+
+  /* FORM */
+  .login-card form p {
+    margin-bottom: 16px;
+  }
+
+  .login-card input[type="text"],
+  .login-card input[type="password"],
+  .login-card input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.2s;
+  }
+
+  .login-card input:focus {
+    border-color: #e53935;
+    box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.15);
+  }
+
+  .login-card input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #e53935, #c62828);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .login-card input[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(229, 57, 53, 0.45);
+  }
+
+  /* LINKS */
+  .login-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .login-links a {
+    color: #e53935;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .login-links a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <i class="bi bi-cpu-fill"></i>
+      <h2>TechStore</h2>
+      <div class="login-desc">
+        Đăng nhập để mua sắm thiết bị công nghệ
+      </div>
+    </div>
+
+    <form action="{% url 'users:login' %}" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p>
+        <input type="submit" value="Đăng nhập" />
+      </p>
+    </form>
+
+    <div class="login-links">
+      <p>
+        <a href="{% url 'users:password_reset' %}">
+          Quên mật khẩu?
+        </a>
+      </p>
+      <p>
+        Chưa có tài khoản?
+        <a href="{% url 'users:register' %}">Đăng ký ngay</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
