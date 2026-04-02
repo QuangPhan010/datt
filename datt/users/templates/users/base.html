@@ -1,0 +1,304 @@
+<!doctype html>
+{% load static %}
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}TechStore{% endblock %}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+
+  <style>
+    :root {
+      --primary: #e53935;
+      --primary-hover: #ff5252;
+      --bg: #f8f9fa;
+      --text: #212529;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* NAVBAR */
+    .navbar-tech {
+      background: linear-gradient(135deg, #e53935, #c62828);
+    }
+
+    .navbar-tech .nav-link,
+    .navbar-tech .navbar-brand {
+      color: #fff !important;
+      font-weight: 500;
+    }
+
+    .navbar-tech .nav-link:hover {
+      color: #ffecec !important;
+    }
+
+    .brand-logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* CART */
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      font-size: 0.65rem;
+      background: #fff;
+      color: #e53935;
+    }
+
+    /* DROPDOWN */
+    .dropdown-menu {
+      border-radius: 14px;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(229, 57, 53, 0.08);
+      color: #e53935;
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-outline-light:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* FOOTER */
+    .footer-tech {
+      background: #1f1f1f;
+      color: #ddd;
+      margin-top: 80px;
+    }
+
+    .footer-tech h6 {
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .footer-tech a {
+      color: #bbb;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer-tech a:hover {
+      color: #ff5252;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 30px;
+      padding-top: 15px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .footer-logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #ff5252;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top navbar-tech shadow">
+    <div class="container">
+      <!-- LOGO -->
+      <a class="navbar-brand brand-logo d-flex align-items-center" href="{% url 'shops:index' %}">
+        <i class="bi bi-cpu-fill me-2"></i> TechStore
+      </a>
+
+      <!-- TOGGLER -->
+      <button class="navbar-toggler text-white" data-bs-toggle="collapse" data-bs-target="#navbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar">
+        <!-- SEARCH CENTER -->
+        <form class="mx-lg-4 my-3 my-lg-0 flex-grow-1" role="search">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-0">
+              <i class="bi bi-search text-danger"></i>
+            </span>
+            <input type="search" class="form-control border-0" placeholder="Tìm điện thoại, laptop, phụ kiện..." />
+          </div>
+        </form>
+
+        <!-- RIGHT MENU -->
+        <ul class="navbar-nav ms-lg-3 align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="bi bi-lightning-charge-fill me-1"></i> Khuyến mãi
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'shops:order_history' %}">
+              <i class="bi bi-truck me-1"></i> Đơn hàng
+            </a>
+          </li>
+
+          <!-- CART -->
+          <li class="nav-item position-relative mx-lg-2">
+            <a class="nav-link" href="{% url 'shops:cart_detail' %}">
+              <i class="bi bi-cart3 fs-5"></i>
+            </a>
+          </li>
+
+          <!-- USER -->
+          {% if request.user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link d-flex align-items-center" data-bs-toggle="dropdown" href="#">
+              <img
+                src="{% if request.user.profile.photo %}{{ request.user.profile.photo.url }}{% else %}https://i.pravatar.cc/150?u={{ request.user.id }}{% endif %}"
+                class="rounded-circle me-2" width="32" height="32" style="object-fit: cover" />
+              <span class="d-none d-lg-inline">{{ request.user.username }}</span>
+              <i class="bi bi-chevron-down ms-1 small"></i>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li>
+                <a class="dropdown-item" href="{% url 'users:profile' %}">
+                  <i class="bi bi-person me-2"></i>Tài khoản
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'shops:order_history' %}">
+                  <i class="bi bi-receipt me-2"></i>Đơn mua
+                </a>
+              </li>
+              {% if request.user.is_staff or request.user.is_superuser %}
+              <li>
+                <a class="dropdown-item" href="{% url 'shops:admin_order_list' %}">
+                  <i class="bi bi-clipboard-check me-2"></i>Quản lý đơn hàng
+                </a>
+              </li>
+              {% endif %}
+              <li>
+                <a class="dropdown-item" href="{% url 'users:edit' %}">
+                  <i class="bi bi-gear me-2"></i>Cài đặt
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <form method="post" action="{% url 'users:logout' %}">
+                  {% csrf_token %}
+                  <button class="dropdown-item text-danger">
+                    <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+
+          {% else %}
+          <li class="nav-item ms-lg-2">
+            <a href="{% url 'users:login' %}" class="btn btn-light btn-sm text-danger fw-semibold">
+              Đăng nhập
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="container pt-5 mt-5">
+    {% if messages %}
+      <div class="mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-tech pt-5 pb-4">
+    <div class="container">
+      <div class="row gy-4">
+
+        <!-- BRAND -->
+        <div class="col-md-4">
+          <div class="footer-logo mb-2">
+            <i class="bi bi-cpu-fill me-1"></i> TechStore
+          </div>
+          <p class="small">
+            TechStore – Hệ thống bán lẻ thiết bị công nghệ chính hãng:
+            điện thoại, laptop, phụ kiện với giá tốt và bảo hành uy tín.
+          </p>
+        </div>
+
+        <!-- LINKS -->
+        <div class="col-md-2 col-6">
+          <h6>TechStore</h6>
+          <ul class="list-unstyled">
+            <li><a href="#">Giới thiệu</a></li>
+            <li><a href="#">Tuyển dụng</a></li>
+            <li><a href="#">Tin công nghệ</a></li>
+          </ul>
+        </div>
+
+        <!-- SUPPORT -->
+        <div class="col-md-3 col-6">
+          <h6>Hỗ trợ khách hàng</h6>
+          <ul class="list-unstyled">
+            <li><a href="#">Hướng dẫn mua hàng</a></li>
+            <li><a href="#">Chính sách bảo hành</a></li>
+            <li><a href="#">Đổi trả & hoàn tiền</a></li>
+            <li><a href="#">Liên hệ hỗ trợ</a></li>
+          </ul>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="col-md-3">
+          <h6>Liên hệ</h6>
+          <p class="small mb-1">
+            <i class="bi bi-telephone me-1"></i> 1900 9999
+          </p>
+          <p class="small mb-1">
+            <i class="bi bi-envelope me-1"></i> support@techstore.vn
+          </p>
+          <p class="small">
+            <i class="bi bi-geo-alt me-1"></i> TP. Hồ Chí Minh
+          </p>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom text-center mt-4">
+        © {{ now|date:"Y" }} TechStore. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

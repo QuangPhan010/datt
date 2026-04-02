@@ -1,0 +1,201 @@
+{% extends "users/base.html" %}
+{% block title %}Cài đặt hồ sơ | TechStore{% endblock %}
+
+{% block content %}
+<style>
+.settings-wrapper{
+  max-width:960px;
+  margin:auto;
+}
+
+.settings-header{
+  margin-bottom:28px;
+}
+
+.settings-header h3{
+  font-weight:800;
+  color:#e53935;
+}
+
+.settings-layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  gap:28px;
+}
+
+@media(max-width:992px){
+  .settings-layout{
+    grid-template-columns:1fr;
+  }
+}
+
+/* TABS */
+.settings-tabs{
+  background:#fff;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.settings-tabs a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#333;
+  font-weight:500;
+  transition:.2s;
+}
+
+.settings-tabs a.active,
+.settings-tabs a:hover{
+  background:#ffecec;
+  color:#e53935;
+}
+
+.settings-tabs i{
+  font-size:18px;
+}
+
+/* CONTENT */
+.settings-content{
+  background:#fff;
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.form-section{
+  margin-bottom:32px;
+}
+
+.form-section h6{
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+.form-section p{
+  font-size:14px;
+  color:#777;
+}
+
+/* INPUT */
+.settings-content input,
+.settings-content select,
+.settings-content textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+.settings-content input:focus,
+.settings-content textarea:focus{
+  border-color:#e53935;
+  box-shadow:0 0 0 2px rgba(229,57,53,.15);
+}
+
+/* AVATAR */
+.avatar-box{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.avatar-box img{
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #e53935;
+}
+
+/* ACTION */
+.settings-actions{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+}
+</style>
+
+<div class="container mt-4 mb-5">
+  <div class="settings-wrapper">
+
+    <!-- HEADER -->
+    <div class="settings-header">
+      <h3>Cài đặt hồ sơ</h3>
+      <p class="text-muted">
+        Quản lý thông tin cá nhân và bảo mật tài khoản TechStore
+      </p>
+    </div>
+
+    <div class="settings-layout">
+
+      <!-- LEFT TABS -->
+      <div class="settings-tabs">
+        <a href="#" class="active">
+          <i class="bi bi-person"></i> Thông tin cá nhân
+        </a>
+        <a href="#">
+          <i class="bi bi-image"></i> Ảnh đại diện
+        </a>
+        <a href="#">
+          <i class="bi bi-envelope"></i> Liên hệ
+        </a>
+        <a href="{% url 'users:password_change' %}">
+          <i class="bi bi-shield-lock"></i> Bảo mật
+        </a>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="settings-content">
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- BASIC INFO -->
+          <div class="form-section">
+            <h6>Thông tin cơ bản</h6>
+            <p>Họ tên, tên đăng nhập và thông tin hiển thị</p>
+            {{ user_form.as_p }}
+          </div>
+
+          <!-- AVATAR -->
+          <div class="form-section">
+            <h6>Ảnh đại diện</h6>
+            <p>Ảnh hiển thị cho tài khoản của bạn</p>
+
+            <div class="avatar-box mb-3">
+              {% if user.profile.photo %}
+                <img src="{{ user.profile.photo.url }}">
+              {% else %}
+                <img src="https://i.pravatar.cc/300?u={{ user.id }}">
+              {% endif %}
+              <div class="text-muted small">
+                JPG, PNG – tối đa 2MB
+              </div>
+            </div>
+
+            {{ profile_form.as_p }}
+          </div>
+
+          <!-- ACTION -->
+          <div class="settings-actions">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-save me-1"></i> Lưu thay đổi
+            </button>
+            <a href="{% url 'users:profile' %}" class="btn btn-outline-danger">
+              Hủy
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
