@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}Đăng ký | Nexora{% endblock %}
+{% block title %}{{ cms.register_title|safe }}{% endblock %}
 
 {% block content %}
 <style>
@@ -111,9 +111,15 @@
 
     <div class="auth-header">
       <i class="bi bi-shield-plus"></i>
-      <h2>NEXORA</h2>
+      <h2>
+        <div class="cms-edit cms-inline" data-page="global" data-key="nav_brand">
+          <span class="cms-edit__content">{{ cms.global_nav_brand|safe }}</span>
+        </div>
+      </h2>
       <div class="auth-desc">
-        Tạo tài khoản để tham gia hệ sinh thái bảo mật của Nexora
+        <div class="cms-edit" data-page="register" data-key="subtitle">
+          <span class="cms-edit__content">{{ cms.register_subtitle|safe }}</span>
+        </div>
       </div>
     </div>
 
@@ -134,13 +140,21 @@
       {% endfor %}
 
       <button type="submit" class="auth-btn">
-        Tạo tài khoản
+        <div class="cms-edit cms-inline" data-page="register" data-key="submit">
+          <span class="cms-edit__content">{{ cms.register_submit|safe }}</span>
+        </div>
       </button>
     </form>
 
     <div class="auth-footer">
-      Đã có tài khoản?
-      <a href="{% url 'users:login' %}">Đăng nhập</a>
+      <div class="cms-edit cms-inline" data-page="register" data-key="login_text">
+        <span class="cms-edit__content">{{ cms.register_login_text|safe }}</span>
+      </div>
+      <a href="{% url 'users:login' %}">
+        <div class="cms-edit cms-inline" data-page="register" data-key="login_link">
+          <span class="cms-edit__content">{{ cms.register_login_link|safe }}</span>
+        </div>
+      </a>
     </div>
 
   </div>

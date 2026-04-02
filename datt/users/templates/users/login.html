@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}Đăng nhập | Nexora{% endblock %}
+{% block title %}{{ cms.login_title|safe }}{% endblock %}
 
 {% block content %}
 <style>
@@ -65,7 +65,7 @@
     box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
   }
 
-  .auth-card input[type="submit"] {
+  .auth-card button[type="submit"] {
     width: 100%;
     padding: 12px;
     background: linear-gradient(45deg, #ff0000, #ff4d4d);
@@ -77,7 +77,7 @@
     transition: 0.3s;
   }
 
-  .auth-card input[type="submit"]:hover {
+  .auth-card button[type="submit"]:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 26px rgba(255, 0, 0, 0.45);
   }
@@ -103,9 +103,15 @@
   <div class="auth-card">
     <div class="auth-header">
       <i class="bi bi-shield-lock-fill"></i>
-      <h2>NEXORA</h2>
+      <h2>
+        <div class="cms-edit cms-inline" data-page="global" data-key="nav_brand">
+          <span class="cms-edit__content">{{ cms.global_nav_brand|safe }}</span>
+        </div>
+      </h2>
       <div class="auth-desc">
-        Đăng nhập để truy cập hệ thống bảo mật & công nghệ
+        <div class="cms-edit" data-page="login" data-key="subtitle">
+          <span class="cms-edit__content">{{ cms.login_subtitle|safe }}</span>
+        </div>
       </div>
     </div>
 
@@ -113,17 +119,31 @@
       {% csrf_token %}
       {{ form.as_p }}
       <p>
-        <input type="submit" value="Đăng nhập" />
+        <button type="submit">
+          <div class="cms-edit cms-inline" data-page="login" data-key="submit">
+            <span class="cms-edit__content">{{ cms.login_submit|safe }}</span>
+          </div>
+        </button>
       </p>
     </form>
 
     <div class="auth-links">
       <p>
-        <a href="{% url 'users:password_reset' %}">Quên mật khẩu?</a>
+        <a href="{% url 'users:password_reset' %}">
+          <div class="cms-edit cms-inline" data-page="login" data-key="forgot_link">
+            <span class="cms-edit__content">{{ cms.login_forgot_link|safe }}</span>
+          </div>
+        </a>
       </p>
       <p>
-        Chưa có tài khoản?
-        <a href="{% url 'users:register' %}">Tạo ngay</a>
+        <div class="cms-edit cms-inline" data-page="login" data-key="register_text">
+          <span class="cms-edit__content">{{ cms.login_register_text|safe }}</span>
+        </div>
+        <a href="{% url 'users:register' %}">
+          <div class="cms-edit cms-inline" data-page="login" data-key="register_link">
+            <span class="cms-edit__content">{{ cms.login_register_link|safe }}</span>
+          </div>
+        </a>
       </p>
     </div>
   </div>

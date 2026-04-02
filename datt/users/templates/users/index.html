@@ -1,236 +1,320 @@
-{% extends "shops/base.html" %}
-{% load static %}
-{% block title %}Hệ thống Người dùng | Nexora{% endblock %}
+{% extends "users/base.html" %}
+{% block title %}{{ cms.users_home_title|safe }}{% endblock %}
 
-{% block body_block %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+{% block content %}
+<style>
+/* LAYOUT */
+.tech-layout{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap:24px;
+}
 
-<!-- ===== HERO CAROUSEL ===== -->
-<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+@media(max-width:992px){
+  .tech-layout{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* LEFT */
+.tech-panel{
+  background:#fff;
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.tech-title{
+  font-weight:800;
+  color:#e53935;
+}
+
+/* CATEGORY GRID */
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-top:20px;
+}
+
+@media(max-width:768px){
+  .category-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.category-item{
+  border-radius:14px;
+  padding:20px;
+  border:1px solid #eee;
+  transition:.25s;
+  cursor:pointer;
+}
+
+.category-item:hover{
+  border-color:#e53935;
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(229,57,53,.2);
+}
+
+.category-item i{
+  font-size:34px;
+  color:#e53935;
+}
+
+/* RIGHT */
+.side-panel{
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.stat-box{
+  border-radius:14px;
+  padding:16px;
+  background:#fff5f5;
+  margin-bottom:14px;
+}
+
+.stat-box h4{
+  margin:0;
+  font-weight:800;
+  color:#e53935;
+}
+
+.quick-link{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:12px;
+  transition:.2s;
+  cursor:pointer;
+  text-decoration:none;
+  color:inherit;
+}
+
+.quick-link:hover{
+  background:#ffecec;
+}
+
+.quick-link i{
+  font-size:22px;
+  color:#e53935;
+}
+</style>
+
+<div class="container mt-4 mb-5">
+
+  <div class="tech-layout">
+
+    <!-- LEFT MAIN -->
+    <div class="tech-panel">
+      <h4 class="tech-title mb-1">
+        <div class="cms-edit" data-page="users_home" data-key="heading">
+          <span class="cms-edit__content">{{ cms.users_home_heading|safe }}</span>
+        </div>
+      </h4>
+      <p class="text-muted small">
+        <span class="cms-edit" data-page="users_home" data-key="subtitle">
+          <span class="cms-edit__content">{{ cms.users_home_subtitle|safe }}</span>
+        </span>
+      </p>
+
+      <!-- CATEGORY -->
+      <div class="category-grid">
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-phone-fill"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_1_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_1_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_1_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_1_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-laptop"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_2_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_2_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_2_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_2_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-headphones"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_3_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_3_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_3_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_3_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-cpu-fill"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_4_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_4_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_4_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_4_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-watch"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_5_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_5_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_5_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_5_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+        <a href="{% url 'shops:index' %}" class="text-decoration-none text-dark">
+          <div class="category-item">
+            <i class="bi bi-fire"></i>
+            <h6 class="mt-2">
+              <div class="cms-edit cms-inline" data-page="users_home" data-key="category_6_title">
+                <span class="cms-edit__content">{{ cms.users_home_category_6_title|safe }}</span>
+              </div>
+            </h6>
+            <p class="small text-muted mb-0">
+              <span class="cms-edit" data-page="users_home" data-key="category_6_desc">
+                <span class="cms-edit__content">{{ cms.users_home_category_6_desc|safe }}</span>
+              </span>
+            </p>
+          </div>
+        </a>
+
+      </div>
     </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active" style="height: 100vh;">
-            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
-                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070') center/cover;">
-                <div class="px-3" style="max-width: 800px;">
-                    <h1 class="display-2 fw-bold text-danger mb-3 tracking-tighter">CYBER DEFENSE</h1>
-                    <p class="lead text-light mb-4 text-uppercase fw-semibold tracking-widest" style="letter-spacing: 3px;">Protecting your infrastructure with AI-driven security.</p>
-                    <a href="#security" class="btn btn-danger btn-lg px-5 py-3 rounded-pill shadow-lg border-0">Khám phá ngay</a>
-                </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="side-panel">
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">
+          <span class="cms-edit cms-inline" data-page="users_home" data-key="stat_account_label">
+            <span class="cms-edit__content">{{ cms.users_home_stat_account_label|safe }}</span>
+          </span>
+        </p>
+        <h4>{{ request.user.username }}</h4>
+      </div>
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">
+          <span class="cms-edit cms-inline" data-page="users_home" data-key="stat_cart_label">
+            <span class="cms-edit__content">{{ cms.users_home_stat_cart_label|safe }}</span>
+          </span>
+        </p>
+        <h4>
+          <span class="cms-edit cms-inline" data-page="users_home" data-key="stat_cart_value">
+            <span class="cms-edit__content">{{ cms.users_home_stat_cart_value|safe }}</span>
+          </span>
+        </h4>
+      </div>
+
+      <div class="stat-box">
+        <p class="small text-muted mb-1">
+          <span class="cms-edit cms-inline" data-page="users_home" data-key="stat_order_label">
+            <span class="cms-edit__content">{{ cms.users_home_stat_order_label|safe }}</span>
+          </span>
+        </p>
+        <h4>
+          <span class="cms-edit cms-inline" data-page="users_home" data-key="stat_order_value">
+            <span class="cms-edit__content">{{ cms.users_home_stat_order_value|safe }}</span>
+          </span>
+        </h4>
+      </div>
+
+      <hr>
+
+      <a class="quick-link" href="{% url 'users:profile' %}">
+        <i class="bi bi-person-circle"></i>
+        <div>
+          <strong>
+            <div class="cms-edit cms-inline" data-page="users_home" data-key="quick_account_title">
+              <span class="cms-edit__content">{{ cms.users_home_quick_account_title|safe }}</span>
             </div>
+          </strong>
+          <div class="small text-muted">
+            <span class="cms-edit" data-page="users_home" data-key="quick_account_desc">
+              <span class="cms-edit__content">{{ cms.users_home_quick_account_desc|safe }}</span>
+            </span>
+          </div>
         </div>
-        <div class="carousel-item" style="height: 100vh;">
-            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
-                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072') center/cover;">
-                <div class="px-3" style="max-width: 800px;">
-                    <h1 class="display-3 fw-bold text-danger mb-3 tracking-tighter">NEXT-GEN SOFTWARE</h1>
-                    <p class="lead text-light mb-4 text-uppercase fw-semibold tracking-widest" style="letter-spacing: 2px;">Xây dựng hệ thống phần mềm quy mô lớn cho tương lai.</p>
-                    <a href="#software" class="btn btn-outline-danger btn-lg px-5 py-3 rounded-pill">Xem dự án</a>
-                </div>
+      </a>
+
+      <a class="quick-link" href="{% url 'users:edit' %}">
+        <i class="bi bi-gear"></i>
+        <div>
+          <strong>
+            <div class="cms-edit cms-inline" data-page="users_home" data-key="quick_settings_title">
+              <span class="cms-edit__content">{{ cms.users_home_quick_settings_title|safe }}</span>
             </div>
+          </strong>
+          <div class="small text-muted">
+            <span class="cms-edit" data-page="users_home" data-key="quick_settings_desc">
+              <span class="cms-edit__content">{{ cms.users_home_quick_settings_desc|safe }}</span>
+            </span>
+          </div>
         </div>
-        <div class="carousel-item" style="height: 100vh;">
-            <div class="d-flex align-items-center justify-content-center text-center w-100 h-100" 
-                 style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=2072') center/cover;">
-                <div class="px-3" style="max-width: 800px;">
-                    <h1 class="display-3 fw-bold text-danger mb-3 tracking-tighter">MANAGED IT</h1>
-                    <p class="lead text-light mb-4 text-uppercase tracking-widest" style="letter-spacing: 2px;">Dịch vụ vận hành & tối ưu hóa hạ tầng số toàn cầu.</p>
-                    <a href="#services" class="btn btn-danger btn-lg px-5 py-3 rounded-pill border-0 shadow-lg">Tìm hiểu thêm</a>
-                </div>
+      </a>
+
+      <a class="quick-link" href="{% url 'users:password_change' %}">
+        <i class="bi bi-shield-lock"></i>
+        <div>
+          <strong>
+            <div class="cms-edit cms-inline" data-page="users_home" data-key="quick_password_title">
+              <span class="cms-edit__content">{{ cms.users_home_quick_password_title|safe }}</span>
             </div>
+          </strong>
+          <div class="small text-muted">
+            <span class="cms-edit" data-page="users_home" data-key="quick_password_desc">
+              <span class="cms-edit__content">{{ cms.users_home_quick_password_desc|safe }}</span>
+            </span>
+          </div>
         </div>
+      </a>
+
     </div>
+
+  </div>
+
 </div>
-
-<!-- ===== TECHNOLOGY STACK ===== -->
-<section id="tech" class="py-5">
-    <div class="container py-lg-5">
-        <div class="row align-items-center mb-5">
-            <div class="col-lg-6">
-                <h2 class="display-5 fw-bold text-danger mb-4">CÔNG NGHỆ TIÊN PHONG</h2>
-                <p class="text-secondary lead">Chúng tôi áp dụng những xu hướng công nghệ mới nhất để giải quyết mọi thách thức của doanh nghiệp.</p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100 text-center p-4">
-                    <div class="mb-4">
-                        <i class="bi bi-cpu display-4 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">AI & Machine Learning</h5>
-                    <p class=" small">Tích hợp trí tuệ nhân tạo để tối ưu hóa quy trình và đưa ra quyết định thông minh.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100 text-center p-4">
-                    <div class="mb-4">
-                        <i class="bi bi-cloud-check display-4 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">Cloud Computing</h5>
-                    <p class=" small">Hạ tầng đám mây linh hoạt, ổn định và có khả năng mở rộng không giới hạn.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100 text-center p-4">
-                    <div class="mb-4">
-                        <i class="bi bi-hdd-network display-4 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">IoT & Edge</h5>
-                    <p class=" small">Kết nối vạn vật và xử lý dữ liệu tại biên để đạt tốc độ phản hồi cực nhanh.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100 text-center p-4">
-                    <div class="mb-4">
-                        <i class="bi bi-infinity display-4 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">High Performance</h5>
-                    <p class=" small">Tối ưu hiệu năng cho các hệ thống yêu cầu khắt khe về băng thông & tốc độ.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== SECURITY PILLAR ===== -->
-<section id="security" class="py-5" style="background: rgba(0,0,0,0.3);">
-    <div class="container py-lg-5">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold text-danger">BẢO MẬT TUYỆT ĐỐI</h2>
-            <div class="mx-auto bg-danger mt-3" style="width: 80px; height: 3px;"></div>
-        </div>
-        <div class="row g-5">
-            <div class="col-lg-6">
-                <div class="d-flex mb-5">
-                    <div class="flex-shrink-0 me-4">
-                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
-                            <i class="bi bi-shield-lock-fill text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">Pentesting & Red Teaming</h4>
-                        <p class="text-secondary">Kiểm thử xâm nhập giả lập hacker thực thụ để tìm lỗ hổng trước khi chúng bị khai thác.</p>
-                    </div>
-                </div>
-                <div class="d-flex mb-5">
-                    <div class="flex-shrink-0 me-4">
-                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
-                            <i class="bi bi-fingerprint text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">Zero Trust Architecture</h4>
-                        <p class="text-secondary">Xây dựng hệ thống với triết lý "không bao giờ tin tưởng, luôn kiểm tra" mọi kết nối.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="d-flex mb-5">
-                    <div class="flex-shrink-0 me-4">
-                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
-                            <i class="bi bi-key-fill text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">Data Encryption</h4>
-                        <p class="text-secondary">Mã hóa dữ liệu cấp cao (AES-256) đảm bảo an toàn tuyệt đối cho thông tin nhạy cảm.</p>
-                    </div>
-                </div>
-                <div class="d-flex mb-5">
-                    <div class="flex-shrink-0 me-4">
-                        <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px;">
-                            <i class="bi bi-activity text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">24/7 Monitoring (SOC)</h4>
-                        <p class="text-secondary">Trung tâm điều hành bảo mật giám sát hệ thống liên tục, phản ứng tức thì khi có sự cố.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== SOFTWARE SOLUTIONS ===== -->
-<section id="software" class="py-5">
-    <div class="container py-lg-5">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-5 order-lg-2">
-                <h2 class="display-6 fw-bold text-danger mb-4">PHẦN MỀM CHUYÊN NGHIỆP</h2>
-                <p class="text-light mb-4">Kiến trúc phần mềm bền vững, dễ mở rộng và thân thiện với người dùng.</p>
-                <ul class="list-unstyled text-secondary">
-                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Cloud-Native Development</li>
-                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Enterprise Resource Planning (ERP)</li>
-                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> Mobile Application (iOS/Android)</li>
-                    <li class="mb-3"><i class="bi bi-check2-circle text-danger me-2"></i> DevOps & CI/CD Pipelines</li>
-                </ul>
-                <button class="btn btn-danger px-4 py-2 mt-4">Liên hệ báo giá</button>
-            </div>
-            <div class="col-lg-7 order-lg-1 pe-lg-5">
-                <div class="row g-3">
-                    <div class="col-6">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2426" class="img-fluid rounded-4 shadow" alt="Dashboard content">
-                    </div>
-                    <div class="col-6 pt-5">
-                        <img src="https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=2070" class="img-fluid rounded-4 shadow" alt="Analytics content">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== ONLINE SERVICES ===== -->
-<section id="services" class="py-5" style="border-top: 1px solid rgba(255,0,0,0.1);">
-    <div class="container py-lg-5">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-danger text-uppercase tracking-widest">DỊCH VỤ TRỰC TUYẾN</h2>
-            <p class="text-secondary mt-2">Hỗ trợ doanh nghiệp hiện diện mạnh mẽ trên không gian số.</p>
-        </div>
-        <div class="row g-4 mt-2">
-            <div class="col-lg-4">
-                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
-                    <div class="mb-3">
-                        <i class="bi bi-globe2 fs-2 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">Domain & Hosting</h5>
-                    <p class="small">Cung cấp tên miền quốc tế và hạ tầng hosting tốc độ cao, băng thông không giới hạn.</p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
-                    <div class="mb-3">
-                        <i class="bi bi-envelope-at fs-2 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">Enterprise Email</h5>
-                    <p class=" small">Hệ thống email dành riêng cho doanh nghiệp, bảo mật cao, chống spam tuyệt đối.</p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="p-4 rounded-4" style="background: #111; border: 1px solid #222;">
-                    <div class="mb-3">
-                        <i class="bi bi-graph-up-arrow fs-2 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">SEO & Digital Marketing</h5>
-                    <p class=" small">Tối ưu hóa công cụ tìm kiếm và chiến dịch marketing để tăng trưởng doanh số bền vững.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== CTA ===== -->
-<section class="py-5 text-center mt-5" style="background: linear-gradient(rgba(255,0,0,0.15), rgba(0,0,0,0.9));">
-    <div class="container py-4">
-        <h2 class="fw-bold mb-3 mt-4">BẠN CÓ DỰ ÁN CẦN TRIỂN KHAI?</h2>
-        <p class="text-light-50 mb-4 opacity-75">Hãy để Nexora đồng hành cùng sự đột phá của bạn trong kỷ nguyên số.</p>
-        <button class="btn btn-danger btn-lg px-5 mb-4">Gửi yêu cầu ngay</button>
-    </div>
-</section>
-
 {% endblock %}

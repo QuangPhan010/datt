@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}Cài đặt hồ sơ | TechStore{% endblock %}
+{% block title %}{{ cms.edit_title|safe }}{% endblock %}
 
 {% block content %}
 <style>
@@ -125,9 +125,15 @@
 
     <!-- HEADER -->
     <div class="settings-header">
-      <h3>Cài đặt hồ sơ</h3>
+      <h3>
+        <div class="cms-edit" data-page="edit" data-key="heading">
+          <span class="cms-edit__content">{{ cms.edit_heading|safe }}</span>
+        </div>
+      </h3>
       <p class="text-muted">
-        Quản lý thông tin cá nhân và bảo mật tài khoản TechStore
+        <span class="cms-edit" data-page="edit" data-key="subtitle">
+          <span class="cms-edit__content">{{ cms.edit_subtitle|safe }}</span>
+        </span>
       </p>
     </div>
 
@@ -136,16 +142,28 @@
       <!-- LEFT TABS -->
       <div class="settings-tabs">
         <a href="#" class="active">
-          <i class="bi bi-person"></i> Thông tin cá nhân
+          <i class="bi bi-person"></i>
+          <div class="cms-edit cms-inline" data-page="edit" data-key="tab_profile">
+            <span class="cms-edit__content">{{ cms.edit_tab_profile|safe }}</span>
+          </div>
         </a>
         <a href="#">
-          <i class="bi bi-image"></i> Ảnh đại diện
+          <i class="bi bi-image"></i>
+          <div class="cms-edit cms-inline" data-page="edit" data-key="tab_avatar">
+            <span class="cms-edit__content">{{ cms.edit_tab_avatar|safe }}</span>
+          </div>
         </a>
         <a href="#">
-          <i class="bi bi-envelope"></i> Liên hệ
+          <i class="bi bi-envelope"></i>
+          <div class="cms-edit cms-inline" data-page="edit" data-key="tab_contact">
+            <span class="cms-edit__content">{{ cms.edit_tab_contact|safe }}</span>
+          </div>
         </a>
         <a href="{% url 'users:password_change' %}">
-          <i class="bi bi-shield-lock"></i> Bảo mật
+          <i class="bi bi-shield-lock"></i>
+          <div class="cms-edit cms-inline" data-page="edit" data-key="tab_security">
+            <span class="cms-edit__content">{{ cms.edit_tab_security|safe }}</span>
+          </div>
         </a>
       </div>
 
@@ -157,15 +175,31 @@
 
           <!-- BASIC INFO -->
           <div class="form-section">
-            <h6>Thông tin cơ bản</h6>
-            <p>Họ tên, tên đăng nhập và thông tin hiển thị</p>
+            <h6>
+              <div class="cms-edit" data-page="edit" data-key="section_basic_title">
+                <span class="cms-edit__content">{{ cms.edit_section_basic_title|safe }}</span>
+              </div>
+            </h6>
+            <p>
+              <span class="cms-edit" data-page="edit" data-key="section_basic_desc">
+                <span class="cms-edit__content">{{ cms.edit_section_basic_desc|safe }}</span>
+              </span>
+            </p>
             {{ user_form.as_p }}
           </div>
 
           <!-- AVATAR -->
           <div class="form-section">
-            <h6>Ảnh đại diện</h6>
-            <p>Ảnh hiển thị cho tài khoản của bạn</p>
+            <h6>
+              <div class="cms-edit" data-page="edit" data-key="section_avatar_title">
+                <span class="cms-edit__content">{{ cms.edit_section_avatar_title|safe }}</span>
+              </div>
+            </h6>
+            <p>
+              <span class="cms-edit" data-page="edit" data-key="section_avatar_desc">
+                <span class="cms-edit__content">{{ cms.edit_section_avatar_desc|safe }}</span>
+              </span>
+            </p>
 
             <div class="avatar-box mb-3">
               {% if user.profile.photo %}
@@ -174,7 +208,9 @@
                 <img src="https://i.pravatar.cc/300?u={{ user.id }}">
               {% endif %}
               <div class="text-muted small">
-                JPG, PNG – tối đa 2MB
+                <span class="cms-edit" data-page="edit" data-key="avatar_hint">
+                  <span class="cms-edit__content">{{ cms.edit_avatar_hint|safe }}</span>
+                </span>
               </div>
             </div>
 
@@ -184,10 +220,15 @@
           <!-- ACTION -->
           <div class="settings-actions">
             <button type="submit" class="btn btn-danger">
-              <i class="bi bi-save me-1"></i> Lưu thay đổi
+              <i class="bi bi-save me-1"></i>
+              <div class="cms-edit cms-inline" data-page="edit" data-key="save_button">
+                <span class="cms-edit__content">{{ cms.edit_save_button|safe }}</span>
+              </div>
             </button>
             <a href="{% url 'users:profile' %}" class="btn btn-outline-danger">
-              Hủy
+              <div class="cms-edit cms-inline" data-page="edit" data-key="cancel_button">
+                <span class="cms-edit__content">{{ cms.edit_cancel_button|safe }}</span>
+              </div>
             </a>
           </div>
 
