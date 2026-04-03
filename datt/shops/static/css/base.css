@@ -370,25 +370,28 @@ footer::before {
 }
 
 .logo-wrapper {
-    height: 140px;
+    height: 120px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 10px;
-    transition: 0.3s ease;
+    transition: 0.4s ease;
 }
 
 .logo-wrapper img {
     max-width: 100%;
-    max-height: 80px;
+    max-height: 70px;
     width: auto;
     height: auto;
     object-fit: contain;
+    filter: grayscale(100%) brightness(0.8) invert(1);
+    transition: 0.4s ease;
 }
 
-.partner-item:hover .logo-wrapper {
-    box-shadow: 0 15px 40px rgba(255, 0, 0, 0.2);
+.partner-item:hover .logo-wrapper img {
+    filter: grayscale(0%) brightness(1) invert(0);
+    transform: scale(1.1);
 }
 
 .partner-name {
