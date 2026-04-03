@@ -16,4 +16,9 @@ urlpatterns = [
     path('categories/edit/<int:pk>/', views.category_edit, name='category_edit'),
     path('categories/delete/<int:pk>/', views.category_delete, name='category_delete'),
     path('categories/toggle-hide/<int:pk>/', views.category_toggle_hide, name='category_toggle_hide'),
+    
+    # Pricing & Subscription
+    path('pricing/', views.pricing, name='pricing'),
+    path('subscribe/<int:plan_id>/', views.subscribe, name='subscribe'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]

@@ -1,9 +1,12 @@
 import json
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import user_passes_test
-from .models import Product, Category
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+from .models import Product, Category, Plan, Subscription
 
 def index(request):
     return render(request, 'shops/index.html')
@@ -120,3 +123,47 @@ def product_delete(request, pk):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+# --- PRICING & SUBSCRIPTION ---
+
+def pricing(request):
+    plans = Plan.objects.all().order_by('price_monthly')
+    return render(request, 'shops/pricing.html', {'plans': plans})
+
+@login_required
+def subscribe(request, plan_id):
+    plan = get_object_or_404(Plan, id=plan_id)
+    
+    if request.method == 'POST':
+        period = request.POST.get('period', 'monthly')
+        
+        # Calculate end date
+        if period == 'yearly':
+            duration = timedelta(days=365)
+        else:
+            duration = timedelta(days=30)
+            
+        # Deactivate old subscriptions
+        Subscription.objects.filter(user=request.user, status='active').update(status='canceled')
+        
+        # Create new subscription (Mock Payment)
+        Subscription.objects.create(
+            user=request.user,
+            plan=plan,
+            start_date=timezone.now(),
+            end_date=timezone.now() + duration,
+            status='active'
+        )
+        
+        messages.success(request, f"Bạn đã đăng ký gói {plan.name} thành công!")
+        return redirect('shops:dashboard')
+        
+    return render(request, 'shops/subscribe.html', {
+        'plan': plan, 
+        'period': request.GET.get('period', 'monthly')
+    })
+
+@login_required
+def dashboard(request):
+    subscription = Subscription.objects.filter(user=request.user, status='active').order_by('-start_date').first()
+    return render(request, 'shops/dashboard.html', {'subscription': subscription})

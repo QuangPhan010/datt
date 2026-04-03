@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ cms.profile_title|safe }}{% endblock %}
+{% block title %}Trang cá nhân - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -138,34 +138,19 @@
 
       <div class="account-menu">
         <a href="#">
-          <i class="bi bi-receipt"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="menu_orders">
-            <span class="cms-edit__content">{{ cms.profile_menu_orders|safe }}</span>
-          </div>
+          <i class="bi bi-receipt"></i> Đơn hàng của tôi
         </a>
         <a href="#">
-          <i class="bi bi-heart"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="menu_favorites">
-            <span class="cms-edit__content">{{ cms.profile_menu_favorites|safe }}</span>
-          </div>
+          <i class="bi bi-heart"></i> Sản phẩm yêu thích
         </a>
         <a href="#">
-          <i class="bi bi-truck"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="menu_addresses">
-            <span class="cms-edit__content">{{ cms.profile_menu_addresses|safe }}</span>
-          </div>
+          <i class="bi bi-truck"></i> Sổ địa chỉ
         </a>
         <a href="{% url 'users:password_change' %}">
-          <i class="bi bi-lock"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="menu_password">
-            <span class="cms-edit__content">{{ cms.profile_menu_password|safe }}</span>
-          </div>
+          <i class="bi bi-lock"></i> Đổi mật khẩu
         </a>
         <a href="{% url 'users:edit' %}">
-          <i class="bi bi-gear"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="menu_settings">
-            <span class="cms-edit__content">{{ cms.profile_menu_settings|safe }}</span>
-          </div>
+          <i class="bi bi-gear"></i> Cài đặt tài khoản
         </a>
       </div>
 
@@ -174,77 +159,35 @@
     <!-- MAIN -->
     <div class="account-main">
 
-      <h4 class="fw-bold mb-3">
-        <div class="cms-edit" data-page="profile" data-key="overview_title">
-          <span class="cms-edit__content">{{ cms.profile_overview_title|safe }}</span>
-        </div>
-      </h4>
+      <h4 class="fw-bold mb-3">Tổng quan tài khoản</h4>
 
       <!-- STATS -->
       <div class="stat-grid">
         <div class="stat-item">
-          <h4>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_orders_value">
-              <span class="cms-edit__content">{{ cms.profile_stat_orders_value|safe }}</span>
-            </span>
-          </h4>
-          <span>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_orders_label">
-              <span class="cms-edit__content">{{ cms.profile_stat_orders_label|safe }}</span>
-            </span>
-          </span>
+          <h4>0</h4>
+          <span>Đơn hàng</span>
         </div>
         <div class="stat-item">
-          <h4>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_shipping_value">
-              <span class="cms-edit__content">{{ cms.profile_stat_shipping_value|safe }}</span>
-            </span>
-          </h4>
-          <span>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_shipping_label">
-              <span class="cms-edit__content">{{ cms.profile_stat_shipping_label|safe }}</span>
-            </span>
-          </span>
+          <h4>0</h4>
+          <span>Đang giao</span>
         </div>
         <div class="stat-item">
-          <h4>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_spent_value">
-              <span class="cms-edit__content">{{ cms.profile_stat_spent_value|safe }}</span>
-            </span>
-          </h4>
-          <span>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_spent_label">
-              <span class="cms-edit__content">{{ cms.profile_stat_spent_label|safe }}</span>
-            </span>
-          </span>
+          <h4>0đ</h4>
+          <span>Đã chi tiêu</span>
         </div>
         <div class="stat-item">
-          <h4>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_points_value">
-              <span class="cms-edit__content">{{ cms.profile_stat_points_value|safe }}</span>
-            </span>
-          </h4>
-          <span>
-            <span class="cms-edit cms-inline" data-page="profile" data-key="stat_points_label">
-              <span class="cms-edit__content">{{ cms.profile_stat_points_label|safe }}</span>
-            </span>
-          </span>
+          <h4>0</h4>
+          <span>Điểm tích lũy</span>
         </div>
       </div>
 
       <!-- ACTION -->
       <div class="action-bar">
         <a href="{% url 'users:edit' %}" class="btn btn-danger btn-sm">
-          <i class="bi bi-pencil"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="action_edit_profile">
-            <span class="cms-edit__content">{{ cms.profile_action_edit_profile|safe }}</span>
-          </div>
+          <i class="bi bi-pencil"></i> Chỉnh sửa hồ sơ
         </a>
         <a href="#" class="btn btn-outline-danger btn-sm">
-          <i class="bi bi-truck"></i>
-          <div class="cms-edit cms-inline" data-page="profile" data-key="action_manage_addresses">
-            <span class="cms-edit__content">{{ cms.profile_action_manage_addresses|safe }}</span>
-          </div>
+          <i class="bi bi-truck"></i> Quản lý địa chỉ
         </a>
       </div>
 

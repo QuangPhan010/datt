@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ cms.edit_done_title|safe }}{% endblock %}
+{% block title %}Cập nhật thành công - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -24,23 +24,13 @@
       <i class="bi bi-check-circle-fill"></i>
     </div>
 
-    <h3>
-      <div class="cms-edit" data-page="edit_done" data-key="heading">
-        <span class="cms-edit__content">{{ cms.edit_done_heading|safe }}</span>
-      </div>
-    </h3>
+    <h3>Hoàn tất!</h3>
 
     <p class="text-muted mt-2">
-      <span class="cms-edit" data-page="edit_done" data-key="message">
-        <span class="cms-edit__content">{{ cms.edit_done_message|safe }}</span>
-      </span>
+      Thông tin tài khoản của bạn đã được cập nhật thành công.
     </p>
 
-    <a href="{% url 'users:profile' %}" class="btn btn-danger mt-3">
-      <div class="cms-edit cms-inline" data-page="edit_done" data-key="back_button">
-        <span class="cms-edit__content">{{ cms.edit_done_back_button|safe }}</span>
-      </div>
-    </a>
+    <a href="{% url 'users:profile' %}" class="btn btn-danger mt-3"> Quay lại hồ sơ </a>
 
   </div>
 </div>

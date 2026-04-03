@@ -1,5 +1,5 @@
 {% extends "shops/base.html" %}
-{% block title %}{{ cms.contact_title|safe }}{% endblock %}
+{% block title %}Liên hệ - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -115,16 +115,8 @@
 </style>
 
 <section class="contact-hero">
-  <h1>
-    <div class="cms-edit" data-page="contact" data-key="hero_title">
-      <span class="cms-edit__content">{{ cms.contact_hero_title|safe }}</span>
-    </div>
-  </h1>
-  <p>
-    <span class="cms-edit" data-page="contact" data-key="hero_subtitle">
-      <span class="cms-edit__content">{{ cms.contact_hero_subtitle|safe }}</span>
-    </span>
-  </p>
+  <h1>Kết nối với Nexora</h1>
+  <p>Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc của bạn.</p>
 </section>
 
 <section class="container pb-5">
@@ -133,54 +125,30 @@
       <div class="contact-card">
         <form>
           <div class="mb-3">
-            <label>
-              <div class="cms-edit cms-inline" data-page="contact" data-key="form_name_label">
-                <span class="cms-edit__content">{{ cms.contact_form_name_label|safe }}</span>
-              </div>
-            </label>
-            <input type="text" placeholder="{{ cms.contact_form_name_placeholder|safe }}">
+            <label>Họ và Tên</label>
+            <input type="text" placeholder="Nhập họ tên của bạn">
           </div>
           <div class="mb-3">
-            <label>
-              <div class="cms-edit cms-inline" data-page="contact" data-key="form_email_label">
-                <span class="cms-edit__content">{{ cms.contact_form_email_label|safe }}</span>
-              </div>
-            </label>
-            <input type="email" placeholder="{{ cms.contact_form_email_placeholder|safe }}">
+            <label>Địa chỉ Email</label>
+            <input type="email" placeholder="vi-du@email.com">
           </div>
           <div class="mb-3">
-            <label>
-              <div class="cms-edit cms-inline" data-page="contact" data-key="form_phone_label">
-                <span class="cms-edit__content">{{ cms.contact_form_phone_label|safe }}</span>
-              </div>
-            </label>
-            <input type="tel" placeholder="{{ cms.contact_form_phone_placeholder|safe }}">
+            <label>Số điện thoại</label>
+            <input type="tel" placeholder="09xx xxx xxx">
           </div>
           <div class="mb-3">
-            <label>
-              <div class="cms-edit cms-inline" data-page="contact" data-key="form_package_label">
-                <span class="cms-edit__content">{{ cms.contact_form_package_label|safe }}</span>
-              </div>
-            </label>
+            <label>Dịch vụ quan tâm</label>
             <select>
-              <option value="{{ cms.contact_form_package_1|safe }}">{{ cms.contact_form_package_1|safe }}</option>
-              <option value="{{ cms.contact_form_package_2|safe }}">{{ cms.contact_form_package_2|safe }}</option>
-              <option value="{{ cms.contact_form_package_3|safe }}">{{ cms.contact_form_package_3|safe }}</option>
+              <option value="Thiết kế Website">Thiết kế Website</option>
+              <option value="Ứng dụng Di động">Ứng dụng Di động</option>
+              <option value="Giải pháp Cloud">Giải pháp Cloud</option>
             </select>
           </div>
           <div class="mb-3">
-            <label>
-              <div class="cms-edit cms-inline" data-page="contact" data-key="form_message_label">
-                <span class="cms-edit__content">{{ cms.contact_form_message_label|safe }}</span>
-              </div>
-            </label>
-            <textarea rows="4" placeholder="{{ cms.contact_form_message_placeholder|safe }}"></textarea>
+            <label>Lời nhắn</label>
+            <textarea rows="4" placeholder="Mô tả ngắn gọn yêu cầu của bạn..."></textarea>
           </div>
-          <button type="submit" class="contact-btn">
-            <div class="cms-edit cms-inline" data-page="contact" data-key="form_submit">
-              <span class="cms-edit__content">{{ cms.contact_form_submit|safe }}</span>
-            </div>
-          </button>
+          <button type="submit" class="contact-btn">Gửi yêu cầu ngay</button>
         </form>
       </div>
     </div>
@@ -188,58 +156,30 @@
     <div class="col-lg-5">
       <div class="info-grid">
         <div class="info-card">
-          <h6>
-            <div class="cms-edit cms-inline" data-page="contact" data-key="info_address_title">
-              <span class="cms-edit__content">{{ cms.contact_info_address_title|safe }}</span>
-            </div>
-          </h6>
-          <p>
-            <span class="cms-edit" data-page="contact" data-key="info_address_value">
-              <span class="cms-edit__content">{{ cms.contact_info_address_value|safe }}</span>
-            </span>
-          </p>
+          <h6>Văn phòng chính</h6>
+          <p>123 Đường Công Nghệ, Quận 1, TP. Hồ Chí Minh</p>
         </div>
 
         <div class="info-card">
-          <h6>
-            <div class="cms-edit cms-inline" data-page="contact" data-key="info_phone_title">
-              <span class="cms-edit__content">{{ cms.contact_info_phone_title|safe }}</span>
-            </div>
-          </h6>
-          <p>
-            <span class="cms-edit" data-page="contact" data-key="info_phone_value">
-              <span class="cms-edit__content">{{ cms.contact_info_phone_value|safe }}</span>
-            </span>
-          </p>
+          <h6>Hotline hỗ trợ</h6>
+          <p>+84 123 456 789</p>
         </div>
 
         <div class="info-card">
-          <h6>
-            <div class="cms-edit cms-inline" data-page="contact" data-key="info_email_title">
-              <span class="cms-edit__content">{{ cms.contact_info_email_title|safe }}</span>
-            </div>
-          </h6>
-          <p>
-            <span class="cms-edit" data-page="contact" data-key="info_email_value">
-              <span class="cms-edit__content">{{ cms.contact_info_email_value|safe }}</span>
-            </span>
-          </p>
+          <h6>Email liên hệ</h6>
+          <p>contact@nexora.com</p>
         </div>
 
         <div class="info-card">
-          <h6>
-            <div class="cms-edit cms-inline" data-page="contact" data-key="info_follow_title">
-              <span class="cms-edit__content">{{ cms.contact_info_follow_title|safe }}</span>
-            </div>
-          </h6>
+          <h6>Theo dõi chúng tôi</h6>
           <div class="social-links mt-2">
-            <a href="{{ cms.contact_info_facebook_url|safe }}" target="_blank" rel="noopener">
+            <a href="https://facebook.com/nexora" target="_blank" rel="noopener">
               <i class="bi bi-facebook"></i>
             </a>
-            <a href="{{ cms.contact_info_zalo_url|safe }}" target="_blank" rel="noopener">
+            <a href="https://zalo.me/nexora" target="_blank" rel="noopener">
               <i class="bi bi-chat-dots"></i>
             </a>
-            <a href="{{ cms.contact_info_linkedin_url|safe }}" target="_blank" rel="noopener">
+            <a href="https://linkedin.com/company/nexora" target="_blank" rel="noopener">
               <i class="bi bi-linkedin"></i>
             </a>
           </div>

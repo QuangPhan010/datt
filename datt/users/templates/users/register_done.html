@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ cms.register_done_title|safe }}{% endblock %}
+{% block title %}Đăng ký thành công - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -26,23 +26,13 @@
       <i class="bi bi-check-circle-fill"></i>
     </div>
 
-    <h3 class="mb-2">
-      <div class="cms-edit" data-page="register_done" data-key="heading">
-        <span class="cms-edit__content">{{ cms.register_done_heading|safe }}</span>
-      </div>
-    </h3>
+    <h3 class="mb-2">Chúc mừng!</h3>
 
     <p class="text-muted mt-2">
-      <span class="cms-edit" data-page="register_done" data-key="message">
-        <span class="cms-edit__content">{{ cms.register_done_message|safe }}</span>
-      </span>
+      Tài khoản của bạn đã được tạo thành công. Bây giờ bạn có thể đăng nhập để bắt đầu sử dụng dịch vụ.
     </p>
 
-    <a href="{% url 'users:login' %}" class="btn btn-danger mt-3">
-      <div class="cms-edit cms-inline" data-page="register_done" data-key="login_button">
-        <span class="cms-edit__content">{{ cms.register_done_login_button|safe }}</span>
-      </div>
-    </a>
+    <a href="{% url 'users:login' %}" class="btn btn-danger mt-3"> Đăng nhập ngay </a>
 
   </div>
 </div>

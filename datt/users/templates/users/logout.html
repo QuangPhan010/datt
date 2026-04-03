@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ cms.logout_title|safe }}{% endblock %}
+{% block title %}Đăng xuất thành công - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -42,29 +42,15 @@
       <i class="bi bi-check-circle-fill"></i>
     </div>
 
-    <h3 class="mb-2">
-      <div class="cms-edit" data-page="logout" data-key="heading">
-        <span class="cms-edit__content">{{ cms.logout_heading|safe }}</span>
-      </div>
-    </h3>
+    <h3 class="mb-2">Hẹn gặp lại!</h3>
 
     <p class="mb-4">
-      <span class="cms-edit" data-page="logout" data-key="message">
-        <span class="cms-edit__content">{{ cms.logout_message|safe }}</span>
-      </span>
+      Bạn đã đăng xuất an toàn khỏi tài khoản của mình. Chúc bạn một ngày tốt lành!
     </p>
 
     <div class="d-flex justify-content-center gap-3 flex-wrap">
-      <a href="{% url 'users:login' %}" class="btn btn-danger">
-        <div class="cms-edit cms-inline" data-page="logout" data-key="login_button">
-          <span class="cms-edit__content">{{ cms.logout_login_button|safe }}</span>
-        </div>
-      </a>
-      <a href="{% url 'shops:index' %}" class="btn btn-outline-danger">
-        <div class="cms-edit cms-inline" data-page="logout" data-key="home_button">
-          <span class="cms-edit__content">{{ cms.logout_home_button|safe }}</span>
-        </div>
-      </a>
+      <a href="{% url 'users:login' %}" class="btn btn-danger"> Đăng nhập lại </a>
+      <a href="{% url 'shops:index' %}" class="btn btn-outline-danger"> Về trang chủ </a>
     </div>
 
   </div>

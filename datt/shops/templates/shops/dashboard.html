@@ -1,0 +1,200 @@
+{% extends 'shops/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-container {
+        padding: 40px 0;
+    }
+
+    .stat-card {
+        background: #0d0d0d;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 24px;
+        color: white;
+    }
+
+    .subscription-details {
+        background: linear-gradient(135deg, #1a0000 0%, #000 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-top: 30px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 0, 0, 0.2);
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+    }
+
+    .subscription-details::after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 0, 0, 0.05);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .badge-status {
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .badge-active {
+        background: rgba(255, 0, 0, 0.1);
+        color: #ff0000;
+        border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .plan-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .info-item .label {
+        color: #cbd5e1; /* Much brighter label */
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        display: block;
+        opacity: 0.8;
+    }
+
+    .info-item .value {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .no-subscription {
+        text-align: center;
+        padding: 60px 40px;
+        background: #0d0d0d;
+        border: 2px dashed rgba(255, 0, 0, 0.3);
+        border-radius: 20px;
+        color: white;
+    }
+    
+    .stat-card .text-muted {
+        color: #cbd5e1 !important;
+    }
+
+    .btn-upgrade {
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    }
+
+    .btn-upgrade:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0">Chào mừng trở lại, {{ request.user.username }}!</h2>
+    </div>
+
+    {% if subscription %}
+    <div class="subscription-details shadow-lg">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h4 class="text-danger mb-1">Gói dịch vụ hiện tại</h4>
+                <div class="fs-2 fw-bold text-white">{{ subscription.plan.name }}</div>
+            </div>
+            <span class="badge-status badge-active">
+                <i class="bi bi-circle-fill small me-2"></i> Đang hoạt động
+            </span>
+        </div>
+
+        <div class="plan-info-grid">
+            <div class="info-item">
+                <span class="label">Ngày bắt đầu</span>
+                <span class="value text-white">{{ subscription.start_date|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Ngày hết hạn</span>
+                <span class="value text-white">{{ subscription.end_date|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Loại gói</span>
+                <span class="value text-white">Theo định kỳ</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Trạng thái thanh toán</span>
+                <span class="value text-white">Đã thanh toán</span>
+            </div>
+        </div>
+
+        <hr class="opacity-25 my-4">
+        
+        <div class="d-flex gap-3 mt-2">
+            <a href="{% url 'shops:pricing' %}" class="btn btn-outline-light px-4">Thay đổi gói</a>
+            <button class="btn btn-danger px-4 opacity-75">Hủy đăng ký</button>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-subscription">
+        <div class="mb-4">
+            <i class="bi bi-rocket-takeoff text-danger" style="font-size: 4rem;"></i>
+        </div>
+        <h3 class="fw-bold mb-3 text-white">Bạn chưa đăng ký gói dịch vụ nào</h3>
+        <p class="text-light mb-4 mx-auto" style="max-width: 500px; opacity: 0.8;">
+            Hãy nâng cấp ngay để trải nghiệm đầy đủ các tính năng vượt trội và giải pháp công nghệ hiện đại từ Nexora.
+        </p>
+        <a href="{% url 'shops:pricing' %}" class="btn btn-upgrade">Xem bảng giá & Đăng ký ngay</a>
+    </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6 class="text-muted mb-3 text-uppercase small ls-1">Dung lượng sử dụng</h6>
+                <div class="fs-3 fw-bold">2.4 GB / 10 GB</div>
+                <div class="progress mt-3" style="height: 6px;">
+                    <div class="progress-bar bg-danger" style="width: 24%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6 class="text-muted mb-3 text-uppercase small ls-1">Băng thông tháng này</h6>
+                <div class="fs-3 fw-bold">85.2 GB</div>
+                <p class="text-success small mb-0 mt-2"><i class="bi bi-arrow-up"></i> +12% so với tháng trước</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6 class="text-muted mb-3 text-uppercase small ls-1">Số lượng API requests</h6>
+                <div class="fs-3 fw-bold">1.2k / 5k</div>
+                <div class="progress mt-3" style="height: 6px;">
+                    <div class="progress-bar bg-danger" style="width: 24%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

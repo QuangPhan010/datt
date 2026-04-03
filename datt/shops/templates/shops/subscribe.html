@@ -1,0 +1,164 @@
+{% extends 'shops/base.html' %}
+{% load static %}
+
+{% block title %}Đăng ký {{ plan.name }} - Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .subscribe-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: #0d0d0d;
+        color: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 0 60px rgba(255, 0, 0, 0.35); /* Even stronger red shadow */
+        border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .plan-detail {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 0, 0, 0.2);
+    }
+    
+    .plan-detail .text-muted, .payment-method .text-muted {
+        color: #e2e8f0 !important; /* Brighter muted text */
+    }
+
+    .payment-method {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .payment-method:hover {
+        background: rgba(255, 0, 0, 0.08);
+        border-color: #ff0000;
+    }
+
+    .payment-method.active {
+        background: rgba(255, 0, 0, 0.15);
+        border-color: #ff0000;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .payment-method .text-muted {
+        color: #cbd5e1 !important; /* Brighter muted text */
+    }
+
+    .text-muted {
+        color: #cbd5e1 !important;
+    }
+
+    .btn-pay {
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        border: none;
+        color: white;
+        padding: 15px;
+        border-radius: 12px;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .btn-pay:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(255, 0, 0, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subscribe-container">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Xác nhận đăng ký</h2>
+        <p class="text-muted">Hoàn tất bước cuối cùng để kích hoạt dịch vụ của bạn</p>
+    </div>
+
+    <div class="plan-detail">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fs-4 fw-semibold">{{ plan.name }}</span>
+            <span class="badge bg-primary">Gói {% if period == 'yearly' %}năm{% else %}tháng{% endif %}</span>
+        </div>
+        <p class="text-muted small mb-3">Tự động gia hạn vào mỗi kỳ thanh toán.</p>
+        <hr class="opacity-25">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">Tổng thanh toán:</span>
+            <span class="fs-3 fw-bold text-info">
+                {% if period == 'yearly' %}
+                    {{ plan.price_yearly }}
+                {% else %}
+                    {{ plan.price_monthly }}
+                {% endif %}
+                VND
+            </span>
+        </div>
+    </div>
+
+    <h5 class="mb-3">Phương thức thanh toán (Mô phỏng)</h5>
+    
+    <div class="payment-method active">
+        <i class="bi bi-credit-card-2-front"></i>
+        <div>
+            <div class="fw-bold">Thanh Toán Thẻ</div>
+            <div class="text-muted small">Visa, Mastercard, JCB</div>
+        </div>
+    </div>
+
+    <div class="payment-method">
+        <i class="bi bi-wallet2"></i>
+        <div>
+            <div class="fw-bold">Ví Điện Tử</div>
+            <div class="text-muted small">MoMo, ZaloPay, ShopeePay</div>
+        </div>
+    </div>
+
+    <div class="payment-method">
+        <i class="bi bi-bank"></i>
+        <div>
+            <div class="fw-bold">Chuyển Khoản Ngân Hàng</div>
+            <div class="text-muted small">Internet Banking, QR Pay</div>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'shops:subscribe' plan.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="period" value="{{ period }}">
+        <button type="submit" class="btn btn-pay">Thanh toán ngay</button>
+    </form>
+    
+    <div class="text-center mt-3">
+        <a href="{% url 'shops:pricing' %}" class="text-muted text-decoration-none small">
+            <i class="bi bi-arrow-left"></i> Quay lại bảng giá
+        </a>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.payment-method').forEach(method => {
+        method.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Simple number formatting for total
+    const totalElem = document.querySelector('.text-info');
+    if (totalElem) {
+        const val = parseInt(totalElem.textContent.replace('VND', '').trim());
+        totalElem.textContent = new Intl.NumberFormat('vi-VN').format(val) + ' VND';
+    }
+</script>
+{% endblock %}

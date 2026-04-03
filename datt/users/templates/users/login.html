@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ cms.login_title|safe }}{% endblock %}
+{% block title %}Đăng nhập - Nexora{% endblock %}
 
 {% block content %}
 <style>
@@ -103,15 +103,9 @@
   <div class="auth-card">
     <div class="auth-header">
       <i class="bi bi-shield-lock-fill"></i>
-      <h2>
-        <div class="cms-edit cms-inline" data-page="global" data-key="nav_brand">
-          <span class="cms-edit__content">{{ cms.global_nav_brand|safe }}</span>
-        </div>
-      </h2>
+      <h2>NEXORA</h2>
       <div class="auth-desc">
-        <div class="cms-edit" data-page="login" data-key="subtitle">
-          <span class="cms-edit__content">{{ cms.login_subtitle|safe }}</span>
-        </div>
+        Chào mừng bạn quay trở lại với hệ thống tinh hoa của chúng tôi.
       </div>
     </div>
 
@@ -119,31 +113,17 @@
       {% csrf_token %}
       {{ form.as_p }}
       <p>
-        <button type="submit">
-          <div class="cms-edit cms-inline" data-page="login" data-key="submit">
-            <span class="cms-edit__content">{{ cms.login_submit|safe }}</span>
-          </div>
-        </button>
+        <button type="submit">Đăng nhập</button>
       </p>
     </form>
 
     <div class="auth-links">
       <p>
-        <a href="{% url 'users:password_reset' %}">
-          <div class="cms-edit cms-inline" data-page="login" data-key="forgot_link">
-            <span class="cms-edit__content">{{ cms.login_forgot_link|safe }}</span>
-          </div>
-        </a>
+        <a href="{% url 'users:password_reset' %}">Quên mật khẩu?</a>
       </p>
       <p>
-        <div class="cms-edit cms-inline" data-page="login" data-key="register_text">
-          <span class="cms-edit__content">{{ cms.login_register_text|safe }}</span>
-        </div>
-        <a href="{% url 'users:register' %}">
-          <div class="cms-edit cms-inline" data-page="login" data-key="register_link">
-            <span class="cms-edit__content">{{ cms.login_register_link|safe }}</span>
-          </div>
-        </a>
+        Chưa có tài khoản?
+        <a href="{% url 'users:register' %}">Đăng ký ngay</a>
       </p>
     </div>
   </div>

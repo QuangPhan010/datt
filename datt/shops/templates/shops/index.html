@@ -1,6 +1,6 @@
 {% extends 'shops/base.html' %}
 {% load static %}
-{% block title %}{{ cms.home_title|safe }}{% endblock %}
+{% block title %}Nexora - Giải pháp Công nghệ Toàn diện{% endblock %}
 {% block body_block %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}" />
 
@@ -13,19 +13,13 @@
            style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover;">
         <div>
           <h1 class="display-3 fw-bold text-danger">
-            <div class="cms-edit" data-page="home" data-key="hero_title_1">
-              <span class="cms-edit__content">{{ cms.home_hero_title_1|safe }}</span>
-            </div>
+            Nexora - Công nghệ dẫn đầu
           </h1>
           <p class="lead text-light">
-            <div class="cms-edit" data-page="home" data-key="hero_subtitle_1">
-              <span class="cms-edit__content">{{ cms.home_hero_subtitle_1|safe }}</span>
-            </div>
+            Chúng tôi cung cấp các giải pháp công nghệ tiên tiến nhất để tối ưu hóa doanh nghiệp của bạn.
           </p>
           <a href="#services" class="btn btn-danger px-4 py-2 mt-3">
-            <div class="cms-edit cms-inline" data-page="home" data-key="hero_cta_1">
-              <span class="cms-edit__content">{{ cms.home_hero_cta_1|safe }}</span>
-            </div>
+            Khám phá ngay
           </a>
         </div>
       </div>
@@ -36,14 +30,10 @@
            style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b') center/cover;">
         <div>
           <h1 class="display-4 fw-bold text-danger">
-            <div class="cms-edit" data-page="home" data-key="hero_title_2">
-              <span class="cms-edit__content">{{ cms.home_hero_title_2|safe }}</span>
-            </div>
+            Chuyển đổi số thông minh
           </h1>
           <p class="text-light">
-            <div class="cms-edit" data-page="home" data-key="hero_subtitle_2">
-              <span class="cms-edit__content">{{ cms.home_hero_subtitle_2|safe }}</span>
-            </div>
+            Giải pháp phần mềm may đo theo nhu cầu thực tế của từng khách hàng.
           </p>
         </div>
       </div>
@@ -54,14 +44,10 @@
            style="height:90vh; background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085') center/cover;">
         <div>
           <h1 class="display-4 fw-bold text-danger">
-            <div class="cms-edit" data-page="home" data-key="hero_title_3">
-              <span class="cms-edit__content">{{ cms.home_hero_title_3|safe }}</span>
-            </div>
+            Bảo mật & Tin cậy
           </h1>
           <p class="text-light">
-            <div class="cms-edit" data-page="home" data-key="hero_subtitle_3">
-              <span class="cms-edit__content">{{ cms.home_hero_subtitle_3|safe }}</span>
-            </div>
+            Hệ thống an ninh mạng đa lớp, bảo vệ dữ liệu tuyệt đối cho doanh nghiệp.
           </p>
         </div>
       </div>
@@ -78,74 +64,151 @@
   </button>
 </div>
 
+<!-- ===== STATS SECTION ===== -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-item">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Khách hàng</span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-item">
+          <span class="stat-number">1200+</span>
+          <span class="stat-label">Dự án</span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-item">
+          <span class="stat-number">10+</span>
+          <span class="stat-label">Năm kinh nghiệm</span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-item">
+          <span class="stat-number">24/7</span>
+          <span class="stat-label">Hỗ trợ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== SERVICES ===== -->
 <section id="services" class="py-5">
   <div class="container text-center">
-    <h2 class="text-danger fw-bold mb-5">
-      <div class="cms-edit" data-page="home" data-key="services_title">
-        <span class="cms-edit__content">{{ cms.home_services_title|safe }}</span>
-      </div>
-    </h2>
+    <h2 class="text-danger fw-bold mb-5">Dịch vụ của chúng tôi</h2>
 
     <div class="row g-4">
       <div class="col-md-6 col-lg-3">
         <div class="card service-card p-4 h-100">
-          <h5>
-            <div class="cms-edit" data-page="home" data-key="service_1_title">
-              <span class="cms-edit__content">{{ cms.home_service_1_title|safe }}</span>
-            </div>
-          </h5>
-          <p>
-            <div class="cms-edit" data-page="home" data-key="service_1_desc">
-              <span class="cms-edit__content">{{ cms.home_service_1_desc|safe }}</span>
-            </div>
-          </p>
+          <h5>Thiết kế Website</h5>
+          <p>Website chuyên nghiệp, chuẩn SEO, tương thích mọi thiết bị.</p>
         </div>
       </div>
 
       <div class="col-md-6 col-lg-3">
         <div class="card service-card p-4 h-100">
-          <h5>
-            <div class="cms-edit" data-page="home" data-key="service_2_title">
-              <span class="cms-edit__content">{{ cms.home_service_2_title|safe }}</span>
-            </div>
-          </h5>
-          <p>
-            <div class="cms-edit" data-page="home" data-key="service_2_desc">
-              <span class="cms-edit__content">{{ cms.home_service_2_desc|safe }}</span>
-            </div>
-          </p>
+          <h5>Ứng dụng Di động</h5>
+          <p>Phát triển app iOS/Android mượt mà, trải nghiệm người dùng tối ưu.</p>
         </div>
       </div>
 
       <div class="col-md-6 col-lg-3">
         <div class="card service-card p-4 h-100">
-          <h5>
-            <div class="cms-edit" data-page="home" data-key="service_3_title">
-              <span class="cms-edit__content">{{ cms.home_service_3_title|safe }}</span>
-            </div>
-          </h5>
-          <p>
-            <div class="cms-edit" data-page="home" data-key="service_3_desc">
-              <span class="cms-edit__content">{{ cms.home_service_3_desc|safe }}</span>
-            </div>
-          </p>
+          <h5>Giải pháp Cloud</h5>
+          <p>Hệ thống lưu trữ đám mây an toàn, tốc độ cao và dễ dàng mở rộng.</p>
         </div>
       </div>
 
       <div class="col-md-6 col-lg-3">
         <div class="card service-card p-4 h-100">
-          <h5>
-            <div class="cms-edit" data-page="home" data-key="service_4_title">
-              <span class="cms-edit__content">{{ cms.home_service_4_title|safe }}</span>
-            </div>
-          </h5>
-          <p>
-            <div class="cms-edit" data-page="home" data-key="service_4_desc">
-              <span class="cms-edit__content">{{ cms.home_service_4_desc|safe }}</span>
-            </div>
-          </p>
+          <h5>Bảo mật Hệ thống</h5>
+          <p>Kiểm soát an ninh, phòng chống tấn công mạng và bảo mật dữ liệu.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY CHOOSE US ===== -->
+<section class="py-5" style="background: #050505;">
+  <div class="container text-center">
+    <h2 class="text-danger fw-bold mb-5">Tại sao chọn Nexora?</h2>
+    <div class="row g-4 text-start">
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon mx-auto"><i class="bi bi-lightbulb"></i></div>
+          <h5 class="text-center">Giải pháp sáng tạo</h5>
+          <p>Chúng tôi luôn cập nhật những công nghệ mới nhất để mang lại giá trị đột phá cho bạn.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon mx-auto"><i class="bi bi-people"></i></div>
+          <h5 class="text-center">Đội ngũ chuyên gia</h5>
+          <p>Hội tụ những chuyên gia CNTT hàng đầu với bề dày kinh nghiệm thực chiến.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon mx-auto"><i class="bi bi-shield-check"></i></div>
+          <h5 class="text-center">Bảo mật tối đa</h5>
+          <p>Cam kết bảo mật dữ liệu khách hàng theo các tiêu chuẩn quốc tế nghiêm ngặt nhất.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon mx-auto"><i class="bi bi-graph-up-arrow"></i></div>
+          <h5 class="text-center">Khả năng mở rộng</h5>
+          <p>Hệ thống được thiết kế linh hoạt, sẵn sàng mở rộng cùng sự phát triển của doanh nghiệp.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PARTNERS ===== -->
+<section class="partners-section">
+  <div class="container text-center">
+    <h3 class="text-light fw-bold mb-5">
+      Trusted Partners
+    </h3>
+    <p class="text-secondary mb-5">
+      Những doanh nghiệp hàng đầu đã tin tưởng Nexora
+    </p>
+    <div class="partners-grid">
+      <div class="partner-item">
+        <div class="logo-wrapper">
+          <img src="https://cdn.tgdd.vn/2020/03/GameApp/image(13)-200x200-1.png" alt="Techcombank">
+        </div>
+        <span class="partner-name">Techcombank</span>
+      </div>
+      <div class="partner-item">
+        <div class="logo-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjNrth9D12U-w1YDVelzT5eSzetDjf_zGJ4Q&s" alt="FPT Software">
+        </div>
+        <span class="partner-name">FPT Software</span>
+      </div>
+      <div class="partner-item">
+        <div class="logo-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDRczMzT5B8bYs21dzdScp54d6k4QPIaiHEA&s" alt="Viettel">
+        </div>
+        <span class="partner-name">Viettel</span>
+      </div>
+      <div class="partner-item">
+        <div class="logo-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDPm6LG8gK6IpGGCJlPOTksUTgD97HcoG_Dg&s" alt="VNPT">
+        </div>
+        <span class="partner-name">VNPT</span>
+      </div>
+      <div class="partner-item">
+        <div class="logo-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBKx0FiHWcBZffcjevRpJvBXhmWAOpzZsXMg&s" alt="Vingroup">
+        </div>
+        <span class="partner-name">Vingroup</span>
       </div>
     </div>
   </div>
@@ -154,21 +217,9 @@
 <!-- ===== CTA ===== -->
 <section id="contact" class="text-center py-5" style="background:#111;">
   <div class="container">
-    <h2 class="text-danger fw-bold">
-      <div class="cms-edit" data-page="home" data-key="cta_title">
-        <span class="cms-edit__content">{{ cms.home_cta_title|safe }}</span>
-      </div>
-    </h2>
-    <p class="text-light">
-      <div class="cms-edit" data-page="home" data-key="cta_subtitle">
-        <span class="cms-edit__content">{{ cms.home_cta_subtitle|safe }}</span>
-      </div>
-    </p>
-    <button class="btn btn-outline-danger px-4 mt-3">
-      <div class="cms-edit cms-inline" data-page="home" data-key="cta_button">
-        <span class="cms-edit__content">{{ cms.home_cta_button|safe }}</span>
-      </div>
-    </button>
+    <h2 class="text-danger fw-bold">Sẵn sàng để bắt đầu?</h2>
+    <p class="text-light">Hãy liên hệ với chúng tôi ngay hôm nay để nhận tư vấn miễn phí về giải pháp cho doanh nghiệp của bạn.</p>
+    <button class="btn btn-outline-danger px-4 mt-3">Gửi tin nhắn</button>
   </div>
 </section>
 
