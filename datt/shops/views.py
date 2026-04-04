@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from django.db import transaction
 from .models import Product, Category, Plan, Subscription
 
 def index(request):
@@ -25,6 +26,18 @@ def products(request):
     return render(request, 'shops/products.html', {
         'products': product_list,
         'categories': categories
+    })
+
+def product_detail(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    
+    # If not superuser, check if category is hidden
+    if not request.user.is_superuser and product.category.is_hidden:
+        from django.http import Http404
+        raise Http404("Sản phẩm không tồn tại hoặc đã bị ẩn.")
+        
+    return render(request, 'shops/product_detail.html', {
+        'product': product,
     })
 
 # --- CATEGORY CRUD ---
@@ -85,15 +98,42 @@ def category_toggle_hide(request, pk):
 @require_POST
 def product_add(request):
     try:
-        data = json.loads(request.body)
-        product = Product.objects.create(
-            name=data.get('name'),
-            category_id=data.get('category_id'),
-            description=data.get('description'),
-            price=data.get('price'),
-            image_url=data.get('image_url'),
-            badge=data.get('badge', '')
-        )
+        # FormData sends fields individually
+        name = request.POST.get('name')
+        slug = request.POST.get('slug')
+        category_id = request.POST.get('category_id')
+        description = request.POST.get('description')
+        thumbnail = request.POST.get('thumbnail')
+        badge = request.POST.get('badge', '')
+        is_active = request.POST.get('is_active') == 'true'
+        source_file = request.FILES.get('source_file')
+        
+        plans_data = json.loads(request.POST.get('plans', '[]'))
+        if not plans_data:
+            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
+
+        with transaction.atomic():
+            product = Product.objects.create(
+                name=name,
+                slug=slug,
+                category_id=category_id,
+                description=description,
+                thumbnail=thumbnail,
+                badge=badge,
+                is_active=is_active,
+                source_file=source_file
+            )
+            
+            for p in plans_data:
+                Plan.objects.create(
+                    product=product,
+                    plan_name=p.get('plan_name'),
+                    price=p.get('price'),
+                    duration_type=p.get('duration_type'),
+                    duration_value=p.get('duration_value') if p.get('duration_type') != 'lifetime' else None,
+                    is_renewable=p.get('is_renewable', True),
+                    is_active=p.get('is_active', True)
+                )
         return JsonResponse({'status': 'success', 'id': product.id})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -102,15 +142,67 @@ def product_add(request):
 @require_POST
 def product_edit(request, pk):
     try:
-        product = Product.objects.get(pk=pk)
-        data = json.loads(request.body)
-        product.name = data.get('name', product.name)
-        product.category_id = data.get('category_id', product.category_id)
-        product.description = data.get('description', product.description)
-        product.price = data.get('price', product.price)
-        product.image_url = data.get('image_url', product.image_url)
-        product.badge = data.get('badge', product.badge)
-        product.save()
+        product = get_object_or_404(Product, pk=pk)
+        
+        name = request.POST.get('name')
+        slug = request.POST.get('slug')
+        category_id = request.POST.get('category_id')
+        description = request.POST.get('description')
+        thumbnail = request.POST.get('thumbnail')
+        badge = request.POST.get('badge', '')
+        is_active = request.POST.get('is_active') == 'true'
+        source_file = request.FILES.get('source_file')
+        
+        plans_data = json.loads(request.POST.get('plans', '[]'))
+        if not plans_data:
+            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
+        
+        with transaction.atomic():
+            product.name = name
+            product.slug = slug
+            product.category_id = category_id
+            product.description = description
+            product.thumbnail = thumbnail
+            product.badge = badge
+            product.is_active = is_active
+            if source_file:
+                product.source_file = source_file
+            product.save()
+            
+            plans_data = data.get('plans', [])
+            if not plans_data:
+                raise Exception("Sản phẩm phải có ít nhất một gói bán.")
+                
+            # Track updated IDs to delete removed plans
+            updated_plan_ids = []
+            
+            for p_data in plans_data:
+                plan_id = p_data.get('id')
+                if plan_id:
+                    plan = Plan.objects.get(pk=plan_id, product=product)
+                    plan.plan_name = p_data.get('plan_name', plan.plan_name)
+                    plan.price = p_data.get('price', plan.price)
+                    plan.duration_type = p_data.get('duration_type', plan.duration_type)
+                    plan.duration_value = p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None
+                    plan.is_renewable = p_data.get('is_renewable', plan.is_renewable)
+                    plan.is_active = p_data.get('is_active', plan.is_active)
+                    plan.save()
+                    updated_plan_ids.append(plan.id)
+                else:
+                    new_plan = Plan.objects.create(
+                        product=product,
+                        plan_name=p_data.get('plan_name'),
+                        price=p_data.get('price'),
+                        duration_type=p_data.get('duration_type'),
+                        duration_value=p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None,
+                        is_renewable=p_data.get('is_renewable', True),
+                        is_active=p_data.get('is_active', True)
+                    )
+                    updated_plan_ids.append(new_plan.id)
+            
+            # Delete plans not in the updated list
+            product.plans.exclude(id__in=updated_plan_ids).delete()
+            
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -127,7 +219,7 @@ def product_delete(request, pk):
 # --- PRICING & SUBSCRIPTION ---
 
 def pricing(request):
-    plans = Plan.objects.all().order_by('price_monthly')
+    plans = Plan.objects.filter(is_active=True).select_related('product').order_by('price')
     return render(request, 'shops/pricing.html', {'plans': plans})
 
 @login_required
@@ -155,7 +247,10 @@ def subscribe(request, plan_id):
             status='active'
         )
         
-        messages.success(request, f"Bạn đã đăng ký gói {plan.name} thành công!")
+        if plan.product and plan.product.source_file:
+            request.session['download_on_load'] = plan.product.source_file.url
+        
+        messages.success(request, f"Bạn đã đăng ký gói {plan.plan_name} thành công!")
         return redirect('shops:dashboard')
         
     return render(request, 'shops/subscribe.html', {
@@ -166,4 +261,8 @@ def subscribe(request, plan_id):
 @login_required
 def dashboard(request):
     subscription = Subscription.objects.filter(user=request.user, status='active').order_by('-start_date').first()
-    return render(request, 'shops/dashboard.html', {'subscription': subscription})
+    download_url = request.session.pop('download_on_load', None)
+    return render(request, 'shops/dashboard.html', {
+        'subscription': subscription,
+        'download_url': download_url
+    })

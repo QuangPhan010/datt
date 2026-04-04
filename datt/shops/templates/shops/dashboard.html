@@ -51,9 +51,9 @@
     }
 
     .badge-active {
-        background: rgba(255, 0, 0, 0.1);
-        color: #ff0000;
-        border: 1px solid rgba(255, 0, 0, 0.3);
+        background: rgba(46, 203, 25, 0.1);
+        color: #00ff04ff;
+        border: 1px solid rgba(0, 255, 94, 0.73);
     }
 
     .plan-info-grid {
@@ -153,6 +153,11 @@
         
         <div class="d-flex gap-3 mt-2">
             <a href="{% url 'shops:pricing' %}" class="btn btn-outline-light px-4">Thay đổi gói</a>
+            {% if subscription.plan.product.source_file %}
+            <a href="{{ subscription.plan.product.source_file.url }}" class="btn btn-success px-4" download>
+                <i class="bi bi-download me-2"></i>Tải Source
+            </a>
+            {% endif %}
             <button class="btn btn-danger px-4 opacity-75">Hủy đăng ký</button>
         </div>
     </div>
@@ -197,4 +202,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadUrl = "{{ download_url }}";
+        if (downloadUrl && downloadUrl !== "None" && downloadUrl !== "") {
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = ''; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log("Auto-downloading source from: " + downloadUrl);
+        }
+    });
+</script>
 {% endblock %}

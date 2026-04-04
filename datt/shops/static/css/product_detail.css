@@ -1,0 +1,220 @@
+.product-detail-container {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    background: radial-gradient(circle at top right, rgba(220, 53, 69, 0.05), transparent 400px),
+                radial-gradient(circle at bottom left, rgba(0, 123, 255, 0.05), transparent 400px);
+}
+
+.detail-card {
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    overflow: hidden;
+    padding: 40px;
+}
+
+.detail-img-wrapper {
+    position: sticky;
+    top: 100px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.detail-img:hover {
+    transform: scale(1.05);
+}
+
+.detail-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+}
+
+.detail-category {
+    color: #ff4b2b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.detail-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.detail-desc {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+/* Plan Selection */
+.plan-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.plan-option {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    position: relative;
+    user-select: none;
+}
+
+.plan-option:hover {
+    border-color: rgba(255, 75, 43, 0.5);
+    background: rgba(255, 75, 43, 0.05);
+    transform: translateY(-5px);
+}
+
+.plan-option.active {
+    border-color: #ff4b2b;
+    background: rgba(255, 75, 43, 0.1);
+    box-shadow: 0 10px 30px rgba(255, 75, 43, 0.2);
+}
+
+.plan-option.active::after {
+    content: '\F633';
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ff4b2b;
+    font-size: 1.2rem;
+}
+
+.plan-name {
+    display: block;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.plan-price {
+    display: block;
+    color: #ff4b2b;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.plan-duration {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+/* Bottom CTA */
+.detail-cta-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-price-display {
+    flex-grow: 1;
+}
+
+.total-label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 2px;
+}
+
+.total-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+}
+
+.btn-order-now {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(255, 75, 43, 0.3);
+}
+
+.btn-order-now:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 75, 43, 0.4);
+    color: white;
+}
+
+/* Breadcrumbs */
+.breadcrumb-nav {
+    margin-bottom: 30px;
+}
+
+.breadcrumb-item {
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb-item a:hover {
+    color: #ff4b2b;
+}
+
+.breadcrumb-item.active {
+    color: white;
+}
+
+/* responsive */
+@media (max-width: 991.98px) {
+    .detail-card {
+        padding: 20px;
+    }
+    .detail-img-wrapper {
+        position: static;
+        margin-bottom: 30px;
+    }
+    .detail-title {
+        font-size: 1.8rem;
+    }
+}

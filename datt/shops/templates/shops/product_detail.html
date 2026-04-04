@@ -1,0 +1,112 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} | Nexora{% endblock %}
+
+{% block body_block %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}" />
+
+<div class="product-detail-container">
+    <div class="container pb-5">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumb-nav">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shops:index' %}">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shops:products' %}">Sản phẩm</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shops:products' %}?category={{ product.category.id }}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="detail-card">
+            <div class="row g-5">
+                <!-- Left: Image -->
+                <div class="col-lg-6">
+                    <div class="detail-img-wrapper">
+                        {% if product.badge %}
+                        <div class="position-absolute top-0 start-0 m-3" style="z-index: 10;">
+                            <span class="detail-badge">{{ product.badge }}</span>
+                        </div>
+                        {% endif %}
+                        <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="detail-img">
+                    </div>
+                </div>
+
+                <!-- Right: Content -->
+                <div class="col-lg-6">
+                    <span class="detail-category">{{ product.category.name }}</span>
+                    <h1 class="detail-title">{{ product.name }}</h1>
+                    
+                    <div class="detail-desc">
+                        {{ product.description|linebreaks }}
+                    </div>
+
+                    <h5 class="text-white mb-3">Chọn gói bán của bạn:</h5>
+                    <div class="plan-selector">
+                        {% for plan in product.plans.all %}
+                        {% if plan.is_active %}
+                        <div class="plan-option {% if forloop.first %}active{% endif %}" 
+                             data-price="{{ plan.price }}" 
+                             data-id="{{ plan.id }}"
+                             data-type="{{ plan.duration_type }}"
+                             onclick="selectPlan(this)">
+                            <span class="plan-name">{{ plan.plan_name }}</span>
+                            <span class="plan-price">${{ plan.price|floatformat:2 }}</span>
+                            <span class="plan-duration">
+                                {% if plan.duration_type == 'monthly' %}
+                                / tháng
+                                {% elif plan.duration_type == 'yearly' %}
+                                / năm
+                                {% else %}
+                                vĩnh viễn
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="detail-cta-wrapper">
+                        <div class="total-price-display">
+                            <span class="total-label">Tổng thanh toán</span>
+                            <span class="total-value" id="displayTotal">$0.00</span>
+                        </div>
+                        <form action="#" method="POST" id="purchaseForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_id" id="selectedPlanId">
+                            <button type="submit" class="btn-order-now">Mua ngay</button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4 p-3 rounded-3 bg-dark bg-opacity-25 border border-secondary border-opacity-25">
+                        <small class="text-secondary"><i class="bi bi-shield-check me-2 text-success"></i>Giao dịch an toàn & bảo mật. Hỗ trợ 24/7.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectPlan(el) {
+        // UI
+        document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
+        el.classList.add('active');
+
+        // Update data
+        const price = el.getAttribute('data-price');
+        const planId = el.getAttribute('data-id');
+        
+        document.getElementById('displayTotal').textContent = '$' + parseFloat(price).toFixed(2);
+        document.getElementById('selectedPlanId').value = planId;
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const activePlan = document.querySelector('.plan-option.active');
+        if (activePlan) {
+            selectPlan(activePlan);
+        }
+    });
+</script>
+{% endblock %}

@@ -217,30 +217,37 @@
         <div class="row g-4 justify-content-center">
             {% for plan in plans %}
             <div class="col-lg-4 col-md-6">
-                <div class="pricing-card {% if plan.is_popular %}popular{% endif %}">
-                    {% if plan.is_popular %}
-                    <div class="badge-popular">HOT</div>
-                    {% endif %}
-                    
-                    <h3 class="mb-4">{{ plan.name }}</h3>
+                <div class="pricing-card">
+                    <h3 class="mb-2 text-danger">{{ plan.product.name }}</h3>
+                    <h5 class="mb-4 text-white opacity-75">{{ plan.plan_name }}</h5>
                     <div class="price-container">
-                        <div class="price-value" 
-                             data-monthly="{{ plan.price_monthly }}" 
-                             data-yearly="{{ plan.price_yearly }}">
-                            {% if period == 'yearly' %}{{ plan.price_yearly }}{% else %}{{ plan.price_monthly }}{% endif %}
+                        <div class="price-value">
+                            {{ plan.price }}
                         </div>
-                        <span class="price-currency">VND / <span class="period-label">{% if period == 'yearly' %}năm{% else %}tháng{% endif %}</span></span>
+                        <span class="price-currency">VND / 
+                            <span>
+                                {% if plan.duration_type == 'monthly' %}
+                                    {{ plan.duration_value }} tháng
+                                {% elif plan.duration_type == 'yearly' %}
+                                    {{ plan.duration_value }} năm
+                                {% else %}
+                                    Vĩnh viễn
+                                {% endif %}
+                            </span>
+                        </span>
                     </div>
 
                     <ul class="feature-list text-start">
-                        {% for feature in plan.get_features_list %}
-                        <li><i class="bi bi-check-circle-fill"></i> {{ feature }}</li>
-                        {% endfor %}
+                        <li><i class="bi bi-check-circle-fill"></i> Hỗ trợ 24/7</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Kích hoạt ngay lập tức</li>
+                        {% if plan.is_renewable %}
+                        <li><i class="bi bi-check-circle-fill"></i> Có thể gia hạn</li>
+                        {% endif %}
                     </ul>
 
-                    <a href="{% url 'shops:subscribe' plan.id %}?period={% if period == 'yearly' %}yearly{% else %}monthly{% endif %}" 
-                       class="btn btn-pricing {% if plan.is_popular %}btn-pricing-primary{% else %}btn-pricing-outline{% endif %} subscribe-link">
-                        Bắt đầu ngay
+                    <a href="{% url 'shops:subscribe' plan.id %}" 
+                       class="btn btn-pricing btn-pricing-outline subscribe-link">
+                        Đăng ký ngay
                     </a>
                 </div>
             </div>
