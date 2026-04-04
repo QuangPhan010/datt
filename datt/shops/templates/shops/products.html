@@ -120,7 +120,16 @@
                         <span class="product-category">{{ product.category.name }}</span>
                         <h3 class="product-title">{{ product.name }}</h3>
                         <p class="product-desc">{{ product.description }}</p>
-                        <div class="product-footer d-flex justify-content-end">
+                        <div class="product-footer">
+                            <span class="product-price">
+                                {% with cheapest=product.get_cheapest_plan %}
+                                    {% if cheapest %}
+                                        ${{ cheapest.price|floatformat:2 }}{% if cheapest.duration_type == 'monthly' %}/m{% elif cheapest.duration_type == 'yearly' %}/y{% endif %}
+                                    {% else %}
+                                        Liên hệ
+                                    {% endif %}
+                                {% endwith %}
+                            </span>
                             <a href="{% url 'shops:product_detail' product.slug %}" class="btn-buy" style="text-decoration: none; text-align: center;">Chi tiết</a>
                         </div>
                     </div>
@@ -197,6 +206,19 @@
                         <div id="p_current_source" class="mt-1 small text-info" style="display:none;"></div>
                     </div>
 
+                    <hr class="border-secondary my-4">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0"><i class="bi bi-tags-fill me-2 text-danger"></i>Cấu hình các gói bán (Plans)</h6>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="addPlanRow()">
+                            <i class="bi bi-plus-lg me-1"></i>Thêm gói
+                        </button>
+                    </div>
+
+                    <div id="plansContainer">
+                        <!-- Plans will be added here dynamically -->
+                    </div>
+
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -233,76 +255,7 @@
 </div>
 {% endif %}
 
-<!-- ===== CSS INLINE ===== -->
-<style>
-.admin-category-panel {
-    backdrop-filter: blur(10px);
-}
-.table-dark {
-    --bs-table-bg: transparent;
-    --bs-table-border-color: rgba(255,255,255,0.1);
-}
-.product-hidden {
-    opacity: 0.7;
-}
-.hidden-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    pointer-events: none;
-}
-.admin-controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: 0.3s;
-    z-index: 5;
-}
-.product-card:hover .admin-controls {
-    opacity: 1;
-}
-.admin-controls button {
-    width: 35px;
-    height: 35px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-}
-</style>
 
 <script src="{% static 'js/crud.js' %}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const products = document.querySelectorAll('.product-item');
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const filter = btn.dataset.filter;
-            products.forEach(p => {
-                if (filter === 'all' || p.dataset.category === filter) {
-                    p.style.display = 'block';
-                } else {
-                    p.style.display = 'none';
-                }
-            });
-        });
-    });
-});
-</script>
+<script src="{% static 'js/product.js' %}"></script>
 {% endblock %}

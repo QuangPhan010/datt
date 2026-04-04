@@ -30,6 +30,75 @@ function toSlug(str) {
     return str;
 }
 
+// Global functions for onclick handlers (Products)
+window.addPlanRow = function(data = null) {
+    const plansContainer = document.getElementById('plansContainer');
+    if (!plansContainer) return;
+
+    const rowId = 'plan_' + Date.now() + Math.floor(Math.random() * 1000);
+    const row = document.createElement('div');
+    row.className = 'plan-row mb-3 p-3 border border-secondary rounded position-relative bg-dark bg-opacity-25';
+    row.id = rowId;
+    
+    row.innerHTML = `
+        <input type="hidden" class="p-plan-id" value="${data ? data.id : ''}">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label class="form-label small">Tên gói (VD: 1 tháng)</label>
+                <input type="text" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-name" value="${data ? data.plan_name : ''}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Giá ($)</label>
+                <input type="number" step="any" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-price" value="${data ? data.price : ''}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Loại</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary p-plan-type" onchange="updateDurationVisibility(this)" required>
+                    <option value="monthly" ${data && data.duration_type === 'monthly' ? 'selected' : ''}>Theo tháng</option>
+                    <option value="yearly" ${data && data.duration_type === 'yearly' ? 'selected' : ''}>Theo năm</option>
+                    <option value="lifetime" ${data && data.duration_type === 'lifetime' ? 'selected' : ''}>Vĩnh viễn</option>
+                </select>
+            </div>
+            <div class="col-md-2 p-duration-wrapper" style="${data && data.duration_type === 'lifetime' ? 'display: none;' : ''}">
+                <label class="form-label small">Thời hạn</label>
+                <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-duration" value="${data ? data.duration_value : '1'}">
+            </div>
+        </div>
+        <div class="d-flex gap-3 mt-2">
+            <div class="form-check">
+                <input class="form-check-input p-plan-renewable" type="checkbox" ${!data || data.is_renewable ? 'checked' : ''}>
+                <label class="form-check-label small">Cho phép gia hạn</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input p-plan-active" type="checkbox" ${!data || data.is_active ? 'checked' : ''}>
+                <label class="form-check-label small">Kích hoạt</label>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2 border-0" onclick="removePlanRow('${rowId}')">
+            <i class="bi bi-x-lg text-danger"></i>
+        </button>
+    `;
+    plansContainer.appendChild(row);
+};
+
+window.removePlanRow = function(rowId) {
+    const plansContainer = document.getElementById('plansContainer');
+    if (plansContainer.children.length > 1) {
+        document.getElementById(rowId).remove();
+    } else {
+        alert('Sản phẩm phải có ít nhất một gói bán.');
+    }
+};
+
+window.updateDurationVisibility = function(selectEl) {
+    const wrapper = selectEl.closest('.plan-row').querySelector('.p-duration-wrapper');
+    if (selectEl.value === 'lifetime') {
+        wrapper.style.display = 'none';
+    } else {
+        wrapper.style.display = 'block';
+    }
+};
+
 // Global functions (Products)
 
 window.deleteProduct = function(id) {
@@ -101,6 +170,11 @@ document.addEventListener('DOMContentLoaded', function() {
             productForm.reset();
             document.getElementById('modalTitle').textContent = 'Thêm sản phẩm mới';
             document.getElementById('p_current_source').style.display = 'none';
+            const plansContainer = document.getElementById('plansContainer');
+            if (plansContainer) {
+                plansContainer.innerHTML = '';
+                addPlanRow(); // Add one default plan
+            }
             productModal.show();
         };
 
@@ -124,6 +198,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             document.getElementById('p_source_file').value = '';
+            // Populate plans
+            const plansContainer = document.getElementById('plansContainer');
+            if (plansContainer) {
+                plansContainer.innerHTML = '';
+                const scriptTag = document.getElementById('plans-data-' + id);
+                const plansData = scriptTag ? JSON.parse(scriptTag.textContent) : [];
+                
+                if (plansData.length > 0) {
+                    plansData.forEach(p => addPlanRow(p));
+                } else {
+                    addPlanRow();
+                }
+            }
+            
             productModal.show();
         };
 
@@ -140,6 +228,21 @@ document.addEventListener('DOMContentLoaded', function() {
         productForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const url = currentId ? `/shops/products/edit/${currentId}/` : '/shops/products/add/';
+            const plansContainer = document.getElementById('plansContainer');
+            if (!plansContainer) return;
+            
+            const plans = [];
+            plansContainer.querySelectorAll('.plan-row').forEach(row => {
+                plans.push({
+                    id: row.querySelector('.p-plan-id').value || null,
+                    plan_name: row.querySelector('.p-plan-name').value,
+                    price: row.querySelector('.p-plan-price').value,
+                    duration_type: row.querySelector('.p-plan-type').value,
+                    duration_value: row.querySelector('.p-plan-duration').value,
+                    is_renewable: row.querySelector('.p-plan-renewable').checked,
+                    is_active: row.querySelector('.p-plan-active').checked
+                });
+            });
 
             const formData = new FormData();
             formData.append('name', document.getElementById('p_name').value);
@@ -149,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('thumbnail', document.getElementById('p_thumbnail').value);
             formData.append('badge', document.getElementById('p_badge').value);
             formData.append('is_active', document.getElementById('p_is_active').checked);
+            formData.append('plans', JSON.stringify(plans));
 
             const sourceFile = document.getElementById('p_source_file').files[0];
             if (sourceFile) {

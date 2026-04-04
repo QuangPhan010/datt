@@ -40,5 +40,30 @@ class Product(models.Model):
                 count += 1
         super().save(*args, **kwargs)
 
+    def get_cheapest_plan(self):
+        return self.plans.filter(is_active=True).order_by('price').first()
+
+    def get_plans_data(self):
+        return list(self.plans.values('id', 'plan_name', 'price', 'duration_type', 'duration_value', 'is_renewable', 'is_active'))
+
     def __str__(self):
         return self.name
+
+class Plan(models.Model):
+    DURATION_CHOICES = [
+        ('monthly', 'Theo tháng'),
+        ('yearly', 'Theo năm'),
+        ('lifetime', 'Vĩnh viễn'),
+    ]
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='plans', null=True) # Allow null for migration
+    plan_name = models.CharField(max_length=100, default='')
+    price = models.FloatField(default=0.0)
+    duration_type = models.CharField(max_length=20, choices=DURATION_CHOICES, default='monthly')
+    duration_value = models.IntegerField(null=True, blank=True, help_text="Số tháng/năm. Lifetime để trống.")
+    is_renewable = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.product.name if self.product else 'N/A'} - {self.plan_name}"

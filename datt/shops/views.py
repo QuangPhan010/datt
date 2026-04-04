@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.db import transaction
-from .models import Product, Category
+from .models import Product, Category, Plan
 
 def index(request):
     return render(request, 'shops/index.html')
@@ -106,6 +106,10 @@ def product_add(request):
         is_active = request.POST.get('is_active') == 'true'
         source_file = request.FILES.get('source_file')
         
+        plans_data = json.loads(request.POST.get('plans', '[]'))
+        if not plans_data:
+            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
+
         with transaction.atomic():
             product = Product.objects.create(
                 name=name,
@@ -117,6 +121,17 @@ def product_add(request):
                 is_active=is_active,
                 source_file=source_file
             )
+            
+            for p in plans_data:
+                Plan.objects.create(
+                    product=product,
+                    plan_name=p.get('plan_name'),
+                    price=p.get('price'),
+                    duration_type=p.get('duration_type'),
+                    duration_value=p.get('duration_value') if p.get('duration_type') != 'lifetime' else None,
+                    is_renewable=p.get('is_renewable', True),
+                    is_active=p.get('is_active', True)
+                )
         return JsonResponse({'status': 'success', 'id': product.id})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -136,6 +151,10 @@ def product_edit(request, pk):
         is_active = request.POST.get('is_active') == 'true'
         source_file = request.FILES.get('source_file')
         
+        plans_data = json.loads(request.POST.get('plans', '[]'))
+        if not plans_data:
+            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
+
         with transaction.atomic():
             product.name = name
             product.slug = slug
@@ -148,6 +167,36 @@ def product_edit(request, pk):
                 product.source_file = source_file
             product.save()
             
+            # Track updated IDs to delete removed plans
+            updated_plan_ids = []
+            
+            for p_data in plans_data:
+                plan_id = p_data.get('id')
+                if plan_id:
+                    plan = Plan.objects.get(pk=plan_id, product=product)
+                    plan.plan_name = p_data.get('plan_name', plan.plan_name)
+                    plan.price = p_data.get('price', plan.price)
+                    plan.duration_type = p_data.get('duration_type', plan.duration_type)
+                    plan.duration_value = p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None
+                    plan.is_renewable = p_data.get('is_renewable', plan.is_renewable)
+                    plan.is_active = p_data.get('is_active', plan.is_active)
+                    plan.save()
+                    updated_plan_ids.append(plan.id)
+                else:
+                    new_plan = Plan.objects.create(
+                        product=product,
+                        plan_name=p_data.get('plan_name'),
+                        price=p_data.get('price'),
+                        duration_type=p_data.get('duration_type'),
+                        duration_value=p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None,
+                        is_renewable=p_data.get('is_renewable', True),
+                        is_active=p_data.get('is_active', True)
+                    )
+                    updated_plan_ids.append(new_plan.id)
+            
+            # Delete plans not in the updated list
+            product.plans.exclude(id__in=updated_plan_ids).delete()
+
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
