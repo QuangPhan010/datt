@@ -120,16 +120,7 @@
                         <span class="product-category">{{ product.category.name }}</span>
                         <h3 class="product-title">{{ product.name }}</h3>
                         <p class="product-desc">{{ product.description }}</p>
-                        <div class="product-footer">
-                            <span class="product-price">
-                                {% with cheapest=product.get_cheapest_plan %}
-                                    {% if cheapest %}
-                                        ${{ cheapest.price|floatformat:2 }}{% if cheapest.duration_type == 'monthly' %}/m{% elif cheapest.duration_type == 'yearly' %}/y{% endif %}
-                                    {% else %}
-                                        Liên hệ
-                                    {% endif %}
-                                {% endwith %}
-                            </span>
+                        <div class="product-footer d-flex justify-content-end">
                             <a href="{% url 'shops:product_detail' product.slug %}" class="btn-buy" style="text-decoration: none; text-align: center;">Chi tiết</a>
                         </div>
                     </div>
@@ -206,18 +197,6 @@
                         <div id="p_current_source" class="mt-1 small text-info" style="display:none;"></div>
                     </div>
 
-                    <hr class="border-secondary my-4">
-                    
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0"><i class="bi bi-tags-fill me-2 text-danger"></i>Cấu hình các gói bán (Plans)</h6>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="addPlanRow()">
-                            <i class="bi bi-plus-lg me-1"></i>Thêm gói
-                        </button>
-                    </div>
-
-                    <div id="plansContainer">
-                        <!-- Plans will be added here dynamically -->
-                    </div>
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>

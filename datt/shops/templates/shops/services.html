@@ -1,0 +1,338 @@
+{% extends 'shops/base.html' %}
+{% load static %}
+
+{% block title %}Dịch vụ - Nexora Technology{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/services.css' %}">
+{% endblock %}
+
+{% block body_block %}
+<!-- HERO SECTION -->
+<section class="services-hero">
+    <div class="hero-glow" style="top: -10%; left: 10%;"></div>
+    <div class="hero-glow" style="bottom: -10%; right: 10%;"></div>
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-danger mb-3 p-2 px-3 rounded-pill text-uppercase" style="letter-spacing: 2px; font-size: 0.7rem;">Nexora Solutions</span>
+                <h1 class="hero-title">Giải pháp công nghệ toàn diện cho doanh nghiệp</h1>
+                <p class="lead text-white-50 mb-5">
+                    Chúng tôi cung cấp hệ sinh thái giải pháp từ bảo mật, phát triển phần mềm đến hạ tầng Cloud giúp doanh nghiệp tối ưu vận hành và bứt phá doanh thu.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#services-grid" class="btn btn-danger btn-lg px-4 rounded-pill">Khám phá dịch vụ</a>
+                    <a href="{% url 'shops:contact' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill">Liên hệ tư vấn</a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <div class="position-relative">
+                    <i class="bi bi-shield-lock-fill text-danger" style="font-size: 10rem; filter: drop-shadow(0 0 50px rgba(255,0,0,0.3));"></i>
+                    <div class="position-absolute top-50 start-50 translate-middle w-100 h-100 d-flex align-items-center justify-content-center">
+                        <div class="spinner-border text-danger" role="status" style="width: 15rem; height: 15rem; opacity: 0.2; border-width: 0.1rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES GRID -->
+<section id="services-grid" class="section-padding bg-dark">
+    <div class="container text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Hệ sinh thái dịch vụ</h2>
+        <p class="text-white-50 max-w-600 mx-auto">Đội ngũ Nexora cam kết mang đến những công nghệ tiên tiến nhất, được may đo riêng cho mô hình kinh doanh của bạn.</p>
+    </div>
+    <div class="container">
+        <div class="row g-4">
+            <!-- 1. Cybersecurity -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-shield-check"></i></div>
+                    <h3>Bảo mật hệ thống</h3>
+                    <p class="text-white-50 mb-4">Giải pháp Cyber Security đa lớp, bảo vệ dữ liệu và hệ thống trước mọi cuộc tấn công từ bên ngoài.</p>
+                    <a href="#cyber" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <!-- 2. Accounts -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-key"></i></div>
+                    <h3>Cung cấp tài khoản</h3>
+                    <p class="text-white-50 mb-4">Cung cấp bản quyền phần mềm, tài khoản AI (ChatGPT, API) và các nền tảng Streaming chất lượng cao.</p>
+                    <a href="#software" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <!-- 3. Development -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-code-slash"></i></div>
+                    <h3>Phát triển phần mềm</h3>
+                    <p class="text-white-50 mb-4">Thiết kế Web/App theo yêu cầu với giao diện UI/UX hiện đại và hiệu năng xử lý tốc độ cao.</p>
+                    <a href="#software" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <!-- 4. API & Automation -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-robot"></i></div>
+                    <h3>API & Automation</h3>
+                    <p class="text-white-50 mb-4">Tự động hóa quy trình nghiệp vụ (RPA) và tích hợp API trung gian giúp hệ thống vận hành liền mạch.</p>
+                    <a href="#software" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <!-- 5. Cloud & Hosting -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                    <h3>Cloud & Hosting</h3>
+                    <p class="text-white-50 mb-4">Hạ tầng Cloud mạnh mẽ, độ ổn định 99.99% giúp lưu trữ và triển khai dự án quy mô lớn.</p>
+                    <a href="#" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <!-- 6. Managed IT -->
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card">
+                    <div class="service-icon"><i class="bi bi-gear-wide-connected"></i></div>
+                    <h3>Quản trị hệ thống IT</h3>
+                    <p class="text-white-50 mb-4">Vận hành và bảo trì server, giám sát hệ thống 24/7 giúp bạn tập trung hoàn toàn vào kinh doanh.</p>
+                    <a href="#" class="btn btn-link text-danger p-0 text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ZIGZAG DETAILS -->
+<section class="section-padding zigzag-section">
+    <div class="container">
+        <!-- Detail 1: Security -->
+        <div id="cyber" class="row detail-block">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="detail-content">
+                    <h2 class="text-danger">Bảo mật hệ thống (Cyber Security)</h2>
+                    <p class="text-white-50 mb-4">Bảo vệ tài sản số của doanh nghiệp là sứ mệnh hàng đầu của chúng tôi. Nexora áp dụng các giao thức bảo mật tiên tiến nhất thế giới.</p>
+                    <ul class="feature-list">
+                        <li><i class="bi bi-check2-circle"></i> <span>Quét lỗ hổng và Pentest định kỳ cho hệ thống.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Tường lửa (Firewall) đa tầng chống DDoS và SQL Injection.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Giám sát an ninh mạng (SOC) 24/7 phát hiện xâm nhập trái phép.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Mã hóa dữ liệu đầu cuối chuẩn quân đội.</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="detail-visual">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="Cyber Security">
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail 2: Software -->
+        <div id="software" class="row detail-block flex-lg-row-reverse">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="detail-content ps-lg-5">
+                    <h2 class="text-danger">Phát triển phần mềm & API</h2>
+                    <p class="text-white-50 mb-4">Chúng tôi biến ý tưởng của bạn thành những sản phẩm phần mềm chất lượng cao, dễ dàng mở rộng và tích hợp.</p>
+                    <ul class="feature-list">
+                        <li><i class="bi bi-check2-circle"></i> <span>Thiết kế UI/UX theo xu hướng tối giản, hiện đại.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Xây dựng hệ thống Backend mạnh mẽ với Microservices.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Thiết lập API Gateway kết nối đa nền tảng.</span></li>
+                        <li><i class="bi bi-check2-circle"></i> <span>Tự động hóa tác vụ văn phòng qua Bot và RPA.</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="detail-visual">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800" alt="Software Development">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING PLANS -->
+<section class="section-padding bg-dark">
+    <div class="container text-center mb-5">
+        <h2 class="display-6 fw-bold">Gói dịch vụ doanh nghiệp</h2>
+        <p class="text-white-50">Lựa chọn giải pháp phù hợp với quy mô kinh doanh của bạn</p>
+    </div>
+    <div class="container">
+        <div class="row g-4">
+            <!-- Basic -->
+            <div class="col-lg-4">
+                <div class="pricing-card">
+                    <h4 class="fw-bold">Basic</h4>
+                    <div class="price">$199<span>/tháng</span></div>
+                    <ul class="feature-list d-inline-block text-start mb-5">
+                        <li><i class="bi bi-check"></i> Bảo trì hệ thống cơ bản</li>
+                        <li><i class="bi bi-check"></i> Support 8/5</li>
+                        <li><i class="bi bi-check"></i> Cloud Hosting 20GB</li>
+                        <li><i class="bi bi-x text-white-50"></i> Báo cáo Pentest hàng tháng</li>
+                    </ul>
+                    <a href="{% url 'shops:contact' %}" class="btn btn-outline-danger w-100 rounded-pill">Chọn gói</a>
+                </div>
+            </div>
+            <!-- Pro -->
+            <div class="col-lg-4">
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Phổ biến nhất</div>
+                    <h4 class="fw-bold">Pro Edition</h4>
+                    <div class="price">$499<span>/tháng</span></div>
+                    <ul class="feature-list d-inline-block text-start mb-5">
+                        <li><i class="bi bi-check"></i> Bảo mật đa tầng SOC</li>
+                        <li><i class="bi bi-check"></i> Support 24/7</li>
+                        <li><i class="bi bi-check"></i> Tối ưu API & Automation</li>
+                        <li><i class="bi bi-check"></i> Backup dữ liệu hàng ngày</li>
+                    </ul>
+                    <a href="{% url 'shops:contact' %}" class="btn btn-danger w-100 rounded-pill">Chọn gói</a>
+                </div>
+            </div>
+            <!-- Enterprise -->
+            <div class="col-lg-4">
+                <div class="pricing-card">
+                    <h4 class="fw-bold">Enterprise</h4>
+                    <div class="price">Liên hệ</div>
+                    <ul class="feature-list d-inline-block text-start mb-5">
+                        <li><i class="bi bi-check"></i> Giải pháp May đo toàn diện</li>
+                        <li><i class="bi bi-check"></i> Hạ tầng riêng (On-premise)</li>
+                        <li><i class="bi bi-check"></i> Kỹ sư On-site 24/7</li>
+                        <li><i class="bi bi-check"></i> API không giới hạn</li>
+                    </ul>
+                    <a href="{% url 'shops:contact' %}" class="btn btn-outline-danger w-100 rounded-pill">Liên hệ ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="section-padding bg-black">
+    <div class="container mb-5">
+        <h2 class="text-center fw-bold mb-4">So sánh chi tiết</h2>
+    </div>
+    <div class="container">
+        <div class="comparison-container table-responsive">
+            <table class="table table-nexora text-white">
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Tính năng kỹ thuật</th>
+                        <th>Basic</th>
+                        <th>Pro</th>
+                        <th>Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">Thời gian Uptime cam kết (SLA)</td>
+                        <td>99.0%</td>
+                        <td>99.9%</td>
+                        <td>99.99%</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Số lượng API Endpoint</td>
+                        <td>10</td>
+                        <td>50</td>
+                        <td>Không giới hạn</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Quét bảo mật tự động</td>
+                        <td><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Hỗ trợ kỹ thuật</td>
+                        <td>Email/Ticket</td>
+                        <td>Chat / Hotline 24/7</td>
+                        <td>Kỹ sư riêng chuyên trách</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Backup & Recovery</td>
+                        <td>Theo tuần</td>
+                        <td>Theo ngày</td>
+                        <td>Real-time (Gần tức thì)</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Tùy biến UI/UX</td>
+                        <td><i class="bi bi-dash-circle cross-icon"></i></td>
+                        <td>Cơ bản</td>
+                        <td>Toàn diện theo Brand</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section-padding bg-dark">
+    <div class="container text-center mb-5">
+        <h2 class="display-6 fw-bold">Quy trình làm việc</h2>
+        <p class="text-white-50">Sự chuyên nghiệp và minh bạch trong từng giai đoạn</p>
+    </div>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="process-step">
+                    <div class="step-number">01</div>
+                    <h5 class="fw-bold">Tiếp nhận yêu cầu</h5>
+                    <p class="small text-white-50 px-3">Lắng nghe và thu thập thông tin về dự án.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="process-step">
+                    <div class="step-number">02</div>
+                    <h5 class="fw-bold">Phân tích & Tư vấn</h5>
+                    <p class="small text-white-50 px-3">Đề xuất giải pháp và lộ trình triển khai tối ưu.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="process-step">
+                    <div class="step-number">03</div>
+                    <h5 class="fw-bold">Triển khai & Test</h5>
+                    <p class="small text-white-50 px-3">Xây dựng hệ thống và kiểm thử nghiêm ngặt.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="process-step">
+                    <div class="step-number">04</div>
+                    <h5 class="fw-bold">Bàn giao & Hỗ trợ</h5>
+                    <p class="small text-white-50 px-3">Bàn giao và đồng hành bảo trì trọn đời.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="section-padding bg-black border-top border-secondary border-opacity-10">
+    <div class="container">
+        <div class="row align-items-center justify-content-center g-5 text-center">
+            <div class="col-6 col-md-4 col-lg-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/960px-2021_Facebook_icon.svg.png" class="partner-logo" alt="FB">
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png" class="partner-logo" alt="Google">
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png" class="partner-logo" alt="MS">
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/019/136/322/small_2x/amazon-logo-amazon-icon-free-free-vector.jpg" class="partner-logo" alt="Amazon">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="section-padding" style="background: linear-gradient(135deg, #220000, #000);">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-4">Bạn cần giải pháp công nghệ vươn tầm?</h2>
+        <p class="text-white-50 mb-5 max-w-600 mx-auto">Đội ngũ chuyên gia Nexora sẵn sàng lắng nghe và giải quyết bài toán của bạn.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'shops:contact' %}" class="btn btn-danger btn-lg px-5 rounded-pill">Liên hệ ngay</a>
+            <a href="#" class="btn btn-outline-light btn-lg px-5 rounded-pill">Nhận báo giá</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

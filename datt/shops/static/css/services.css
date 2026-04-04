@@ -1,0 +1,308 @@
+/* ===== NEXORA SERVICES CSS ===== */
+
+:root {
+    --nx-red: #ff2d2d;
+    --nx-red-glow: rgba(255, 45, 45, 0.4);
+    --nx-black: #0f0f0f;
+    --nx-dark: #050505;
+    --nx-glass: rgba(255, 255, 255, 0.03);
+    --nx-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== HERO SECTION ===== */
+.services-hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 120px 0 80px;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 0, 0.1), transparent 40%),
+                var(--nx-black);
+    overflow: hidden;
+}
+
+.services-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+    pointer-events: none;
+}
+
+.hero-glow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: var(--nx-red);
+    filter: blur(150px);
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 25px;
+    background: linear-gradient(to right, #fff 40%, var(--nx-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ===== SERVICE GRID ===== */
+.section-padding {
+    padding: 100px 0;
+}
+
+.service-card {
+    background: var(--nx-glass);
+    border: 1px solid var(--nx-border);
+    border-radius: 20px;
+    padding: 40px;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 0, 0, 0.05), transparent);
+    transform: translateX(-100%);
+    transition: 0.6s;
+}
+
+.service-card:hover {
+    transform: translateY(-15px);
+    border-color: var(--nx-red);
+    box-shadow: 0 10px 40px rgba(255, 0, 0, 0.2);
+}
+
+.service-card:hover::after {
+    transform: translateX(100%);
+}
+
+.service-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--nx-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    transition: 0.3s;
+}
+
+.service-card:hover .service-icon {
+    background: var(--nx-red);
+    color: #fff;
+    box-shadow: 0 0 20px var(--nx-red-glow);
+}
+
+/* ===== ZIGZAG DETAILS ===== */
+.zigzag-section {
+    background: var(--nx-black);
+}
+
+.detail-block {
+    align-items: center;
+    margin-bottom: 120px;
+}
+
+.detail-block:last-child {
+    margin-bottom: 0;
+}
+
+.detail-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 10px 0;
+    display: flex;
+    align-items: flex-start;
+    color: #94a3b8;
+}
+
+.feature-list i {
+    color: var(--nx-red);
+    margin-right: 15px;
+    margin-top: 5px;
+}
+
+.detail-visual {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--nx-border);
+}
+
+.detail-visual img {
+    width: 100%;
+    transition: 0.5s;
+}
+
+.detail-block:hover .detail-visual img {
+    transform: scale(1.05);
+}
+
+/* ===== PRICING ===== */
+.pricing-card {
+    background: var(--nx-glass);
+    border: 1px solid var(--nx-border);
+    border-radius: 24px;
+    padding: 50px 30px;
+    text-align: center;
+    transition: 0.3s;
+    position: relative;
+}
+
+.pricing-card.popular {
+    border: 2px solid var(--nx-red);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    background: linear-gradient(180deg, rgba(25, 0, 0, 0.5), transparent);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--nx-red);
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 20px 0;
+}
+
+.price span {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #64748b;
+}
+
+/* ===== COMPARISON TABLE ===== */
+.comparison-container {
+    background: #111;
+    border-radius: 24px;
+    border: 1px solid var(--nx-border);
+    overflow: hidden;
+    margin-top: 30px;
+}
+
+.table-nexora {
+    margin-bottom: 0;
+    background-color: transparent !important;
+}
+
+.table-nexora thead th {
+    background: rgba(255, 255, 255, 0.08) !important;
+    padding: 25px;
+    font-size: 1.1rem;
+    color: #fff !important;
+    border-bottom: 1px solid var(--nx-border);
+}
+
+.table-nexora tbody td {
+    padding: 22px 25px;
+    color: #cbd5e1 !important; /* Brighter gray */
+    border-bottom: 1px solid var(--nx-border);
+    background: transparent !important;
+}
+
+.table-nexora tbody tr:hover {
+    background: rgba(255, 45, 45, 0.03);
+}
+
+.feature-name {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.check-icon { color: #22c55e; }
+.cross-icon { color: #ef4444; }
+
+/* ===== PROCESS ===== */
+.process-step {
+    text-align: center;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--nx-red);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 auto 25px;
+    box-shadow: 0 0 20px var(--nx-red-glow);
+    position: relative;
+    z-index: 2;
+}
+
+.process-step::after {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--nx-red), transparent);
+    z-index: 1;
+}
+
+.process-step:last-child::after { display: none; }
+
+@media (max-width: 991px) {
+    .process-step::after { display: none; }
+}
+
+/* ===== PARTNERS ===== */
+.partner-logo {
+    opacity: 0.5;
+    filter: grayscale(1);
+    transition: 0.3s;
+    max-width: 140px;
+}
+
+.partner-logo:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}

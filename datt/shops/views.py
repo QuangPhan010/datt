@@ -4,10 +4,8 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
-from django.utils import timezone
-from datetime import timedelta
 from django.db import transaction
-from .models import Product, Category, Plan, Subscription
+from .models import Product, Category
 
 def index(request):
     return render(request, 'shops/index.html')
@@ -108,10 +106,6 @@ def product_add(request):
         is_active = request.POST.get('is_active') == 'true'
         source_file = request.FILES.get('source_file')
         
-        plans_data = json.loads(request.POST.get('plans', '[]'))
-        if not plans_data:
-            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
-
         with transaction.atomic():
             product = Product.objects.create(
                 name=name,
@@ -123,17 +117,6 @@ def product_add(request):
                 is_active=is_active,
                 source_file=source_file
             )
-            
-            for p in plans_data:
-                Plan.objects.create(
-                    product=product,
-                    plan_name=p.get('plan_name'),
-                    price=p.get('price'),
-                    duration_type=p.get('duration_type'),
-                    duration_value=p.get('duration_value') if p.get('duration_type') != 'lifetime' else None,
-                    is_renewable=p.get('is_renewable', True),
-                    is_active=p.get('is_active', True)
-                )
         return JsonResponse({'status': 'success', 'id': product.id})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -153,10 +136,6 @@ def product_edit(request, pk):
         is_active = request.POST.get('is_active') == 'true'
         source_file = request.FILES.get('source_file')
         
-        plans_data = json.loads(request.POST.get('plans', '[]'))
-        if not plans_data:
-            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
-        
         with transaction.atomic():
             product.name = name
             product.slug = slug
@@ -168,40 +147,6 @@ def product_edit(request, pk):
             if source_file:
                 product.source_file = source_file
             product.save()
-            
-            plans_data = data.get('plans', [])
-            if not plans_data:
-                raise Exception("Sản phẩm phải có ít nhất một gói bán.")
-                
-            # Track updated IDs to delete removed plans
-            updated_plan_ids = []
-            
-            for p_data in plans_data:
-                plan_id = p_data.get('id')
-                if plan_id:
-                    plan = Plan.objects.get(pk=plan_id, product=product)
-                    plan.plan_name = p_data.get('plan_name', plan.plan_name)
-                    plan.price = p_data.get('price', plan.price)
-                    plan.duration_type = p_data.get('duration_type', plan.duration_type)
-                    plan.duration_value = p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None
-                    plan.is_renewable = p_data.get('is_renewable', plan.is_renewable)
-                    plan.is_active = p_data.get('is_active', plan.is_active)
-                    plan.save()
-                    updated_plan_ids.append(plan.id)
-                else:
-                    new_plan = Plan.objects.create(
-                        product=product,
-                        plan_name=p_data.get('plan_name'),
-                        price=p_data.get('price'),
-                        duration_type=p_data.get('duration_type'),
-                        duration_value=p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None,
-                        is_renewable=p_data.get('is_renewable', True),
-                        is_active=p_data.get('is_active', True)
-                    )
-                    updated_plan_ids.append(new_plan.id)
-            
-            # Delete plans not in the updated list
-            product.plans.exclude(id__in=updated_plan_ids).delete()
             
         return JsonResponse({'status': 'success'})
     except Exception as e:
@@ -216,53 +161,5 @@ def product_delete(request, pk):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
-# --- PRICING & SUBSCRIPTION ---
-
-def pricing(request):
-    plans = Plan.objects.filter(is_active=True).select_related('product').order_by('price')
-    return render(request, 'shops/pricing.html', {'plans': plans})
-
-@login_required
-def subscribe(request, plan_id):
-    plan = get_object_or_404(Plan, id=plan_id)
-    
-    if request.method == 'POST':
-        period = request.POST.get('period', 'monthly')
-        
-        # Calculate end date
-        if period == 'yearly':
-            duration = timedelta(days=365)
-        else:
-            duration = timedelta(days=30)
-            
-        # Deactivate old subscriptions
-        Subscription.objects.filter(user=request.user, status='active').update(status='canceled')
-        
-        # Create new subscription (Mock Payment)
-        Subscription.objects.create(
-            user=request.user,
-            plan=plan,
-            start_date=timezone.now(),
-            end_date=timezone.now() + duration,
-            status='active'
-        )
-        
-        if plan.product and plan.product.source_file:
-            request.session['download_on_load'] = plan.product.source_file.url
-        
-        messages.success(request, f"Bạn đã đăng ký gói {plan.plan_name} thành công!")
-        return redirect('shops:dashboard')
-        
-    return render(request, 'shops/subscribe.html', {
-        'plan': plan, 
-        'period': request.GET.get('period', 'monthly')
-    })
-
-@login_required
-def dashboard(request):
-    subscription = Subscription.objects.filter(user=request.user, status='active').order_by('-start_date').first()
-    download_url = request.session.pop('download_on_load', None)
-    return render(request, 'shops/dashboard.html', {
-        'subscription': subscription,
-        'download_url': download_url
-    })
+def services(request):
+    return render(request, 'shops/services.html')
