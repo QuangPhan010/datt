@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin Dashboard | Nexora{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0a0a0a, #000);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      position: fixed;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 0, 0, 0.1);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .brand-section {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .brand-logo {
+      color: #ff0000;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      text-decoration: none;
+      text-transform: uppercase;
+      text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-item-custom {
+      display: flex;
+      align-items: center;
+      padding: 12px 25px;
+      color: #888;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      border-left: 4px solid transparent;
+    }
+
+    .nav-item-custom i {
+      margin-right: 15px;
+      font-size: 1.2rem;
+    }
+
+    .nav-item-custom:hover {
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff0000;
+      border-left-color: #ff0000;
+    }
+
+    .nav-item-custom.active {
+      background: rgba(255, 0, 0, 0.1);
+      color: #ff0000;
+      border-left-color: #ff0000;
+      font-weight: 600;
+    }
+
+    /* Main Content Styling */
+    .main-content {
+      margin-left: 260px;
+      padding: 40px;
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    /* Top Bar Styling */
+    .top-bar {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .admin-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 2px solid #ff0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    }
+
+    /* Card Styling */
+    .dashboard-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      border-color: rgba(255, 0, 0, 0.3);
+      transform: translateY(-5px);
+    }
+
+    @media (max-width: 991px) {
+      .sidebar { width: 0; overflow: hidden; }
+      .main-content { margin-left: 0; padding: 20px; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand-section">
+      <a href="{% url 'dashboard:index' %}" class="brand-logo">NEXORA</a>
+      <div class="small text-secondary fw-bold mt-2">ADMIN PANEL</div>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="{% url 'dashboard:index' %}" class="nav-item-custom active">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a href="{% url 'dashboard:products' %}" class="nav-item-custom">
+        <i class="bi bi-box-seam"></i> Products
+      </a>
+      <a href="#" class="nav-item-custom">
+        <i class="bi bi-cart3"></i> Orders
+      </a>
+      <a href="#" class="nav-item-custom">
+        <i class="bi bi-people"></i> Users
+      </a>
+      <a href="{% url 'dashboard:transactions_list' %}" class="nav-item-custom">
+        <i class="bi bi-bank"></i> Transactions
+      </a>
+      <div class="mt-4 pt-4 border-top border-white border-opacity-10">
+        <a href="{% url 'shops:index' %}" class="nav-item-custom">
+          <i class="bi bi-globe"></i> View Website
+        </a>
+        <a href="#" class="nav-item-custom">
+          <i class="bi bi-gear"></i> Settings
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="top-bar d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="fw-bold mb-0">Overview</h4>
+        <div class="small text-secondary">Hệ thống quản trị Nexora</div>
+      </div>
+      
+      <div class="d-flex align-items-center gap-4">
+        <div class="admin-profile">
+          <div class="text-end d-none d-md-block">
+            <div class="fw-bold fw-6">{{ request.user.username }}</div>
+            <div class="small text-danger">Super Admin</div>
+          </div>
+          <img src="{% if request.user.profile.photo %}{{ request.user.profile.photo.url }}{% else %}https://i.pravatar.cc/150?u={{ request.user.id }}{% endif %}" class="admin-avatar">
+        </div>
+        
+        <form method="post" action="{% url 'users:logout' %}">
+          {% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm px-3">
+            <i class="bi bi-box-arrow-right me-2"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {% block body_block %}{% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

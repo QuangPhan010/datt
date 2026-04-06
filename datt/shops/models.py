@@ -70,7 +70,7 @@ class Plan(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='plans', null=True) # Allow null for migration
     plan_name = models.CharField(max_length=100, default='')
-    price = models.FloatField(default=0.0)
+    price = models.BigIntegerField(default=0)
     duration_type = models.CharField(max_length=20, choices=DURATION_CHOICES, default='monthly')
     duration_value = models.IntegerField(null=True, blank=True, help_text="Số tháng/năm. Lifetime để trống.")
     is_renewable = models.BooleanField(default=True)
@@ -160,9 +160,9 @@ class Order(models.Model):
     address = models.TextField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    final_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.BigIntegerField(default=0)
+    discount_amount = models.BigIntegerField(default=0)
+    final_price = models.BigIntegerField(default=0)
     coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
@@ -184,7 +184,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     plan_name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.BigIntegerField(default=0)
     quantity = models.PositiveIntegerField(default=1)
 
     def get_total_price(self):

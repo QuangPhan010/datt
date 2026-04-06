@@ -1,299 +1,147 @@
 {% extends "shops/base.html" %}
 {% load static %}
+{% load humanize %}
 
-{% block title %}Giỏ hàng | Nexora{% endblock %}
+{% block title %}Giỏ hàng ({{ total_count }}) | Nexora{% endblock %}
+
 
 {% block body_block %}
-<link rel="stylesheet" href="{% static 'css/cart.css' %}" />
-<style>
-    /* DivineShop inspired refinements */
-    .cart-page-container {
-        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
-        min-height: 100vh;
-        color: #fff;
-    }
-    
-    .breadcrumb-nav .breadcrumb-item, .breadcrumb-nav .breadcrumb-item a {
-        color: #a0a0a0;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-    
-    .breadcrumb-nav .breadcrumb-item.active {
-        color: #fff;
-    }
-    
-    .cart-title {
-        font-size: 2rem;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-    }
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+<div class="cart-container">
+    <h1 class="cart-title">Giỏ hàng <small class="text-secondary fw-normal">({{ total_count }} sản phẩm)</small></h1>
 
-    .cart-items-wrapper {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        overflow: hidden;
-    }
-
-    .cart-item-card {
-        padding: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        transition: background 0.3s;
-    }
-    
-    .cart-item-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .item-img-wrapper {
-        width: 80px;
-        height: 80px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .item-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .qty-control {
-        background: #0f3460;
-        border: none !important;
-    }
-
-    .qty-control button:hover {
-        background: rgba(255,255,255,0.1);
-    }
-
-    .cart-summary-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: sticky;
-        top: 100px;
-        backdrop-filter: blur(10px);
-    }
-
-    .price-value {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-    }
-
-    .btn-checkout {
-        background: linear-gradient(90deg, #e94560, #ff2e63);
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .btn-checkout:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-    }
-
-    .coupon-box {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        padding: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .coupon-box input {
-        background: transparent;
-        border: none;
-        color: #fff;
-        padding-left: 10px;
-    }
-
-    .coupon-box input:focus {
-        outline: none;
-        box-shadow: none;
-    }
-
-    .btn-apply-coupon {
-        background: #e94560;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        padding: 5px 15px;
-    }
-
-    .badge-plan {
-        background: #0f3460;
-        color: #4cc9f0;
-        font-size: 0.7rem;
-        padding: 2px 8px;
-        border-radius: 4px;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-</style>
-
-<div class="cart-page-container">
-    <div class="container py-5">
-        <!-- Breadcrumbs -->
-        <nav class="breadcrumb-nav mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'shops:index' %}">Trang chủ</a></li>
-                <li class="breadcrumb-item active">Giỏ hàng</li>
-            </ol>
-        </nav>
-
-        <h1 class="cart-title mb-5">Giỏ hàng của bạn ({{ total_count }})</h1>
-
-        <div class="row g-4">
-            <!-- Left: Cart Items -->
-            <div class="col-lg-8">
-                <div class="cart-items-wrapper">
-                    {% if cart_items %}
-                        {% for item in cart_items %}
-                        <div class="cart-item-card" id="item-{{ item.id }}">
-                            <div class="row align-items-center g-3">
-                                <!-- Image -->
-                                <div class="col-3 col-md-2">
-                                    <div class="item-img-wrapper">
-                                        <img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}" class="item-img">
-                                    </div>
-                                </div>
-                                <!-- Content -->
-                                <div class="col-9 col-md-4">
-                                    <h5 class="item-product-name mb-1">{{ item.product.name }}</h5>
-                                    <span class="badge-plan mb-2 d-inline-block">{{ item.plan.plan_name }}</span>
-                                </div>
-                                <!-- Quantity -->
-                                <div class="col-6 col-md-3">
-                                    <div class="qty-control d-flex align-items-center justify-content-center rounded-3">
-                                        <button class="btn btn-sm text-white px-2" onclick="updateCartItem('{{ item.id }}', 'decrease')">
-                                            <i class="bi bi-dash-lg"></i>
-                                        </button>
-                                        <span id="qty-{{ item.id }}" class="px-3 fw-bold">{{ item.quantity }}</span>
-                                        <button class="btn btn-sm text-white px-2" onclick="updateCartItem('{{ item.id }}', 'increase')">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- Subtotal -->
-                                <div class="col-4 col-md-2 text-end">
-                                    <span class="item-subtotal price-value fs-5" id="subtotal-{{ item.id }}">
-                                        {{ item.get_total_price|floatformat:0 }} VNĐ
-                                    </span>
-                                </div>
-                                <!-- Delete -->
-                                <div class="col-2 col-md-1 text-end">
-                                    <button class="btn-remove btn btn-link text-danger p-0" onclick="removeCartItem('{{ item.id }}')">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
-                                </div>
+    <div class="row">
+        <!-- Main Cart items -->
+        <div class="col-lg-8">
+            <div class="cart-card">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                    <div class="item-row" id="item-{{ item.id }}">
+                        <div class="item-img-box">
+                            <img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}">
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">{{ item.product.name }} - {{ item.plan.plan_name }}</div>
+                            <div class="item-meta">{{ item.product.category.name }}</div>
+                            <div class="item-status">
+                                <i class="bi bi-box status-green"></i> Tình trạng: <span class="status-green">Còn hàng</span>
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-cart-state text-center py-5">
-                            <i class="bi bi-cart-x display-1 text-secondary opacity-25 mb-4"></i>
-                            <h3 class="mb-3">Giỏ hàng trống</h3>
-                            <p class="text-secondary">Có vẻ như bạn chưa chọn được sản phẩm nào.</p>
-                            <a href="{% url 'shops:products' %}" class="btn btn-danger mt-3 px-5 py-2 fw-bold">Tiếp tục mua sắm</a>
+                        <div class="qty-box">
+                            <button class="qty-btn" onclick="updateCartItem('{{ item.id }}', 'decrease')">-</button>
+                            <input type="text" class="qty-input" value="{{ item.quantity }}" id="qty-{{ item.id }}" readonly>
+                            <button class="qty-btn" onclick="updateCartItem('{{ item.id }}', 'increase')">+</button>
                         </div>
-                    {% endif %}
+                        <div class="item-price-box">
+                            <div class="price-main" id="subtotal-{{ item.id }}">{{ item.get_total_price|intcomma }}đ</div>
+                        </div>
+                        <button class="btn-delete-item" onclick="removeCartItem('{{ item.id }}')">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-cart3 display-1 text-secondary opacity-25"></i>
+                        <h4 class="mt-4">Giỏ hàng của bạn đang trống</h4>
+                        <a href="{% url 'shops:products' %}" class="btn btn-primary mt-3">Tiếp tục mua sắm</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar Summary -->
+        <div class="col-lg-4">
+            <div class="sidebar-card">
+                <div class="side-item">
+                    <span>Bạn có mã giới thiệu?</span>
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="side-item">
+                    <span>Bạn có mã ưu đãi?</span>
+                    <i class="bi bi-percent"></i>
+                </div>
+                <div class="side-item">
+                    <span>Bạn muốn tặng cho bạn bè?</span>
+                    <i class="bi bi-gift"></i>
                 </div>
             </div>
 
-            <!-- Right: Summary -->
-            <div class="col-lg-4">
-                <div class="cart-summary-card p-4">
-                    <h4 class="summary-title mb-4 fw-bold">Thông tin đơn hàng</h4>
+            <div class="sidebar-card">
+                <div class="phone-input-group">
+                    <div class="phone-label">SĐT liên hệ của bạn <span>*</span></div>
+                    <div class="input-box-wrapper">
+                        <div class="prefix">+84</div>
+                        <input type="text" class="phone-input" id="contact-phone" 
+                               placeholder="Nhập SĐT của bạn" 
+                               inputmode="numeric"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                               value="{{ user.profile.phone|default_if_none:'' }}">
+                    </div>
+                </div>
+
+                <div class="summary-details pt-3 border-top mt-2">
+                    <div class="side-item fw-bold h5 mb-3">Thanh toán</div>
                     
-                    <!-- Coupon Section -->
-                    <div class="mb-4">
-                        <label class="small text-secondary mb-2">Mã giảm giá</label>
-                        <div class="coupon-box d-flex">
-                            <input type="text" id="coupon-code" class="form-control" placeholder="Nhập mã...">
-                            <button class="btn btn-apply-coupon" onclick="applyCoupon()">Áp dụng</button>
-                        </div>
-                        <div id="coupon-msg" class="small mt-2" style="display:none;"></div>
+                    <div class="summary-row">
+                        <span>Tổng giá trị sản phẩm</span>
+                        <span id="summary-subtotal" class="fw-bold">{{ total_price|intcomma }}đ</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Tổng giá trị phải thanh toán</span>
+                        <span id="summary-total" class="text-danger fw-bold fs-5">{{ total_price|intcomma }}đ</span>
                     </div>
 
-                    <div class="cart-summary p-4">
-                        <h5 class="fw-bold mb-4">Tổng đơn hàng</h5>
-                        <div class="d-flex justify-content-between mb-2">
-                          <span>Tạm tính:</span>
-                          <span id="cart-subtotal" class="fw-bold">{{ total_price|floatformat:0 }} VNĐ</span>
+                    {% if user.is_authenticated %}
+                        <div class="summary-row">
+                            <span>Số dư hiện tại</span>
+                            <span id="user-balance-val" data-balance="{{ user_balance }}" class="fw-bold text-info">
+                                {{ user_balance|intcomma }}đ
+                            </span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span>Phí vận chuyển:</span>
-                            <span class="text-success fw-bold">Miễn phí</span>
+                        <div class="summary-row">
+                            <span>Số tiền cần nạp thêm</span>
+                            <span id="summary-deficit" class="fw-bold text-danger">
+                                {{ deficit|intcomma }}đ
+                            </span>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                          <span class="h5 fw-bold">Tổng cộng:</span>
-                          <span id="cart-total" class="h5 fw-bold text-danger">{{ total_price|floatformat:0 }} VNĐ</span>
+
+                        <!-- Buttons Logic -->
+                        <button id="btn-pay-balance" class="btn-checkout-primary {% if deficit > 0 %}d-none{% endif %}" 
+                                onclick="processBalancePayment()">
+                            <i class="bi bi-wallet2"></i> Thanh toán ngay bằng số dư
+                        </button>
+
+                        <div id="topup-actions" class="{% if deficit == 0 %}d-none{% endif %}">
+                            <div class="payment-note mb-3">Quét mã. Thanh toán. Không cần đăng nhập.</div>
+                            <button class="btn-checkout-secondary" onclick="window.location.href='{% url 'users:topup_index' %}'">
+                                <i class="bi bi-qr-code"></i> Mua siêu tốc qua QR Banking
+                            </button>
+                            <button class="btn-checkout-secondary btn-momo" onclick="window.location.href='{% url 'users:topup_index' %}'">
+                                <i class="bi bi-lightning-fill"></i> Thanh toán bằng MoMo
+                            </button>
                         </div>
-                        <a href="{% url 'shops:checkout' %}" class="btn btn-danger w-100 py-3 fw-bold shadow-sm">
-                          TIẾN HÀNH THANH TOÁN
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="btn-checkout-primary">
+                            <i class="bi bi-person-circle"></i> Đăng nhập để thanh toán
                         </a>
-                    </div>
-                    
-                    <div class="secure-info d-flex align-items-center justify-content-center gap-2 small text-secondary">
-                        <i class="bi bi-shield-check text-success"></i>
-                        Thông tin được bảo mật bởi Nexora
-                    </div>
+                        <div class="payment-note">Quét mã. Thanh toán. Không cần đăng nhập.</div>
+                        <button class="btn-checkout-secondary opacity-50" disabled>
+                            <i class="bi bi-qr-code"></i> Mua siêu tốc qua QR Banking
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    const cartConfig = {
-        updateCartUrl: "{% url 'shops:update_cart' %}",
-        removeFromCartUrl: "{% url 'shops:remove_from_cart' %}",
-        validateCouponUrl: "{% url 'shops:validate_coupon' %}",
-        csrfToken: "{{ csrf_token }}"
-    };
+<form id="pay-form">
+    {% csrf_token %}
+</form>
 
-    function applyCoupon() {
-        const code = document.getElementById('coupon-code').value;
-        const subtotal = parseFloat(document.getElementById('cart-subtotal').innerText.replace(' VNĐ', '').replace(/,/g, ''));
-        const msgDiv = document.getElementById('coupon-msg');
-        
-        if (!code) return;
-
-        fetch(cartConfig.validateCouponUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': cartConfig.csrfToken
-            },
-            body: JSON.stringify({ code: code, total_price: subtotal })
-        })
-        .then(response => response.json())
-        .then(data => {
-            msgDiv.style.display = 'block';
-            if (data.status === 'success') {
-                msgDiv.className = 'small mt-2 text-success';
-                msgDiv.innerText = data.message;
-                
-                // Store in session storage to persist to checkout page
-                sessionStorage.setItem('applied_coupon', JSON.stringify({
-                    code: code,
-                    discount: data.discount,
-                    final_total: data.final_total
-                }));
-
-                document.getElementById('discount-row').style.setProperty('display', 'flex', 'important');
-                document.getElementById('cart-discount').innerText = `-${data.discount.toFixed(0)} VNĐ`;
-                document.getElementById('cart-total').innerText = `${data.final_total.toFixed(0)} VNĐ`;
-            } else {
-                msgDiv.className = 'small mt-2 text-danger';
-                msgDiv.innerText = data.message;
-                sessionStorage.removeItem('applied_coupon');
-            }
-        });
-    }
-</script>
-<script src="{% static 'js/cart.js' %}?v=2"></script>
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %}
 {% endblock %}

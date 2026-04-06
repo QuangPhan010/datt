@@ -1,0 +1,217 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Quản lý giao dịch | Nexora Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+    .transaction-card {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 30px;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pending { color: #ffc107; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2); }
+    .status-completed { color: #28a745; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2); }
+    .status-failed { color: #dc3545; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2); }
+    .status-expired { color: #6c757d; background: rgba(108, 117, 125, 0.1); border: 1px solid rgba(108, 117, 125, 0.2); }
+
+    .table-tx th {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #888 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px 20px;
+        border: none;
+    }
+
+    .table-tx td {
+        padding: 20px;
+        vertical-align: middle;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        color: #ccc;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 1px solid #ff0000;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-white">Quản lý nạp tiền</h4>
+            <div class="small text-secondary">Duyệt và kiểm tra các yêu cầu nạp tiền từ người dùng</div>
+        </div>
+    </div>
+
+    <div class="transaction-card">
+        <div class="table-responsive">
+            <table class="table table-tx">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Số tiền</th>
+                        <th>Phương thức</th>
+                        <th>Nội dung (Note)</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày yêu cầu</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr id="row-{{ req.id }}">
+                        <td>
+                            <div class="user-info">
+                                <img src="https://i.pravatar.cc/100?u={{ req.user.id }}" class="user-avatar">
+                                <div>
+                                    <div class="fw-bold text-white">{{ req.user.username }}</div>
+                                    <div class="x-small text-secondary">{{ req.user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="fw-bold text-info">{{ req.amount|intcomma }} VNĐ</td>
+                        <td>
+                            <span class="badge bg-dark border border-secondary">{{ req.payment_method }}</span>
+                        </td>
+                        <td><code class="text-danger">{{ req.note }}</code></td>
+                        <td>
+                            <span class="status-badge status-{{ req.status|lower }}" id="status-{{ req.id }}">
+                                {{ req.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="small opacity-50">{{ req.created_at|date:"d/m/Y H:i" }}</td>
+                        <td class="text-end">
+                            {% if req.status == 'Pending' %}
+                            <div class="d-flex gap-2 justify-content-end" id="actions-{{ req.id }}">
+                                <button class="btn btn-action btn-outline-success" onclick="processTransaction({{ req.id }}, 'approve')" title="Duyệt nạp tiền">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <button class="btn btn-action btn-outline-danger" onclick="processTransaction({{ req.id }}, 'reject')" title="Từ chối">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-secondary">Hệ thống chưa ghi nhận yêu cầu nạp tiền nào.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function processTransaction(id, action) {
+        const title = action === 'approve' ? 'Duyệt nạp tiền?' : 'Từ chối giao dịch?';
+        const text = action === 'approve' ? 'Số tiền sẽ được cộng trực tiếp vào tài khoản người dùng.' : 'Giao dịch này sẽ bị đánh dấu thất bại.';
+        const url = action === 'approve' ? `/dashboard/transactions/approve/${id}/` : `/dashboard/transactions/reject/${id}/`;
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: action === 'approve' ? '#28a745' : '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: action === 'approve' ? 'Xác nhận duyệt' : 'Xác nhận từ chối',
+            background: '#111',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            title: 'Thành công!',
+                            text: data.message,
+                            icon: 'success',
+                            background: '#111',
+                            color: '#fff'
+                        });
+                        
+                        // Update UI
+                        const statusBadge = document.getElementById(`status-${id}`);
+                        const actionsDiv = document.getElementById(`actions-${id}`);
+                        
+                        if (action === 'approve') {
+                            statusBadge.className = 'status-badge status-completed';
+                            statusBadge.innerText = 'Đã nạp tiền';
+                        } else {
+                            statusBadge.className = 'status-badge status-failed';
+                            statusBadge.innerText = 'Thất bại';
+                        }
+                        
+                        if (actionsDiv) actionsDiv.remove();
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: data.message,
+                            icon: 'error',
+                            background: '#111',
+                            color: '#fff'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    // Set active sidebar item
+    document.querySelectorAll('.nav-item-custom').forEach(item => {
+        item.classList.remove('active');
+        if(item.getAttribute('href').includes('transactions')) {
+            item.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

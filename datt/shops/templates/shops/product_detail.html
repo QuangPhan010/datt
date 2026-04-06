@@ -1,5 +1,6 @@
 {% extends "shops/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}{{ product.name }} | Nexora{% endblock %}
 
@@ -51,7 +52,7 @@
                              data-type="{{ plan.duration_type }}"
                              onclick="selectPlan(this)">
                             <span class="plan-name">{{ plan.plan_name }}</span>
-                            <span class="plan-price">{{ plan.price|floatformat:0 }} VNĐ</span>
+                            <span class="plan-price">{{ plan.price|intcomma }} VNĐ</span>
                             <span class="plan-duration">
                                 {% if plan.duration_type == 'monthly' %}
                                 / tháng

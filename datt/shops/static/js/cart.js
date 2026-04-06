@@ -1,3 +1,15 @@
+const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+const cartConfig = {
+    updateCartUrl: "/shops/cart/update/",
+    removeFromCartUrl: "/shops/cart/remove/",
+    payWithBalanceUrl: "/shops/cart/pay-with-balance/",
+    csrfToken: csrfInput ? csrfInput.value : ''
+};
+
+function formatVN(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 function updateCartItem(itemId, action) {
     fetch(cartConfig.updateCartUrl, {
         method: 'POST',
@@ -5,83 +17,114 @@ function updateCartItem(itemId, action) {
             'Content-Type': 'application/json',
             'X-CSRFToken': cartConfig.csrfToken
         },
-        body: JSON.stringify({
-            item_id: itemId,
-            action: action
-        })
+        body: JSON.stringify({ item_id: itemId, action: action })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            // Update quantity display
-            const qtyElement = document.getElementById(`qty-${itemId}`);
-            if (qtyElement) qtyElement.innerText = data.quantity;
-
-            // Update item subtotal
-            const subtotalElement = document.getElementById(`subtotal-${itemId}`);
-            if (subtotalElement) subtotalElement.innerText = `${parseFloat(data.item_total).toFixed(0)} VNĐ`;
-
-            // Update cart summary
-            const cartSubtotalElement = document.getElementById('cart-subtotal');
-            if (cartSubtotalElement) cartSubtotalElement.innerText = `${parseFloat(data.cart_total).toFixed(0)} VNĐ`;
-            
-            const cartTotalElement = document.getElementById('cart-total');
-            if (cartTotalElement) cartTotalElement.innerText = `${parseFloat(data.cart_total).toFixed(0)} VNĐ`;
-
-            // Update Navbar cart badge (globally if exists)
-            const cartBadge = document.getElementById('navbar-cart-count');
-            if (cartBadge) cartBadge.innerText = data.cart_count;
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error updating cart:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById(`qty-${itemId}`).value = data.quantity;
+                document.getElementById(`subtotal-${itemId}`).innerText = formatVN(data.item_total) + 'đ';
+                updateSummary(data.cart_total);
+            } else {
+                Swal.fire('Lỗi', data.message, 'error');
+            }
+        });
 }
 
 function removeCartItem(itemId) {
-    if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) return;
-
-    fetch(cartConfig.removeFromCartUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': cartConfig.csrfToken
-        },
-        body: JSON.stringify({
-            item_id: itemId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            // Remove the item card from DOM
-            const itemCard = document.getElementById(`item-${itemId}`);
-            if (itemCard) itemCard.style.opacity = '0';
-            setTimeout(() => {
-                if (itemCard) itemCard.remove();
-                
-                // If cart is empty, reload to show empty state
-                if (data.cart_count === 0) {
-                    location.reload();
-                }
-            }, 300);
-
-            // Update cart summary
-            const cartSubtotalElement = document.getElementById('cart-subtotal');
-            if (cartSubtotalElement) cartSubtotalElement.innerText = `${parseFloat(data.cart_total).toFixed(0)} VNĐ`;
-            
-            const cartTotalElement = document.getElementById('cart-total');
-            if (cartTotalElement) cartTotalElement.innerText = `${parseFloat(data.cart_total).toFixed(0)} VNĐ`;
-
-            const cartBadge = document.getElementById('navbar-cart-count');
-            if (cartBadge) cartBadge.innerText = data.cart_count;
-        } else {
-            alert(data.message);
+    Swal.fire({
+        title: 'Xóa sản phẩm?',
+        text: "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff0000',
+        confirmButtonText: 'Xóa ngay',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(cartConfig.removeFromCartUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': cartConfig.csrfToken
+                },
+                body: JSON.stringify({ item_id: itemId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById(`item-${itemId}`).remove();
+                        updateSummary(data.cart_total);
+                        if (data.cart_count === 0) {
+                            location.reload();
+                        }
+                    }
+                });
         }
-    })
-    .catch(error => {
-        console.error('Error removing from cart:', error);
+    });
+}
+
+function updateSummary(total) {
+    const subtotalEl = document.getElementById('summary-subtotal');
+    const totalEl = document.getElementById('summary-total');
+    
+    if (subtotalEl) subtotalEl.innerText = formatVN(total) + 'đ';
+    if (totalEl) totalEl.innerText = formatVN(total) + 'đ';
+
+    const balanceEl = document.getElementById('user-balance-val');
+    if (balanceEl) {
+        const balance = parseInt(balanceEl.getAttribute('data-balance'));
+        const deficit = Math.max(0, total - balance);
+        document.getElementById('summary-deficit').innerText = formatVN(deficit) + 'đ';
+
+        // Toggle Buttons
+        const payBtn = document.getElementById('btn-pay-balance');
+        const topupBtns = document.getElementById('topup-actions');
+
+        if (deficit === 0) {
+            if (payBtn) payBtn.classList.remove('d-none');
+            if (topupBtns) topupBtns.classList.add('d-none');
+        } else {
+            if (payBtn) payBtn.classList.add('d-none');
+            if (topupBtns) topupBtns.classList.remove('d-none');
+        }
+    }
+}
+
+function processBalancePayment() {
+    const phone = document.getElementById('contact-phone').value;
+    if (!phone || phone.length < 10) {
+        Swal.fire('Thông báo', 'Vui lòng nhập số điện thoại liên hệ hợp lệ.', 'info');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận thanh toán',
+        text: "Hệ thống sẽ trừ tiền trực tiếp từ số dư tài khoản của bạn.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#007bff',
+        confirmButtonText: 'Thanh toán ngay'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('phone', phone);
+
+            fetch(cartConfig.payWithBalanceUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': cartConfig.csrfToken
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        Swal.fire('Thanh toán thất bại', data.message, 'error');
+                    }
+                });
+        }
     });
 }

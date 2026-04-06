@@ -1,0 +1,213 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Dashboard | Nexora Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+  .stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stat-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ff0000, transparent);
+    opacity: 0.5;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+
+  /* Table Styling */
+  .dashboard-table-card {
+    background: rgba(10, 10, 10, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    overflow: hidden;
+    margin-top: 40px;
+  }
+
+  .table-header {
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .table-custom {
+    margin-bottom: 0;
+  }
+
+  .table-custom th {
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    color: #666;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 20px 30px;
+    letter-spacing: 1px;
+  }
+
+  .table-custom td {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.03);
+    color: #ccc;
+    padding: 18px 30px;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    transition: 0.3s;
+  }
+
+  .table-custom tr:hover td {
+    background: rgba(255, 0, 0, 0.03);
+    color: #fff;
+  }
+
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .status-completed { color: #28a745; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.15); }
+  .status-paid { color: #28a745; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.15); }
+  .status-pending { color: #ffc107; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.15); }
+  .status-cancelled { color: #dc3545; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.15); }
+  .status-processing { color: #0dcaf0; background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.15); }
+
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="container-fluid p-0">
+  <!-- Stats Grid -->
+  <div class="row g-4">
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="bi bi-people"></i></div>
+        <div class="stat-number">{{ total_users }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="bi bi-cart-check"></i></div>
+        <div class="stat-number">{{ total_orders }}</div>
+        <div class="stat-label">Orders</div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+        <div class="stat-number">{{ total_revenue|intcomma }} <small class="fs-6">VNĐ</small></div>
+        <div class="stat-label">Revenue</div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+        <div class="stat-number">{{ total_products }}</div>
+        <div class="stat-label">Products</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders Table -->
+  <div class="dashboard-table-card">
+    <div class="table-header d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0 text-white">Recent Orders</h5>
+      <a href="#" class="btn btn-outline-danger btn-sm px-3">View All Orders</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-custom">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Pymt Status</th>
+            <th>Total Price</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+          <tr>
+            <td class="fw-bold text-white small">#{{ order.order_id }}</td>
+            <td>{{ order.full_name }}</td>
+            <td class="small opacity-75">{{ order.email }}</td>
+            <td>
+              <span class="status-badge status-{{ order.status|lower }}">
+                <i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i>
+                {{ order.get_status_display }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge status-{{ order.payment_status|lower }}">
+                {{ order.get_payment_status_display }}
+              </span>
+            </td>
+            <td class="fw-bold text-danger">{{ order.final_price|intcomma }} VNĐ</td>
+            <td class="small">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-5 text-secondary">
+              <i class="bi bi-files d-block fs-1 mb-3 opacity-25"></i>
+              Hệ thống chưa ghi nhận đơn hàng nào.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

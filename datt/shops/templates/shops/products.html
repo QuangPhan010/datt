@@ -1,5 +1,6 @@
 {% extends "shops/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block title %}Sản phẩm Bảo mật | Nexora{% endblock %}
 
 {% block body_block %}
@@ -10,16 +11,6 @@
     <div class="container">
         <h1 class="display-3 fw-bold text-white mb-3">SECURITY STORE</h1>
         <p class="lead text-light opacity-75 mx-auto" style="max-width: 600px;">Thiết bị & Giải pháp bảo mật hàng đầu thế giới dành cho kỷ nguyên số.</p>
-        {% if user.is_superuser %}
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <button class="btn btn-danger px-4 py-2" onclick="openAddModal()">
-                <i class="bi bi-plus-lg me-2"></i>Thêm sản phẩm
-            </button>
-            <button class="btn btn-outline-light px-4 py-2" onclick="openAddCategoryModal()">
-                <i class="bi bi-folder-plus me-2"></i>Thêm danh mục
-            </button>
-        </div>
-        {% endif %}
     </div>
 </header>
 
@@ -27,50 +18,6 @@
 <main class="py-5">
     <div class="container py-lg-4">
         
-        <!-- Category Management (Admin Only) -->
-        {% if user.is_superuser %}
-        <div class="admin-category-panel mb-5 p-4 rounded-4 border border-secondary bg-dark bg-opacity-50">
-            <h5 class="text-white mb-4"><i class="bi bi-gear-fill me-2 text-danger"></i>Quản lý danh mục</h5>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Tên danh mục</th>
-                            <th>Trạng thái</th>
-                            <th>Số sản phẩm</th>
-                            <th class="text-end">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cat in categories %}
-                        <tr>
-                            <td><span class="fw-bold">{{ cat.name }}</span></td>
-                            <td>
-                                {% if cat.is_hidden %}
-                                <span class="badge bg-secondary"><i class="bi bi-eye-slash-fill me-1"></i>Đang ẩn</span>
-                                {% else %}
-                                <span class="badge bg-success"><i class="bi bi-eye-fill me-1"></i>Đang hiện</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ cat.products.count }}</td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-info me-2" onclick="openEditCategoryModal({{ cat.id }}, '{{ cat.name|escapejs }}')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm {% if cat.is_hidden %}btn-outline-success{% else %}btn-outline-warning{% endif %} me-2" onclick="toggleCategoryHide({{ cat.id }})">
-                                    <i class="bi {% if cat.is_hidden %}bi-eye-fill{% else %}bi-eye-slash-fill{% endif %}"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory({{ cat.id }})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {% endif %}
 
         <!-- Public Filters -->
         <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
@@ -101,20 +48,6 @@
                         {% endif %}
                         <img src="{{ product.thumbnail }}" class="product-img" alt="{{ product.name }}">
                         
-                        {% if user.is_superuser %}
-                        <div class="admin-controls">
-                            {% with "plans-data-"|add:product.id|stringformat:"s" as script_id %}
-                                {{ product.get_plans_data|json_script:script_id }}
-                            {% endwith %}
-                            <button class="btn btn-sm btn-dark" 
-                                onclick="openEditModal('{{ product.id }}', '{{ product.name|escapejs }}', '{{ product.category.id }}', '{{ product.description|escapejs }}', '{{ product.thumbnail|escapejs }}', '{{ product.badge|escapejs }}', {{ product.is_active|yesno:'true,false' }}, {{ product.source_file|yesno:'true,false' }}, '{{ product.slug|escapejs }}')">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProduct({{ product.id }})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                        {% endif %}
                     </div>
                     <div class="product-content">
                         <span class="product-category">{{ product.category.name }}</span>
@@ -124,7 +57,7 @@
                             <span class="product-price">
                                 {% with cheapest=product.get_cheapest_plan %}
                                     {% if cheapest %}
-                                        {{ cheapest.price|floatformat:0 }} VNĐ
+                                        {{ cheapest.price|intcomma }} VNĐ
                                     {% else %}
                                         Liên hệ
                                     {% endif %}
@@ -144,118 +77,5 @@
     </div>
 </main>
 
-<!-- ===== MODALS ===== -->
-{% if user.is_superuser %}
-<!-- Product Modal -->
-<div class="modal fade" id="productModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark text-white border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title" id="modalTitle">Thêm sản phẩm</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="productForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Tên sản phẩm</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="p_name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Slug (Đường dẫn URL)</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="p_slug" placeholder="tai-khoan-netflix" required>
-                            <div class="form-text text-white-50 small">Tự động tạo từ tên (có thể sửa).</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Danh mục</label>
-                            <select class="form-select bg-dark text-white border-secondary" id="p_category" required>
-                                <option value="">Chọn danh mục...</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Mô tả</label>
-                        <textarea class="form-control bg-dark text-white border-secondary" id="p_description" rows="2" required></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">URL thumbnail</label>
-                            <input type="url" class="form-control bg-dark text-white border-secondary" id="p_thumbnail" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Badge (New, Hot...)</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="p_badge">
-                        </div>
-                        <div class="col-md-2 mb-3 d-flex align-items-end">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="p_is_active" checked>
-                                <label class="form-check-label">Active</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label text-danger fw-bold"><i class="bi bi-file-earmark-zip me-2"></i>File Source (Tự động tải sau khi mua)</label>
-                        <input type="file" id="p_source_file" class="form-control bg-dark text-white border-secondary" accept=".zip,.rar,.7z">
-                        <div id="p_current_source" class="mt-1 small text-info" style="display:none;"></div>
-                    </div>
-
-                    <hr class="border-secondary my-4">
-                    
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0"><i class="bi bi-tags-fill me-2 text-danger"></i>Cấu hình các gói bán (Plans)</h6>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="addPlanRow()">
-                            <i class="bi bi-plus-lg me-1"></i>Thêm gói
-                        </button>
-                    </div>
-
-                    <div id="plansContainer">
-                        <!-- Plans will be added here dynamically -->
-                    </div>
-
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-danger">Lưu thông tin</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Category Modal -->
-<div class="modal fade" id="categoryModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content bg-dark text-white border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title" id="catModalTitle">Thêm danh mục</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="categoryForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Tên danh mục</label>
-                        <input type="text" class="form-control bg-dark text-white border-secondary" id="cat_name" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-danger">Lưu danh mục</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-
-<script src="{% static 'js/crud.js' %}"></script>
 <script src="{% static 'js/product.js' %}"></script>
 {% endblock %}

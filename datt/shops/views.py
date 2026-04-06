@@ -70,157 +70,7 @@ def product_detail(request, slug):
         'product': product,
     })
 
-# --- SUPERUSER AJAX DECORATOR ---
-def superuser_required_ajax(view_func):
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_superuser:
-            return JsonResponse({'status': 'error', 'message': 'Bạn không có quyền thực hiện hành động này.'}, status=403)
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
-# --- CATEGORY CRUD ---
-@superuser_required_ajax
-@require_POST
-def category_add(request):
-    try:
-        data = json.loads(request.body)
-        cat = Category.objects.create(name=data.get('name'))
-        return JsonResponse({'status': 'success', 'id': cat.id, 'name': cat.name})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@superuser_required_ajax
-@require_POST
-def category_edit(request, pk):
-    try:
-        cat = Category.objects.get(pk=pk)
-        data = json.loads(request.body)
-        cat.name = data.get('name', cat.name)
-        cat.save()
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@superuser_required_ajax
-@require_POST
-def category_delete(request, pk):
-    try:
-        Category.objects.get(pk=pk).delete()
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@superuser_required_ajax
-@require_POST
-def category_toggle_hide(request, pk):
-    try:
-        cat = Category.objects.get(pk=pk)
-        cat.is_hidden = not cat.is_hidden
-        cat.save()
-        return JsonResponse({'status': 'success', 'is_hidden': cat.is_hidden})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-# --- PRODUCT CRUD ---
-@superuser_required_ajax
-@require_POST
-def product_add(request):
-    try:
-        name = request.POST.get('name')
-        slug = request.POST.get('slug')
-        category_id = request.POST.get('category_id')
-        description = request.POST.get('description')
-        thumbnail = request.POST.get('thumbnail')
-        badge = request.POST.get('badge', '')
-        is_active = request.POST.get('is_active') == 'true'
-        source_file = request.FILES.get('source_file')
-        
-        plans_data = json.loads(request.POST.get('plans', '[]'))
-        if not plans_data:
-            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
-
-        with transaction.atomic():
-            product = Product.objects.create(
-                name=name, slug=slug, category_id=category_id,
-                description=description, thumbnail=thumbnail,
-                badge=badge, is_active=is_active, source_file=source_file
-            )
-            for p in plans_data:
-                Plan.objects.create(
-                    product=product, plan_name=p.get('plan_name'),
-                    price=p.get('price'), duration_type=p.get('duration_type'),
-                    duration_value=p.get('duration_value') if p.get('duration_type') != 'lifetime' else None,
-                    is_renewable=p.get('is_renewable', True), is_active=p.get('is_active', True)
-                )
-        return JsonResponse({'status': 'success', 'id': product.id})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@superuser_required_ajax
-@require_POST
-def product_edit(request, pk):
-    try:
-        product = get_object_or_404(Product, pk=pk)
-        name = request.POST.get('name')
-        slug = request.POST.get('slug')
-        category_id = request.POST.get('category_id')
-        description = request.POST.get('description')
-        thumbnail = request.POST.get('thumbnail')
-        badge = request.POST.get('badge', '')
-        is_active = request.POST.get('is_active') == 'true'
-        source_file = request.FILES.get('source_file')
-        
-        plans_data = json.loads(request.POST.get('plans', '[]'))
-        if not plans_data:
-            raise Exception("Sản phẩm phải có ít nhất một gói bán.")
-
-        with transaction.atomic():
-            product.name = name
-            product.slug = slug
-            product.category_id = category_id
-            product.description = description
-            product.thumbnail = thumbnail
-            product.badge = badge
-            product.is_active = is_active
-            if source_file:
-                product.source_file = source_file
-            product.save()
-            
-            updated_plan_ids = []
-            for p_data in plans_data:
-                plan_id = p_data.get('id')
-                if plan_id:
-                    plan = Plan.objects.get(pk=plan_id, product=product)
-                    plan.plan_name = p_data.get('plan_name', plan.plan_name)
-                    plan.price = p_data.get('price', plan.price)
-                    plan.duration_type = p_data.get('duration_type', plan.duration_type)
-                    plan.duration_value = p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None
-                    plan.is_renewable = p_data.get('is_renewable', plan.is_renewable)
-                    plan.is_active = p_data.get('is_active', plan.is_active)
-                    plan.save()
-                    updated_plan_ids.append(plan.id)
-                else:
-                    new_plan = Plan.objects.create(
-                        product=product, plan_name=p_data.get('plan_name'),
-                        price=p_data.get('price'), duration_type=p_data.get('duration_type'),
-                        duration_value=p_data.get('duration_value') if p_data.get('duration_type') != 'lifetime' else None,
-                        is_renewable=p_data.get('is_renewable', True), is_active=p_data.get('is_active', True)
-                    )
-                    updated_plan_ids.append(new_plan.id)
-            product.plans.exclude(id__in=updated_plan_ids).delete()
-
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@superuser_required_ajax
-@require_POST
-def product_delete(request, pk):
-    try:
-        Product.objects.get(pk=pk).delete()
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+# Public Category CRUD and Product CRUD removed. Migrated to Dashboard app.
 
 def services(request):
     return render(request, 'shops/services.html')
@@ -228,11 +78,19 @@ def services(request):
 # --- CART VIEWS ---
 def cart_detail(request):
     items, total_price, total_count = get_cart_data(request)
-    return render(request, 'shops/cart.html', {
+    
+    context = {
         'cart_items': items,
         'total_price': total_price,
         'total_count': total_count
-    })
+    }
+    
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        context['user_balance'] = profile.balance
+        context['deficit'] = max(0, total_price - profile.balance)
+        
+    return render(request, 'shops/cart.html', context)
 
 @require_POST
 def add_to_cart(request):
@@ -349,61 +207,70 @@ def validate_coupon(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
-def checkout(request):
-    items, total_price, total_count = get_cart_data(request)
-    if not items:
-        messages.warning(request, "Giỏ hàng trống.")
-        return redirect('shops:products')
-    return render(request, 'shops/checkout.html', {'cart_items': items, 'total_price': total_price, 'total_count': total_count})
 
+@login_required
 @require_POST
-def place_order(request):
+def pay_with_balance(request):
     try:
         items, total_price, _ = get_cart_data(request)
         if not items:
-            return JsonResponse({'status': 'error', 'message': 'Trống.'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'Giỏ hàng trống.'}, status=400)
         
-        full_name = request.POST.get('full_name')
-        email = request.POST.get('email')
         phone = request.POST.get('phone')
-        note = request.POST.get('note', '')
-        payment_method = request.POST.get('payment_method', 'Bank Transfer')
-        coupon_code = request.POST.get('coupon_code')
+        if not phone:
+            return JsonResponse({'status': 'error', 'message': 'Vui lòng nhập số điện thoại liên hệ.'}, status=400)
         
-        discount_amount = 0
-        applied_coupon = None
-        if coupon_code:
-            coupon = Coupon.objects.filter(code__iexact=coupon_code, is_active=True).first()
-            if coupon and coupon.is_valid(total_price):
-                applied_coupon = coupon
-                discount_amount = (coupon.discount_value / 100) * float(total_price) if coupon.discount_type == 'Percentage' else min(coupon.discount_value, float(total_price))
-        
-        final_price = float(total_price) - discount_amount
+        profile = request.user.profile
+        if profile.balance < total_price:
+            return JsonResponse({'status': 'error', 'message': 'Số dư tài khoản không đủ. Vui lòng nạp thêm.'}, status=400)
         
         with transaction.atomic():
-            order = Order.objects.create(
-                user=request.user if request.user.is_authenticated else None,
-                full_name=full_name, email=email, phone=phone, note=note,
-                total_price=total_price, discount_amount=discount_amount,
-                final_price=final_price, coupon=applied_coupon,
-                payment_method=payment_method, status='Pending'
-            )
-            for item in items:
-                plan = item.plan if hasattr(item, 'plan') else item['plan']
-                qty = item.quantity if hasattr(item, 'plan') else item['quantity']
-                OrderItem.objects.create(order=order, product=plan.product, plan_name=plan.plan_name, price=plan.price, quantity=qty)
+            # 1. Update Profile (Balance & Phone)
+            profile.balance -= total_price
+            if not profile.phone or profile.phone != phone:
+                profile.phone = phone
+            profile.save()
             
-            if request.user.is_authenticated:
-                Cart.objects.filter(user=request.user).delete()
-            else:
-                request.session['cart'] = {}
-                request.session.modified = True
-                
-            if applied_coupon:
-                applied_coupon.used_count += 1
-                applied_coupon.save()
-
+            # 2. Create Order
+            order = Order.objects.create(
+                user=request.user,
+                full_name=request.user.get_full_name() or request.user.username,
+                email=request.user.email,
+                phone=phone,
+                total_price=total_price,
+                final_price=total_price,
+                payment_method='Wallet Balance',
+                status='Processing',
+                payment_status='Paid'
+            )
+            
+            # 3. Create OrderItems
+            for item in items:
+                OrderItem.objects.create(
+                    order=order, 
+                    product=item.product, 
+                    plan_name=item.plan.plan_name, 
+                    price=item.plan.price, 
+                    quantity=item.quantity
+                )
+            
+            # 4. Create Transaction record
+            from users.models import Transaction
+            Transaction.objects.create(
+                user=request.user,
+                amount=total_price,
+                type='Payment',
+                status='Completed',
+                method='Wallet',
+                transaction_code=f"ORDER_{order.order_id}",
+                description=f"Thanh toán đơn hàng #{order.order_id} bằng số dư."
+            )
+            
+            # 5. Clear Cart
+            Cart.objects.filter(user=request.user).delete()
+            
             return JsonResponse({'status': 'success', 'redirect_url': reverse('shops:order_success', kwargs={'order_id': order.id})})
+            
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 

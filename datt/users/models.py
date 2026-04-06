@@ -8,7 +8,7 @@ from django.utils import timezone
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL , on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='users/%Y/%m/%d/', blank=True)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    balance = models.BigIntegerField(default=0)
     fullname = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)
 
@@ -44,7 +44,7 @@ class Transaction(models.Model):
     ]
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='transactions')
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.BigIntegerField(default=0)
     type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     method = models.CharField(max_length=50, blank=True, null=True)
@@ -70,7 +70,7 @@ class TopUpRequest(models.Model):
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='topup_requests')
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.BigIntegerField(default=0)
     payment_method = models.CharField(max_length=50, choices=METHOD_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     note = models.CharField(max_length=100, unique=True) # E.g. NAPTIEN_1_ABC123

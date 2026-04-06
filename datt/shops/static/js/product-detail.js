@@ -1,4 +1,7 @@
 let currentPrice = 0;
+function formatVN(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
 
 function selectPlan(el) {
     // UI
@@ -16,7 +19,7 @@ function selectPlan(el) {
 function updateTotal() {
     const qty = parseInt(document.getElementById('purchaseQty').value) || 1;
     const total = currentPrice * qty;
-    document.getElementById('displayTotal').textContent = total.toFixed(0) + ' VNĐ';
+    document.getElementById('displayTotal').textContent = formatVN(Math.round(total)) + ' VNĐ';
 
     // Update hidden quantity field for form submission if used
     const finalQty = document.getElementById('finalQty');

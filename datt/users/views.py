@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
+from django.http import JsonResponse
 from .forms import (
     LoginForm,
     UserRegistrationForm,
@@ -230,7 +231,7 @@ def topup_create(request):
         return JsonResponse({'status': 'error', 'message': 'Dữ liệu không hợp lệ.'})
         
     try:
-        amount = float(amount)
+        amount = int(float(amount))
         if amount < 10000:
             return JsonResponse({'status': 'error', 'message': 'Số tiền tối thiểu là 10,000 VNĐ.'})
     except ValueError:
