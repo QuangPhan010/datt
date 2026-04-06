@@ -1,0 +1,180 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Xác nhận thanh toán | Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .topup-detail-page {
+        padding-top: 50px;
+        padding-bottom: 80px;
+        min-height: 100vh;
+        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+    }
+    .detail-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        color: #fff;
+    }
+    .qr-box {
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 0 auto 20px;
+        display: inline-block;
+    }
+    .qr-box img { max-width: 200px; display: block; }
+    
+    .countdown-box {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #ffc107;
+        margin-bottom: 20px;
+    }
+    
+    .instruction-table {
+        width: 100%;
+        margin: 20px 0;
+        background: rgba(0,0,0,0.2);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .instruction-table td {
+        padding: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        vertical-align: middle;
+    }
+    .instruction-table td:first-child { color: #a0a0a0; width: 150px; }
+    
+    .copy-btn {
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        transition: all 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="topup-detail-page text-center text-white">
+    <div class="container">
+        <div class="max-width-700 mx-auto" style="max-width: 700px;">
+            <div class="detail-card">
+                <div class="mb-4">
+                    <h4 class="fw-bold">Xác nhận thanh toán</h4>
+                    <p class="text-secondary small">Vui lòng hoàn tất chuyển khoản theo thông tin bên dưới</p>
+                </div>
+                
+                <div class="countdown-box" id="timer">15:00</div>
+                
+                <div class="qr-box">
+                    <img src="{{ topup.qr_url }}" alt="VietQR Payment">
+                </div>
+                <div class="small fw-bold text-info mb-4">
+                    <i class="bi bi-qr-code-scan me-2"></i> Mở ứng dụng Ngân hàng để quét QR
+                </div>
+                
+                <div class="text-start">
+                    <table class="instruction-table">
+                        <tr>
+                            <td>Ngân hàng</td>
+                            <td class="fw-bold">MB BANK (Ngân hàng Quân Đội)</td>
+                        </tr>
+                        <tr>
+                            <td>Chủ tài khoản</td>
+                            <td class="fw-bold">PHAN CONG QUANG</td>
+                        </tr>
+                        <tr>
+                            <td>Số tài khoản</td>
+                            <td class="fw-bold text-danger">
+                                0123456789
+                                <button class="copy-btn" onclick="copyText('0123456789')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Số tiền</td>
+                            <td class="fw-bold text-danger">
+                                {{ topup.amount|floatformat:0 }} VNĐ
+                                <button class="copy-btn" onclick="copyText('{{ topup.amount|floatformat:0 }}')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nội dung CK</td>
+                            <td class="fw-bold text-info">
+                                {{ topup.note }}
+                                <button class="copy-btn" onclick="copyText('{{ topup.note }}')">Copy</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="alert alert-info bg-dark bg-opacity-25 border-info border-opacity-25 text-info text-start small mt-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Hệ thống sẽ nạp tiền tự động:</strong> Trong vòng 1-5 phút sau khi nhận được tiền. Vui lòng ghi chính xác nội dung chuyển khoản.
+                </div>
+                
+                <div id="status-checker" class="mt-4">
+                    <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
+                    <span class="small text-secondary">Đang chờ hệ thống xác nhận thanh toán...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Đã sao chép vào bộ nhớ tạm!');
+        });
+    }
+
+    // Countdown Timer
+    let timeLeft = 15 * 60; // 15 mins in seconds
+    const timerEl = document.getElementById('timer');
+    
+    // Check if created time is old
+    const createdDate = new Date("{{ topup.created_at|date:'c' }}");
+    const now = new Date();
+    const elapsed = Math.floor((now - createdDate) / 1000);
+    timeLeft -= (elapsed > 0 ? elapsed : 0);
+
+    const countdown = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerEl.innerText = "HẾT HẠN";
+            timerEl.classList.replace('text-warning', 'text-danger');
+            document.getElementById('status-checker').innerHTML = '<span class="text-danger">Giao dịch đã hết hạn thanh toán. Vui lòng thử lại.</span>';
+            return;
+        }
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }, 1000);
+
+    // Status Polling
+    const pollStatus = setInterval(() => {
+        fetch("{% url 'shops:check_topup_status' topup.id %}")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'Completed') {
+                    clearInterval(pollStatus);
+                    document.getElementById('status-checker').innerHTML = '<div class="text-success fw-bold"><i class="bi bi-check-circle-fill me-2"></i>NẠP TIỀN THÀNH CÔNG! Đang chuyển hướng...</div>';
+                    setTimeout(() => window.location.href = "{% url 'shops:wallet_index' %}", 2000);
+                } else if (data.status === 'Expired' || data.is_expired) {
+                    clearInterval(pollStatus);
+                    document.getElementById('status-checker').innerHTML = '<span class="text-danger">Giao dịch đã hết hạn.</span>';
+                }
+            });
+    }, 5000); // Check every 5s
+</script>
+{% endblock %}

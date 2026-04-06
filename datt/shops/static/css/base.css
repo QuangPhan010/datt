@@ -3,6 +3,7 @@ body {
     background: radial-gradient(circle at top, #0a0a0a, #000);
     color: #fff;
     font-family: 'Poppins', sans-serif;
+    padding-top: 80px;
 }
 
 /* ===== NAVBAR ===== */
@@ -408,3 +409,55 @@ footer::before {
 .partner-item:hover .partner-name {
     color: #ff0000;
 }
+
+ /* Toast Styles */
+ #toast-container {
+     position: fixed;
+     top: 100px;
+     right: 20px;
+     z-index: 9999;
+ }
+
+ .nexora-toast {
+     background: rgba(20, 20, 20, 0.85);
+     backdrop-filter: blur(10px);
+     border: 1px solid rgba(255, 0, 0, 0.3);
+     border-left: 4px solid #ff0000;
+     color: #fff;
+     padding: 15px 25px;
+     border-radius: 8px;
+     margin-bottom: 10px;
+     display: flex;
+     align-items: center;
+     gap: 12px;
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+     transform: translateX(120%);
+     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+ }
+
+ .nexora-toast.show {
+     transform: translateX(0);
+ }
+
+ .nexora-toast i {
+     font-size: 1.2rem;
+     color: inherit;
+ }
+
+ /* Toast Colors */
+ .nexora-toast.toast-success {
+     border-color: #28a745;
+     border-left-color: #28a745;
+     color: #28a745;
+ }
+
+ .nexora-toast.toast-error {
+     border: #dc3545;
+     border-left-color: #dc3545;
+     color: #dc3545;
+ }
+
+ .nexora-toast.toast-info {
+     border-left-color: #007bff;
+     color: #007bff;
+ }

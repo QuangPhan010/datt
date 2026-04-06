@@ -124,7 +124,7 @@
                             <span class="product-price">
                                 {% with cheapest=product.get_cheapest_plan %}
                                     {% if cheapest %}
-                                        ${{ cheapest.price|floatformat:2 }}{% if cheapest.duration_type == 'monthly' %}/m{% elif cheapest.duration_type == 'yearly' %}/y{% endif %}
+                                        {{ cheapest.price|floatformat:0 }} VNĐ
                                     {% else %}
                                         Liên hệ
                                     {% endif %}

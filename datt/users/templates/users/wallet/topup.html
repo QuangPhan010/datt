@@ -1,0 +1,139 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Nạp tiền vào tài khoản | Nexora{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+{% endblock %}
+
+{% block body_block %}
+<div class="wallet-page text-white">
+    <div class="container">
+        <div class="max-width-700 mx-auto" style="max-width: 800px;">
+            <div class="wallet-card">
+                <h3 class="fw-bold mb-5 text-center text-white">NẠP TIỀN VÀO TÀI KHOẢN</h3>
+                
+                <!-- Step 1: Amount -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4 text-white">
+                        <i class="bi bi-cash-coin me-2 text-danger"></i> 1. Nhập số tiền nạp
+                    </h5>
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="10000">10,000 VNĐ</div></div>
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="50000">50,000 VNĐ</div></div>
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="100000">100,000 VNĐ</div></div>
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="200000">200,000 VNĐ</div></div>
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="500000">500,000 VNĐ</div></div>
+                        <div class="col-md-4 col-6"><div class="amount-preset" data-val="1000000">1,000,000 VNĐ</div></div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-secondary">VNĐ</span>
+                        <input type="number" id="custom-amount" class="form-control bg-dark border-secondary text-white p-3" placeholder="Hoặc nhập số tiền khác">
+                    </div>
+                </div>
+
+                <!-- Step 2: Method -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4 text-white">
+                        <i class="bi bi-wallet-fill me-2 text-info"></i> 2. Chọn phương thức nạp
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="method-card active" data-method="Bank Transfer">
+                                <i class="bi bi-bank method-icon"></i>
+                                <div class="fw-bold mb-1">Ngân hàng</div>
+                                <div class="small text-secondary">Hỗ trợ VietQR</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="method-card" data-method="Momo">
+                                <i class="bi bi-phone-vibrate method-icon"></i>
+                                <div class="fw-bold mb-1">Ví MoMo</div>
+                                <div class="small text-secondary">Tốc độ tức thì</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="method-card" data-method="VNPAY">
+                                <i class="bi bi-credit-card-2-front method-icon"></i>
+                                <div class="fw-bold mb-1">Cổng VNPAY</div>
+                                <div class="small text-secondary">Thẻ ATM/Visa</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Action -->
+                <div class="text-center mt-5 pt-3">
+                    <button id="btn-create-request" class="btn btn-topup w-100 mb-4">
+                        <i class="bi bi-lightning-charge-fill me-2"></i> XÁC NHẬN NẠP TIỀN
+                    </button>
+                    <p class="small text-secondary px-lg-5">
+                        Bằng việc xác nhận, bạn đồng ý với <a href="#" class="text-danger text-decoration-none fw-bold">Điều khoản thanh toán</a> của Nexora Security Group.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.amount-preset').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.amount-preset').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('custom-amount').value = el.dataset.val;
+        });
+    });
+
+    document.querySelectorAll('.method-card').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.method-card').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+        });
+    });
+
+    document.getElementById('btn-create-request').addEventListener('click', function() {
+        const amount = document.getElementById('custom-amount').value;
+        const method = document.querySelector('.method-card.active').dataset.method;
+        const btn = this;
+
+        if (!amount || amount < 10000) {
+            showToast('Số tiền tối thiểu là 10,000đ', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div>ĐANG XỬ LÝ...';
+
+        const formData = new FormData();
+        formData.append('amount', amount);
+        formData.append('method', method);
+
+        fetch("{% url 'users:topup_create' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = data.redirect_url;
+            } else {
+                showToast(data.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Lỗi hệ thống, vui lòng thử lại.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+        });
+    });
+</script>
+{% endblock %}

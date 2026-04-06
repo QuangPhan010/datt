@@ -1,0 +1,353 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Thanh toán | Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .checkout-page {
+        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+        min-height: 100vh;
+        color: #fff;
+        padding-top: 50px;
+        padding-bottom: 80px;
+    }
+
+    .checkout-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: #e94560;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        color: #a0a0a0;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: #e94560;
+        color: #fff;
+        box-shadow: none;
+    }
+
+    /* Payment Methods */
+    .payment-option {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .payment-option:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .payment-option.active {
+        border-color: #e94560;
+        background: rgba(233, 69, 96, 0.1);
+    }
+
+    .payment-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    /* Order Summary Mini */
+    .order-summary-mini {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .checkout-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .checkout-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .price-final {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #e94560;
+    }
+
+    .btn-place-order {
+        background: linear-gradient(90deg, #e94560, #ff2e63);
+        border: none;
+        border-radius: 8px;
+        padding: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+
+    .btn-place-order:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    /* Bank Details Hidden Area */
+    .bank-info-box {
+        background: rgba(15, 52, 96, 0.5);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid rgba(76, 201, 240, 0.3);
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="checkout-page">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left: Form -->
+            <div class="col-lg-8">
+                <form id="place-order-form">
+                    {% csrf_token %}
+                    <!-- Step 1: Customer Info -->
+                    <div class="checkout-card mb-4">
+                        <h4 class="section-title"><i class="bi bi-person-badge"></i> Thông tin khách hàng</h4>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" name="full_name" class="form-control" required value="{{ request.user.get_full_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email nhận sản phẩm</label>
+                                <input type="email" name="email" class="form-control" required value="{{ request.user.email|default:'' }}">
+                                <div class="form-text text-secondary small">Key/Tài khoản sẽ được gửi vào email này.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="text" name="phone" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Ghi chú đơn hàng (Tùy chọn)</label>
+                                <textarea name="note" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Payment Method -->
+                    <div class="checkout-card">
+                        <h4 class="section-title"><i class="bi bi-wallet2"></i> Phương thức thanh toán</h4>
+                        
+                        <div class="payment-methods">
+                            <!-- Bank Transfer -->
+                            <div class="payment-option active" onclick="selectPayment('Bank Transfer', this)">
+                                <div class="payment-icon text-info"><i class="bi bi-bank"></i></div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Chuyển khoản ngân hàng</div>
+                                    <div class="small text-secondary">Quét mã QR hoặc chuyển khoản thủ công</div>
+                                </div>
+                                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                            </div>
+
+                            <!-- Momo -->
+                            <div class="payment-option" onclick="selectPayment('Momo', this)">
+                                <div class="payment-icon text-danger" style="background: rgba(165, 0, 100, 0.1); color: #a50064 !important;"><i class="bi bi-m-circle-fill"></i></div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Ví điện tử MoMo</div>
+                                    <div class="small text-secondary">Tương thích với mọi ứng dụng ngân hàng</div>
+                                </div>
+                                <i class="bi bi-circle text-secondary fs-5"></i>
+                            </div>
+
+                            <!-- ZaloPay -->
+                            <div class="payment-option" onclick="selectPayment('ZaloPay', this)">
+                                <div class="payment-icon text-primary"><i class="bi bi-z-circle-fill"></i></div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Ví ZaloPay</div>
+                                    <div class="small text-secondary">Thanh toán an toàn qua Zalo</div>
+                                </div>
+                                <i class="bi bi-circle text-secondary fs-5"></i>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="payment_method" id="selected-payment" value="Bank Transfer">
+                        <input type="hidden" name="coupon_code" id="order-coupon-code">
+
+                        <div class="bank-info-box mt-4" id="payment-notice">
+                            <div class="small">
+                                <i class="bi bi-info-circle-fill text-info me-2"></i>
+                                Sau khi nhấn "Đặt hàng", bạn sẽ nhận được thông tin số tài khoản và nội dung chuyển khoản để hoàn tất đơn hàng.
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-lg-4">
+                <div class="checkout-card sticky-top" style="top: 20px;">
+                    <h4 class="section-title"><i class="bi bi-cart-check"></i> Đơn hàng của bạn</h4>
+                    
+                    <div class="order-summary-mini mb-4">
+                        {% for item in cart_items %}
+                        <div class="checkout-item">
+                            <img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold small">{{ item.product.name }}</div>
+                                <div class="text-secondary small">{{ item.plan.plan_name }} x {{ item.quantity }}</div>
+                            </div>
+                            <div class="fw-bold small text-end">{{ item.get_total_price|floatformat:0 }} VNĐ</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="price-breakdown small">
+                        <div class="summary-row d-flex justify-content-between mb-2">
+                        <span>Tạm tính</span>
+                        <span class="fw-bold">{{ total_price|floatformat:0 }} VNĐ</span>
+                    </div>
+                    <div class="summary-row d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển</span>
+                        <span class="text-success fw-bold">0 VNĐ</span>
+                    </div>
+                    <div class="summary-row d-flex justify-content-between mb-3 border-top pt-2">
+                        <span class="h5 fw-bold mb-0">Tổng cộng</span>
+                        <span class="h5 fw-bold mb-0 text-danger">{{ total_price|floatformat:0 }} VNĐ</span>
+                    </div>
+                    </div>
+
+                    <button type="button" class="btn btn-place-order btn-danger w-100 mt-4 hstack justify-content-center" onclick="submitOrder()">
+                        <span id="btn-text">XÁC NHẬN ĐẶT HÀNG</span>
+                        <div id="btn-spinner" class="spinner-border spinner-border-sm ms-2" style="display:none;"></div>
+                    </button>
+
+                    <div class="mt-4 text-center">
+                        <div class="small text-secondary mb-2">Đảm bảo an toàn 100%</div>
+                        <div class="d-flex justify-content-center gap-3 fs-3 opacity-50">
+                            <i class="bi bi-shield-lock"></i>
+                            <i class="bi bi-patch-check"></i>
+                            <i class="bi bi-credit-card-2-front"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectPayment(method, element) {
+        document.getElementById('selected-payment').value = method;
+        
+        // UI Update
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('active');
+            opt.querySelector('.bi-check-circle-fill')?.classList.replace('bi-check-circle-fill', 'bi-circle');
+            opt.querySelector('.bi-circle')?.classList.replace('text-success', 'text-secondary');
+        });
+        
+        element.classList.add('active');
+        const icon = element.querySelector('.bi-circle');
+        icon.classList.replace('bi-circle', 'bi-check-circle-fill');
+        icon.classList.replace('text-secondary', 'text-success');
+    }
+
+    // Capture coupon from sessionStorage if set on cart page
+    window.addEventListener('DOMContentLoaded', () => {
+        const storedCoupon = sessionStorage.getItem('applied_coupon');
+        if (storedCoupon) {
+            const couponData = JSON.parse(storedCoupon);
+            document.getElementById('order-coupon-code').value = couponData.code;
+            document.getElementById('checkout-discount-row').style.setProperty('display', 'flex', 'important');
+            document.getElementById('checkout-discount-val').innerText = `-${couponData.discount.toFixed(0)} VNĐ`;
+            document.getElementById('checkout-final-price').innerText = `${couponData.final_total.toFixed(0)} VNĐ`;
+        }
+    });
+
+    function submitOrder() {
+        const form = document.getElementById('place-order-form');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const btn = btnText.parentElement;
+
+        btn.disabled = true;
+        btnText.innerText = 'ĐANG XỬ LÝ...';
+        btnSpinner.style.display = 'inline-block';
+
+        const formData = new FormData(form);
+
+        fetch("{% url 'shops:place_order' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                sessionStorage.removeItem('applied_coupon'); // Clear after success
+                window.location.href = data.redirect_url;
+            } else {
+                showToast(data.message, 'error');
+                btn.disabled = false;
+                btnText.innerText = 'XÁC NHẬN ĐẶT HÀNG';
+                btnSpinner.style.display = 'none';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Lỗi hệ thống, vui lòng thử lại.', 'error');
+            btn.disabled = false;
+            btnText.innerText = 'XÁC NHẬN ĐẶT HÀNG';
+            btnSpinner.style.display = 'none';
+        });
+    }
+</script>
+{% endblock %}

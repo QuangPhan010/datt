@@ -1,199 +1,180 @@
-{% extends "users/base.html" %}
-{% block title %}Trang cá nhân - Nexora{% endblock %}
+{% extends "shops/base.html" %}
+{% load static %}
 
-{% block content %}
-<style>
-/* LAYOUT */
-.account-layout{
-  display:grid;
-  grid-template-columns:280px 1fr;
-  gap:24px;
-}
+{% block title %}Tài khoản - Nexora{% endblock %}
 
-@media(max-width:992px){
-  .account-layout{
-    grid-template-columns:1fr;
-  }
-}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
-/* SIDEBAR */
-.account-sidebar{
-  background:#fff;
-  border-radius:18px;
-  padding:24px;
-  box-shadow:0 12px 30px rgba(0,0,0,.12);
-}
+{% block body_block %}
+<div class="profile-page">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="sidebar-card">
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item active">
+                            <a href="{% url 'users:profile' %}">
+                                <i class="bi bi-person"></i> Tài khoản
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#">
+                                <i class="bi bi-bag-check"></i> Lịch sử đơn hàng
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'users:wallet_index' %}">
+                                <i class="bi bi-wallet2"></i> Lịch sử giao dịch
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'users:password_change' %}">
+                                <i class="bi bi-shield-lock"></i> Mật khẩu và bảo mật
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#">
+                                <i class="bi bi-chat-dots"></i> Bình luận của tôi
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#">
+                                <i class="bi bi-heart"></i> Sản phẩm yêu thích
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#">
+                                <i class="bi bi-people"></i> Giới thiệu bạn bè
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-.user-box{
-  text-align:center;
-}
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Overview Section -->
+                <div class="content-card">
+                    <h5 class="section-title">Tổng quan</h5>
+                    <div class="overview-grid">
+                        <div class="overview-item">
+                            <label>Tên đăng nhập</label>
+                            <span>{{ request.user.username }}</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Email</label>
+                            <span>{{ request.user.email }}</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Họ và tên</label>
+                            <span>{{ profile.fullname|default:request.user.get_full_name|default:"Chưa cập nhật" }}</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Nhóm khách hàng</label>
+                            <span>Member</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Số dư</label>
+                            <span class="text-danger">{% if profile.balance %}{{ profile.balance|floatformat:0 }}{% else %}0{% endif %} VNĐ</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Đã tích lũy</label>
+                            <span>0 VNĐ</span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Ngày tham gia</label>
+                            <span>{{ request.user.date_joined|date:"Y-m-d H:i:s" }}</span>
+                        </div>
+                    </div>
 
-.user-avatar{
-  width:96px;
-  height:96px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid #e53935;
-}
+                    <div class="avatar-wrapper">
+                        {% if profile.photo %}
+                        <img src="{{ profile.photo.url }}" class="profile-avatar" id="avatar-preview">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=random" class="profile-avatar" id="avatar-preview">
+                        {% endif %}
+                        <div class="avatar-details">
+                            <button type="button" class="btn-edit-avatar" onclick="document.getElementById('id_photo').click()">
+                                Sửa ảnh đại diện
+                            </button>
+                            <div class="mt-2 avatar-info">
+                                <div>Dung lượng ảnh tối đa 5MB</div>
+                                <div>Định dạng: .JPG, .PNG, .GIF</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-.user-name{
-  margin-top:10px;
-  font-weight:800;
-}
+                <!-- Personal Form Section -->
+                <div class="content-card">
+                    <h5 class="section-title">Cá nhân</h5>
+                    <form method="post" enctype="multipart/form-data" id="profile-form">
+                        {% csrf_token %}
+                        <!-- Hidden photo input to be triggered by button -->
+                        <div style="display:none">
+                            {{ form.photo }}
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="id_fullname" class="form-label">Họ và tên</label>
+                                <input type="text" name="fullname" id="id_fullname" class="form-control" 
+                                       value="{{ form.fullname.value|default:'' }}" placeholder="Nhập họ và tên">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" name="email" id="id_email" class="form-control" 
+                                       value="{{ form.email.value|default:'' }}" placeholder="Nhập địa chỉ email">
+                                {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_phone" class="form-label">Số điện thoại</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+84</span>
+                                    <input type="text" name="phone" id="id_phone" class="form-control" 
+                                           value="{{ form.phone.value|default:'' }}" placeholder="Nhập số điện thoại">
+                                </div>
+                            </div>
+                        </div>
 
-.user-email{
-  font-size:14px;
-  color:#777;
-}
-
-/* MENU */
-.account-menu a{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px;
-  border-radius:12px;
-  color:#333;
-  text-decoration:none;
-  transition:.2s;
-  font-weight:500;
-}
-
-.account-menu a:hover{
-  background:#ffecec;
-  color:#e53935;
-}
-
-.account-menu i{
-  font-size:20px;
-  color:#e53935;
-}
-
-/* MAIN */
-.account-main{
-  background:#fff;
-  border-radius:18px;
-  padding:28px;
-  box-shadow:0 12px 30px rgba(0,0,0,.12);
-}
-
-/* STATS */
-.stat-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:24px;
-}
-
-@media(max-width:768px){
-  .stat-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
-
-.stat-item{
-  border-radius:16px;
-  padding:18px;
-  background:#fff5f5;
-}
-
-.stat-item h4{
-  margin:0;
-  font-weight:800;
-  color:#e53935;
-}
-
-.stat-item span{
-  font-size:13px;
-  color:#777;
-}
-
-/* ACTION */
-.action-bar a{
-  margin-right:8px;
-}
-</style>
-
-<div class="container mt-4 mb-5">
-
-  <div class="account-layout">
-
-    <!-- SIDEBAR -->
-    <div class="account-sidebar">
-
-      <div class="user-box mb-4">
-        {% if request.user.profile.photo %}
-          <img src="{{ request.user.profile.photo.url }}" class="user-avatar">
-        {% else %}
-          <img src="https://i.pravatar.cc/300?u={{ request.user.id }}" class="user-avatar">
-        {% endif %}
-
-        <div class="user-name">
-          {{ request.user.username }}
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="show_name" checked>
+                                <label class="form-check-label small" for="show_name" style="color: #888;">
+                                    Cho phép hiển thị tên của bạn trên các hoạt động
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-save">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="user-email">
-          {{ request.user.email }}
-        </div>
-      </div>
-
-      <div class="account-menu">
-        <a href="#">
-          <i class="bi bi-receipt"></i> Đơn hàng của tôi
-        </a>
-        <a href="#">
-          <i class="bi bi-heart"></i> Sản phẩm yêu thích
-        </a>
-        <a href="#">
-          <i class="bi bi-truck"></i> Sổ địa chỉ
-        </a>
-        <a href="{% url 'users:password_change' %}">
-          <i class="bi bi-lock"></i> Đổi mật khẩu
-        </a>
-        <a href="{% url 'users:edit' %}">
-          <i class="bi bi-gear"></i> Cài đặt tài khoản
-        </a>
-      </div>
-
     </div>
-
-    <!-- MAIN -->
-    <div class="account-main">
-
-      <h4 class="fw-bold mb-3">Tổng quan tài khoản</h4>
-
-      <!-- STATS -->
-      <div class="stat-grid">
-        <div class="stat-item">
-          <h4>0</h4>
-          <span>Đơn hàng</span>
-        </div>
-        <div class="stat-item">
-          <h4>0</h4>
-          <span>Đang giao</span>
-        </div>
-        <div class="stat-item">
-          <h4>0đ</h4>
-          <span>Đã chi tiêu</span>
-        </div>
-        <div class="stat-item">
-          <h4>0</h4>
-          <span>Điểm tích lũy</span>
-        </div>
-      </div>
-
-      <!-- ACTION -->
-      <div class="action-bar">
-        <a href="{% url 'users:edit' %}" class="btn btn-danger btn-sm">
-          <i class="bi bi-pencil"></i> Chỉnh sửa hồ sơ
-        </a>
-        <a href="#" class="btn btn-outline-danger btn-sm">
-          <i class="bi bi-truck"></i> Quản lý địa chỉ
-        </a>
-      </div>
-
-    </div>
-
-  </div>
-
 </div>
+
+<script>
+    // Preview image on selection
+    document.getElementById('id_photo').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatar-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Handle Toast status from messages if present
+    {% if messages %}
+        {% for message in messages %}
+            showToast("{{ message }}", "{{ message.tags }}");
+        {% endfor %}
+    {% endif %}
+</script>
 {% endblock %}

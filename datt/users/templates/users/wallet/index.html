@@ -1,0 +1,97 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Ví của tôi | Nexora{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+{% endblock %}
+
+{% block body_block %}
+<div class="wallet-page text-white">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="wallet-card text-center mb-4">
+                    <div class="balance-label mb-2">Số dư hiện tại</div>
+                    <div class="balance-display">{{ balance|floatformat:0 }} VNĐ</div>
+                    <a href="{% url 'users:topup_index' %}" class="btn btn-topup w-100 mt-3">
+                        <i class="bi bi-plus-circle me-2"></i> NẠP TIỀN NGAY
+                    </a>
+                    
+                    <div class="mt-4 pt-4 border-top border-white border-opacity-10 text-start">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-secondary small">ID Tài khoản</span>
+                            <span class="fw-bold fs-6 text-white">{{ request.user.id }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-secondary small">Loại tài khoản</span>
+                            <span class="badge bg-danger shadow-sm px-3">MEMBER</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="wallet-card p-4">
+                    <h6 class="fw-bold mb-3 text-white">
+                        <i class="bi bi-shield-lock me-2 text-danger"></i> Bảo mật tài khoản
+                    </h6>
+                    <p class="small text-secondary mb-0">Tài khoản của bạn đang được bảo vệ bởi hệ thống Nexora Security.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="wallet-card">
+                    <h5 class="fw-bold mb-4 text-white">
+                        <i class="bi bi-clock-history me-2 text-danger"></i> Lịch sử giao dịch
+                    </h5>
+                    
+                    <div class="transaction-table-wrapper">
+                        <div class="table-responsive">
+                            <table class="table transaction-table text-white">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Loại</th>
+                                        <th>Số tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Mô tả</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for tx in transactions %}
+                                    <tr>
+                                        <td class="small opacity-75">{{ tx.created_at|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <span class="fw-bold {% if tx.type == 'Deposit' %}text-success{% else %}text-danger{% endif %}">
+                                                {{ tx.get_type_display }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-bold fs-6">
+                                            {% if tx.type == 'Deposit' %}+{% else %}-{% endif %}{{ tx.amount|floatformat:0 }} VNĐ
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-{{ tx.status|lower }}">
+                                                <i class="bi {% if tx.status == 'Completed' %}bi-check-circle-fill{% elif tx.status == 'Pending' %}bi-hourglass-split{% else %}bi-x-circle-fill{% endif %}"></i>
+                                                {{ tx.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td class="small text-secondary">{{ tx.description }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5 text-secondary">
+                                            <i class="bi bi-folder2-open d-block fs-1 mb-3 opacity-25"></i>
+                                            Chưa có giao dịch nào ứng với tài khoản này.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

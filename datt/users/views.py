@@ -17,10 +17,18 @@ from .forms import (
     UserRegistrationForm,
     UserEditForm,
     ProfileEditForm,
+    ProfileUpdateForm,
     PasswordResetRequestForm,
     OTPVerifyForm,
 )
-from .models import Profile
+from .models import Profile, Transaction, TopUpRequest
+
+import random
+import string
+from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+from django.db import transaction
 
 OTP_TTL_MINUTES = 10
 OTP_SESSION_HASH = 'password_reset_otp_hash'
@@ -198,3 +206,73 @@ def password_reset_new(request):
         form = SetPasswordForm(user)
 
     return render(request, 'users/password_reset_new.html', {'form': form})
+
+@login_required
+def wallet_index(request):
+    transactions = request.user.transactions.all().order_by('-created_at')
+    context = {
+        'transactions': transactions,
+        'balance': request.user.profile.balance
+    }
+    return render(request, 'users/wallet/index.html', context)
+
+@login_required
+def topup_index(request):
+    return render(request, 'users/wallet/topup.html')
+
+@login_required
+@require_POST
+def topup_create(request):
+    amount = request.POST.get('amount')
+    method = request.POST.get('method')
+    
+    if not amount or not method:
+        return JsonResponse({'status': 'error', 'message': 'Dữ liệu không hợp lệ.'})
+        
+    try:
+        amount = float(amount)
+        if amount < 10000:
+            return JsonResponse({'status': 'error', 'message': 'Số tiền tối thiểu là 10,000 VNĐ.'})
+    except ValueError:
+        return JsonResponse({'status': 'error', 'message': 'Số tiền không hợp lệ.'})
+
+    # Generate Note
+    random_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    note = f"NAPTIEN {request.user.id} {random_str}"
+    
+    # Expiry 15 mins
+    expired_at = timezone.now() + timezone.timedelta(minutes=15)
+    
+    # Generate QR (Example for MB Bank)
+    qr_url = f"https://img.vietqr.io/image/MB-0123456789-compact.png?amount={int(amount)}&addInfo={note}&accountName=PHAN%20CONG%20QUANG"
+
+    topup = TopUpRequest.objects.create(
+        user=request.user,
+        amount=amount,
+        payment_method=method,
+        note=note,
+        qr_url=qr_url,
+        expired_at=expired_at
+    )
+    
+    return JsonResponse({
+        'status': 'success',
+        'redirect_url': reverse('users:topup_detail', args=[topup.id])
+    })
+
+@login_required
+def topup_detail(request, pk):
+    topup = get_object_or_404(TopUpRequest, pk=pk, user=request.user)
+    if topup.is_expired():
+        topup.status = 'Expired'
+        topup.save()
+        
+    return render(request, 'users/wallet/topup_detail.html', {'topup': topup})
+
+@login_required
+def check_topup_status(request, pk):
+    topup = get_object_or_404(TopUpRequest, pk=pk, user=request.user)
+    return JsonResponse({
+        'status': topup.status,
+        'is_expired': topup.is_expired()
+    })

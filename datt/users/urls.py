@@ -34,4 +34,11 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('edit/', views.edit, name='edit'),
 
+    # Wallet URLs
+    path('wallet/', views.wallet_index, name='wallet_index'),
+    path('wallet/topup/', views.topup_index, name='topup_index'),
+    path('wallet/topup/create/', views.topup_create, name='topup_create'),
+    path('wallet/topup/<int:pk>/', views.topup_detail, name='topup_detail'),
+    path('wallet/topup/<int:pk>/check/', views.check_topup_status, name='check_topup_status'),
+
 ]

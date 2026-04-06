@@ -51,7 +51,7 @@
                              data-type="{{ plan.duration_type }}"
                              onclick="selectPlan(this)">
                             <span class="plan-name">{{ plan.plan_name }}</span>
-                            <span class="plan-price">${{ plan.price|floatformat:2 }}</span>
+                            <span class="plan-price">{{ plan.price|floatformat:0 }} VNĐ</span>
                             <span class="plan-duration">
                                 {% if plan.duration_type == 'monthly' %}
                                 / tháng
@@ -66,17 +66,32 @@
                         {% endfor %}
                     </div>
 
-                    <div class="detail-cta-wrapper">
-                        <div class="total-price-display">
-                            <span class="total-label">Tổng thanh toán</span>
-                            <span class="total-value" id="displayTotal">$0.00</span>
+                        <div class="detail-cta-wrapper d-flex flex-column gap-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="quantity-selector d-flex align-items-center border border-secondary rounded-3 p-1">
+                                    <button class="btn btn-sm text-white px-2" onclick="changeQty(-1)"><i class="bi bi-dash"></i></button>
+                                    <input type="number" id="purchaseQty" value="1" min="1" class="bg-transparent border-0 text-center text-white" style="width: 50px;">
+                                    <button class="btn btn-sm text-white px-2" onclick="changeQty(1)"><i class="bi bi-plus"></i></button>
+                                </div>
+                                <div class="total-price-display mb-0 flex-grow-1">
+                                    <span class="total-label">Tổng thanh toán</span>
+                                    <span class="total-value" id="displayTotal">0 VNĐ</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-danger flex-grow-1 py-3" onclick="handleAddToCart()">
+                                    <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                                </button>
+                                <form action="#" method="POST" id="purchaseForm" class="flex-grow-1">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="plan_id" id="selectedPlanId">
+                                    <input type="hidden" name="quantity" id="finalQty">
+                                    <button type="submit" class="btn-order-now w-100 py-3">Mua ngay</button>
+                                </form>
+                            </div>
                         </div>
-                        <form action="#" method="POST" id="purchaseForm">
-                            {% csrf_token %}
-                            <input type="hidden" name="plan_id" id="selectedPlanId">
-                            <button type="submit" class="btn-order-now">Mua ngay</button>
-                        </form>
-                    </div>
+
 
                     <div class="mt-4 p-3 rounded-3 bg-dark bg-opacity-25 border border-secondary border-opacity-25">
                         <small class="text-secondary"><i class="bi bi-shield-check me-2 text-success"></i>Giao dịch an toàn & bảo mật. Hỗ trợ 24/7.</small>
@@ -87,5 +102,51 @@
     </div>
 </div>
 
+<script>
+    function changeQty(delta) {
+        const input = document.getElementById('purchaseQty');
+        let val = parseInt(input.value) + delta;
+        if (val < 1) val = 1;
+        input.value = val;
+        updateTotal();
+    }
+
+    function handleAddToCart() {
+        const planId = document.getElementById('selectedPlanId').value;
+        const qty = document.getElementById('purchaseQty').value;
+        
+        if (!planId) {
+            alert("Vui lòng chọn một gói bán.");
+            return;
+        }
+
+        fetch("{% url 'shops:add_to_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                plan_id: planId,
+                quantity: qty
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const badge = document.getElementById('cart-badge');
+                badge.innerText = data.cart_count;
+                badge.style.display = 'block';
+                
+                // Show success animation or toast
+                showToast(data.message);
+            } else {
+                showToast(data.message, 'error');
+            }
+        });
+    }
+</script>
+
 <script src="{% static 'js/product-detail.js' %}"></script>
 {% endblock %}
+

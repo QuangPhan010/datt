@@ -48,8 +48,8 @@ window.addPlanRow = function(data = null) {
                 <input type="text" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-name" value="${data ? data.plan_name : ''}" required>
             </div>
             <div class="col-md-3">
-                <label class="form-label small">Giá ($)</label>
-                <input type="number" step="any" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-price" value="${data ? data.price : ''}" required>
+                <label class="form-label small">Giá (VNĐ)</label>
+                <input type="number" step="1000" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-price" value="${data ? data.price : ''}" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label small">Loại</label>

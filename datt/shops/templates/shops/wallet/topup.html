@@ -1,0 +1,193 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Nạp tiền vào tài khoản | Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .topup-page {
+        padding-top: 50px;
+        padding-bottom: 80px;
+        min-height: 100vh;
+        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+    }
+    .topup-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        color: #fff;
+    }
+    .method-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .method-card:hover { border-color: #e94560; background: rgba(233, 69, 96, 0.1); }
+    .method-card.active { border-color: #e94560; background: rgba(233, 69, 96, 0.2); }
+    .method-icon { font-size: 2.5rem; margin-bottom: 10px; color: #e94560; }
+    
+    .amount-preset {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        color: #aeaeae;
+        border-radius: 8px;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .amount-preset:hover { background: rgba(40, 167, 69, 0.2); }
+    .amount-preset.active { background: #28a745; color: #fff; border-color: #28a745; }
+    
+    .form-control {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px;
+    }
+    .form-control:focus { background: rgba(0, 0, 0, 0.3); border-color: #e94560; color: #fff; box-shadow: none; }
+    
+    .btn-submit {
+        background: linear-gradient(45deg, #e94560, #ff2e63);
+        border: none;
+        border-radius: 10px;
+        padding: 15px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="topup-page text-white">
+    <div class="container">
+        <div class="max-width-700 mx-auto" style="max-width: 800px;">
+            <div class="topup-card">
+                <h3 class="fw-bold mb-4 text-center">NẠP TIỀN VÀO TÀI KHOẢN</h3>
+                
+                <!-- Step 1: Amount -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-cash-coin me-2 text-danger"></i> 1. Nhập số tiền nạp</h5>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="10000">10,000 VNĐ</div></div>
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="50000">50,000 VNĐ</div></div>
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="100000">100,000 VNĐ</div></div>
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="200000">200,000 VNĐ</div></div>
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="500000">500,000 VNĐ</div></div>
+                        <div class="col-md-3 col-6"><div class="amount-preset" data-val="1000000">1,000,000 VNĐ</div></div>
+                        <div class="col-md-6 col-12"><input type="number" id="custom-amount" class="form-control" placeholder="Số tiền khác (VNĐ)"></div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Method -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-wallet-fill me-2 text-info"></i> 2. Chọn phương thức nạp</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="method-card active" data-method="Bank Transfer">
+                                <i class="bi bi-bank method-icon"></i>
+                                <div class="fw-bold">Ngân hàng</div>
+                                <div class="small text-secondary">Hỗ trợ VietQR</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="method-card" data-method="Momo">
+                                <i class="bi bi-m-circle-fill method-icon text-danger"></i>
+                                <div class="fw-bold">Ví MoMo</div>
+                                <div class="small text-secondary">Tốc độ tức thì</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="method-card" data-method="VNPAY">
+                                <i class="bi bi-v-circle-fill method-icon text-primary"></i>
+                                <div class="fw-bold">Thẻ VNPAY</div>
+                                <div class="small text-secondary">An toàn thẻ ATM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Action -->
+                <div class="text-center mt-5">
+                    <button id="btn-create-request" class="btn btn-submit w-100 text-white">XÁC NHẬN NẠP TIỀN</button>
+                    <div class="mt-3 small text-secondary">
+                        Bằng việc nạp tiền, bạn đồng ý với <a href="#" class="text-danger">Điều khoản thanh toán</a> của Nexora.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.amount-preset').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.amount-preset').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('custom-amount').value = el.dataset.val;
+        });
+    });
+
+    document.querySelectorAll('.method-card').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.method-card').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+        });
+    });
+
+    document.getElementById('btn-create-request').addEventListener('click', function() {
+        const amount = document.getElementById('custom-amount').value;
+        const method = document.querySelector('.method-card.active').dataset.method;
+        const btn = this;
+
+        if (!amount || amount < 10000) {
+            showToast('Số tiền tối thiểu là 10,000đ', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'ĐANG XỬ LÝ...';
+
+        const formData = new FormData();
+        formData.append('amount', amount);
+        formData.append('method', method);
+
+        fetch("{% url 'shops:topup_create' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = data.redirect_url;
+            } else {
+                showToast(data.message, 'error');
+                btn.disabled = false;
+                btn.innerText = 'XÁC NHẬN NẠP TIỀN';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Lỗi hệ thống, vui lòng thử lại.', 'error');
+            btn.disabled = false;
+        });
+    });
+</script>
+{% endblock %}

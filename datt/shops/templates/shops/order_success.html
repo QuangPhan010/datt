@@ -1,0 +1,216 @@
+{% extends "shops/base.html" %}
+{% load static %}
+
+{% block title %}Đặt hàng thành công | Nexora{% endblock %}
+
+{% block extra_head %}
+<style>
+    .success-page {
+        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+        min-height: 100vh;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .success-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        max-width: 800px;
+        width: 100%;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .success-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        background: rgba(40, 167, 69, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        color: #28a745;
+        font-size: 3.5rem;
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+    }
+
+    @keyframes scaleIn {
+        from { transform: scale(0); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .order-number {
+        background: rgba(233, 69, 96, 0.1);
+        color: #e94560;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .instruction-box {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: left;
+        margin-top: 30px;
+    }
+
+    .qr-placeholder {
+        width: 180px;
+        height: 180px;
+        background: #fff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000;
+        font-weight: 700;
+        margin: 0 auto 20px;
+        padding: 10px;
+    }
+
+    .bank-info-table {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .bank-info-table td {
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .bank-info-table td:first-child {
+        color: #a0a0a0;
+        width: 140px;
+    }
+
+    .copy-btn {
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 10px;
+    }
+
+    .btn-action {
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-primary-nexora {
+        background: #e94560;
+        color: #fff;
+    }
+
+    .btn-outline-nexora {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="success-page">
+    <div class="success-card">
+        <div class="success-icon-wrapper">
+            <i class="bi bi-check-lg"></i>
+        </div>
+        
+        <div class="order-number">ĐƠN HÀNG #{{ order.order_id|default:order.id }}</div>
+        
+        <h1 class="fw-bold mb-3">Đặt hàng thành công!</h1>
+        <p class="text-secondary pb-2">
+            Cảm ơn bạn đã lựa chọn <strong>Nexora</strong>. Đơn hàng của bạn đang ở trạng thái <strong>{{ order.get_status_display }}</strong>.
+        </p>
+
+        {% if order.status == 'Pending' %}
+        <div class="instruction-box">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    <div class="qr-placeholder">
+                        <!-- Generic QR Placeholder or dynamic QR can be here -->
+                        <div class="text-center">
+                            <i class="bi bi-qr-code fs-1 d-block mb-1"></i>
+                            <span style="font-size: 10px;">QUÉT MÃ ĐỂ THANH TOÁN</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h5 class="fw-bold mb-3">Chuyển khoản thủ công</h5>
+                    <table class="bank-info-table">
+                        <tr>
+                            <td>Ngân hàng</td>
+                            <td class="fw-bold">MB Bank (Quân Đội)</td>
+                        </tr>
+                        <tr>
+                            <td>Số tài khoản</td>
+                            <td class="fw-bold">
+                                0123456789 
+                                <button class="copy-btn" onclick="copyText('0123456789')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Chủ tài khoản</td>
+                            <td class="fw-bold">PHAN CONG QUANG</td>
+                        </tr>
+                        <tr>
+                            <td>Số tiền</td>
+                            <td class="fw-bold text-danger">
+                                {{ order.final_price|floatformat:0 }} VNĐ
+                                <button class="copy-btn" onclick="copyText('{{ order.final_price|floatformat:0 }}')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nội dung</td>
+                            <td class="fw-bold text-info">
+                                {{ order.order_id|default:order.id }}
+                                <button class="copy-btn" onclick="copyText('{{ order.order_id|default:order.id }}')">Copy</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-4 p-3 rounded bg-info bg-opacity-10 border border-info border-opacity-25 small text-info">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Hệ thống sẽ tự động kích hoạt sản phẩm trong vòng 1-5 phút sau khi nhận được thanh toán.
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-center gap-3 mt-5">
+            <a href="{% url 'shops:index' %}" class="btn-action btn-outline-nexora">Quay lại trang chủ</a>
+            {% if request.user.is_authenticated %}
+                <a href="#" class="btn-action btn-primary-nexora">Xem lịch sử mua hàng</a>
+            {% endif %}
+        </div>
+
+        <div class="mt-5 pt-4 border-top border-white border-opacity-10 small text-secondary">
+            Gặp vấn đề? Liên hệ Fanpage hoặc Hotline: 09xx.xxx.xxx
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Đã sao chép vào bộ nhớ tạm!');
+        });
+    }
+</script>
+{% endblock %}
