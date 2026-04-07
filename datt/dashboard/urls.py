@@ -22,4 +22,7 @@ urlpatterns = [
     path('transactions/', views.transactions_list, name='transactions_list'),
     path('transactions/approve/<int:pk>/', views.transaction_approve, name='transaction_approve'),
     path('transactions/reject/<int:pk>/', views.transaction_reject, name='transaction_reject'),
+    
+    # Order Management
+    path('orders/', views.orders_list, name='orders_list'),
 ]

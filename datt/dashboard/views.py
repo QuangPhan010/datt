@@ -246,3 +246,8 @@ def transaction_reject(request, pk):
         return JsonResponse({'status': 'success', 'message': 'Đã từ chối giao dịch.'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+@superuser_required
+def orders_list(request):
+    orders = Order.objects.all().order_by('-created_at')
+    return render(request, 'dashboard/order.html', {'orders': orders})
