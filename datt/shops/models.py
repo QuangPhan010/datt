@@ -203,3 +203,31 @@ class ProductKey(models.Model):
     def __str__(self):
         return f"Key for {self.product.name} (Sold: {self.is_sold})"
 
+class DownloadGrant(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='download_grants')
+    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name='download_grants')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='download_grants')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='download_grants')
+    token = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True, editable=False)
+    is_active = models.BooleanField(default=True)
+    max_downloads = models.IntegerField(default=3)
+    download_count = models.IntegerField(default=0)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['order_item'], name='unique_download_grant_per_item'),
+        ]
+
+    def can_download(self):
+        if not self.is_active:
+            return False
+        if self.expires_at and self.expires_at <= timezone.now():
+            return False
+        return self.download_count < self.max_downloads
+
+    def __str__(self):
+        return f"DownloadGrant {self.token} for order {self.order.order_id}"
+

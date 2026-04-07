@@ -18,7 +18,7 @@ urlpatterns = [
     path('cart/get-count/', views.get_cart_count, name='get_cart_count'),
     path('cart/validate-coupon/', views.validate_coupon, name='validate_coupon'),
     path('cart/pay-with-balance/', views.pay_with_balance, name='pay_with_balance'),
-    path('cart/pay-with-balance/', views.pay_with_balance, name='pay_with_balance'),
     path('order-success/<int:order_id>/', views.order_success, name='order_success'),
+    path('download/<uuid:token>/', views.download_by_token, name='download_by_token'),
 
 ]

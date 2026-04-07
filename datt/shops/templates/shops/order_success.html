@@ -200,6 +200,19 @@
             {% endif %}
         </div>
 
+        {% if download_urls %}
+        <div class="instruction-box mt-4">
+            <h5 class="fw-bold mb-3">Tải file sản phẩm</h5>
+            <p class="text-secondary mb-3">Link tải sẽ hết hạn sau 24 giờ vì giới hạn số lần tải.</p>
+            <div class="d-flex flex-wrap gap-2">
+                {% for url in download_urls %}
+                <a href="{{ url }}" class="btn-action btn-primary-nexora">Tải lại file {{ forloop.counter }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+
         <div class="mt-5 pt-4 border-top border-white border-opacity-10 small text-secondary">
             Gặp vấn đề? Liên hệ Fanpage hoặc Hotline: 09xx.xxx.xxx
         </div>
@@ -212,5 +225,18 @@
             showToast('Đã sao chép vào bộ nhớ tạm!');
         });
     }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        {% if download_urls %}
+        const firstUrl = "{{ download_urls.0 }}";
+        if (firstUrl) {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = firstUrl;
+            document.body.appendChild(iframe);
+        }
+        {% endif %}
+    });
 </script>
 {% endblock %}

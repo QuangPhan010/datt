@@ -1,13 +1,15 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from .models import Product, Category, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey
+from .models import Product, Category, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey, DownloadGrant
+from .services import grant_downloads_for_order
 
 def get_cart_data(request):
     """Hybrid cart helper: handles session for guests and DB for users."""
@@ -253,6 +255,8 @@ def pay_with_balance(request):
                     price=item.plan.price, 
                     quantity=item.quantity
                 )
+
+            grants = grant_downloads_for_order(order)
             
             # 4. Create Transaction record
             from users.models import Transaction
@@ -268,15 +272,65 @@ def pay_with_balance(request):
             
             # 5. Clear Cart
             Cart.objects.filter(user=request.user).delete()
-            
-            return JsonResponse({'status': 'success', 'redirect_url': reverse('shops:order_success', kwargs={'order_id': order.id})})
+
+            download_urls = [
+                reverse('shops:download_by_token', kwargs={'token': grant.token})
+                for grant in grants
+            ]
+            response = {
+                'status': 'success',
+                'redirect_url': reverse('shops:order_success', kwargs={'order_id': order.id}),
+                'download_urls': download_urls,
+            }
+            if download_urls:
+                response['first_download_url'] = download_urls[0]
+
+            return JsonResponse(response)
             
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 def order_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    return render(request, 'shops/order_success.html', {'order': order})
+    download_urls = []
+    if order.payment_status == 'Paid' and order.user_id:
+        grants = DownloadGrant.objects.filter(order=order, is_active=True, product__source_file__isnull=False)
+        download_urls = [
+            reverse('shops:download_by_token', kwargs={'token': grant.token})
+            for grant in grants
+        ]
+    return render(request, 'shops/order_success.html', {'order': order, 'download_urls': download_urls})
+
+def download_by_token(request, token):
+    try:
+        grant = DownloadGrant.objects.select_related('order', 'product', 'user').get(token=token)
+    except DownloadGrant.DoesNotExist:
+        raise Http404("Download link not found.")
+
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Login required.")
+
+    if grant.user_id != request.user.id:
+        return HttpResponseForbidden("Not allowed.")
+
+    if grant.order.payment_status != 'Paid':
+        return HttpResponseForbidden("Payment required.")
+
+    if not grant.can_download():
+        return HttpResponseForbidden("Download limit reached or expired.")
+
+    product = grant.product
+    if not product or not product.source_file:
+        raise Http404("File not found.")
+
+    with transaction.atomic():
+        refreshed = DownloadGrant.objects.select_for_update().get(pk=grant.pk)
+        if not refreshed.can_download():
+            return HttpResponseForbidden("Download limit reached or expired.")
+        DownloadGrant.objects.filter(pk=refreshed.pk).update(download_count=F('download_count') + 1)
+
+    filename = f"{product.slug or product.id}.zip"
+    return FileResponse(product.source_file.open('rb'), as_attachment=True, filename=filename)
 
 def get_cart_count(request):
     if request.user.is_authenticated:
