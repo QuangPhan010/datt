@@ -46,12 +46,18 @@
                     <div class="plan-selector">
                         {% for plan in product.plans.all %}
                         {% if plan.is_active %}
-                        <div class="plan-option {% if forloop.first %}active{% endif %}" 
-                             data-price="{{ plan.price }}" 
-                             data-id="{{ plan.id }}"
-                             data-type="{{ plan.duration_type }}"
-                             onclick="selectPlan(this)">
-                            <span class="plan-name">{{ plan.plan_name }}</span>
+                         <div class="plan-option {% if forloop.first %}active{% endif %}" 
+                              data-price="{{ plan.price|stringformat:'d' }}" 
+                              data-id="{{ plan.id }}"
+                              data-stock="{{ plan.stock }}"
+                              data-type="{{ plan.duration_type }}"
+                              onclick="selectPlan(this)">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <span class="plan-name">{{ plan.plan_name }}</span>
+                                <span class="badge {% if plan.stock < 5 %}bg-danger{% else %}bg-secondary{% endif %} bg-opacity-25 border border-white border-opacity-10 small" style="font-size: 0.65rem;">
+                                    Kho: {{ plan.stock }}
+                                </span>
+                            </div>
                             <span class="plan-price">{{ plan.price|intcomma }} VNĐ</span>
                             <span class="plan-duration">
                                 {% if plan.duration_type == 'monthly' %}
@@ -69,11 +75,11 @@
 
                         <div class="detail-cta-wrapper d-flex flex-column gap-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="quantity-selector d-flex align-items-center border border-secondary rounded-3 p-1">
-                                    <button class="btn btn-sm text-white px-2" onclick="changeQty(-1)"><i class="bi bi-dash"></i></button>
-                                    <input type="number" id="purchaseQty" value="1" min="1" class="bg-transparent border-0 text-center text-white" style="width: 50px;">
-                                    <button class="btn btn-sm text-white px-2" onclick="changeQty(1)"><i class="bi bi-plus"></i></button>
-                                </div>
+                                 <div class="quantity-selector d-flex align-items-center border border-secondary rounded-3 p-1">
+                                     <button class="btn btn-sm text-white px-2" onclick="changeQty(-1)"><i class="bi bi-dash"></i></button>
+                                     <input type="number" id="purchaseQty" value="1" min="1" class="bg-transparent border-0 text-center text-white" style="width: 50px;" readonly>
+                                     <button class="btn btn-sm text-white px-2" onclick="changeQty(1)"><i class="bi bi-plus"></i></button>
+                                 </div>
                                 <div class="total-price-display mb-0 flex-grow-1">
                                     <span class="total-label">Tổng thanh toán</span>
                                     <span class="total-value" id="displayTotal">0 VNĐ</span>

@@ -45,6 +45,10 @@ window.addPlanRow = function(data = null) {
                 <label class="form-label small text-secondary">Giá (VNĐ)</label>
                 <input type="number" step="1" min="0" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-price" value="${data ? Math.round(data.price) : ''}" required>
             </div>
+            <div class="col-md-2">
+                <label class="form-label small text-secondary">Kho</label>
+                <input type="number" min="0" class="form-control form-control-sm bg-dark text-white border-secondary p-plan-stock" value="${data ? data.stock : '0'}" required>
+            </div>
             <div class="col-md-3">
                 <label class="form-label small text-secondary">Loại</label>
                 <select class="form-select form-select-sm bg-dark text-white border-secondary p-plan-type" onchange="updateDurationVisibility(this)" required>
@@ -166,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     id: row.querySelector('.p-plan-id').value || null,
                     plan_name: row.querySelector('.p-plan-name').value,
                     price: row.querySelector('.p-plan-price').value,
+                    stock: row.querySelector('.p-plan-stock').value,
                     duration_type: row.querySelector('.p-plan-type').value,
                     duration_value: row.querySelector('.p-plan-duration').value,
                     is_renewable: row.querySelector('.p-plan-renewable').checked,

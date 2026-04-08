@@ -108,15 +108,25 @@ def add_to_cart(request):
                 cart=cart, product=plan.product, plan=plan, defaults={'quantity': quantity}
             )
             if not created:
+                if cart_item.quantity + quantity > plan.stock:
+                    return JsonResponse({'status': 'error', 'message': f'Chỉ còn {plan.stock} sản phẩm trong kho.'}, status=400)
                 cart_item.quantity += quantity
                 cart_item.save()
+            else:
+                if quantity > plan.stock:
+                    cart_item.delete()
+                    return JsonResponse({'status': 'error', 'message': f'Chỉ còn {plan.stock} sản phẩm trong kho.'}, status=400)
             cart_count = cart.get_item_count()
         else:
             cart = request.session.get('cart', {})
             key = f"plan_{plan_id}"
             if key in cart:
+                if cart[key]['quantity'] + quantity > plan.stock:
+                    return JsonResponse({'status': 'error', 'message': f'Chỉ còn {plan.stock} sản phẩm trong kho.'}, status=400)
                 cart[key]['quantity'] += quantity
             else:
+                if quantity > plan.stock:
+                    return JsonResponse({'status': 'error', 'message': f'Chỉ còn {plan.stock} sản phẩm trong kho.'}, status=400)
                 cart[key] = {'plan_id': plan_id, 'quantity': quantity}
             request.session['cart'] = cart
             request.session.modified = True
@@ -136,6 +146,8 @@ def update_cart(request):
         if request.user.is_authenticated:
             cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
             if action == 'increase':
+                if cart_item.quantity + 1 > cart_item.plan.stock:
+                    return JsonResponse({'status': 'error', 'message': f'Chỉ còn {cart_item.plan.stock} sản phẩm trong kho.'}, status=400)
                 cart_item.quantity += 1
             elif action == 'decrease' and cart_item.quantity > 1:
                 cart_item.quantity -= 1
@@ -150,6 +162,9 @@ def update_cart(request):
             cart = request.session.get('cart', {})
             if item_id in cart:
                 if action == 'increase':
+                    plan = Plan.objects.get(id=cart[item_id]['plan_id'])
+                    if cart[item_id]['quantity'] + 1 > plan.stock:
+                        return JsonResponse({'status': 'error', 'message': f'Chỉ còn {plan.stock} sản phẩm trong kho.'}, status=400)
                     cart[item_id]['quantity'] += 1
                 elif action == 'decrease' and cart[item_id]['quantity'] > 1:
                     cart[item_id]['quantity'] -= 1

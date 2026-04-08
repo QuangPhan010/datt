@@ -1,0 +1,205 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Quản lý người dùng | Nexora Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+    .user-card {
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-users {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #eee !important;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        width: 100%;
+    }
+
+    .table-users thead th {
+        background: transparent !important;
+        color: #666 !important;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 15px 20px;
+        border: none !important;
+    }
+
+    .table-users tbody tr {
+        background: rgba(255, 255, 255, 0.02) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-users tbody tr:hover {
+        background: rgba(255, 0, 0, 0.05) !important;
+        transform: scale(1.005);
+    }
+
+    .table-users td {
+        padding: 20px;
+        vertical-align: middle;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .table-users td:first-child { border-radius: 16px 0 0 16px; }
+    .table-users td:last-child { border-radius: 0 16px 16px 0; }
+
+    .user-avatar-lg {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        border: 2px solid rgba(255, 0, 0, 0.2);
+        padding: 2px;
+    }
+
+    .rank-badge {
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .rank-standard { color: #888; background: rgba(136, 136, 136, 0.1); border: 1px solid rgba(136, 136, 136, 0.2); }
+    .rank-silver { color: #bdc3c7; background: rgba(189, 195, 199, 0.1); border: 1px solid rgba(189, 195, 199, 0.2); }
+    .rank-gold { color: #f1c40f; background: rgba(241, 196, 15, 0.1); border: 1px solid rgba(241, 196, 15, 0.2); }
+    .rank-diamond { color: #3498db; background: rgba(52, 152, 219, 0.1); border: 1px solid rgba(52, 152, 219, 0.2); }
+
+    .metric-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.95rem;
+    }
+
+    .text-spending { color: #fc8181; }
+    .text-deposit { color: #68d391; }
+
+    .form-control-custom {
+        background: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        border-radius: 12px !important;
+        padding: 10px 15px !important;
+        transition: 0.3s;
+    }
+
+    .form-control-custom:focus {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border-color: #ff0000 !important;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.2) !important;
+        outline: none;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Quản lý người dùng</h4>
+            <div class="small text-secondary">Danh sách khách hàng và thống kê chi tiêu hệ thống</div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="user-card mb-4 p-3">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-9">
+                <label class="small text-secondary mb-1">Tìm kiếm người dùng</label>
+                <input type="text" name="search" class="form-control form-control-custom" placeholder="Username, Email..." value="{{ filters.search }}">
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-danger flex-grow-1 fw-bold">
+                    <i class="bi bi-search me-2"></i> TÌM KIẾM
+                </button>
+                <a href="{% url 'dashboard:users_list' %}" class="btn btn-outline-secondary px-3">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="user-card">
+        <div class="table-responsive">
+            <table class="table table-users">
+                <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Hạng / Số dư</th>
+                        <th class="text-center">Đơn đã mua</th>
+                        <th class="text-end">Tổng nạp tiền</th>
+                        <th class="text-end">Tổng tiền chi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{% if user.profile.photo %}{{ user.profile.photo.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&background=random{% endif %}" class="user-avatar-lg">
+                                <div>
+                                    <div class="fw-bold text-white">{{ user.username }}</div>
+                                    <div class="small text-secondary">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mb-1">
+                                <span class="rank-badge rank-{{ user.profile.rank|lower }}">
+                                    {{ user.profile.get_rank_display }}
+                                </span>
+                            </div>
+                            <div class="small fw-bold text-info">{{ user.profile.balance|intcomma }} đ</div>
+                        </td>
+                        <td class="text-center">
+                            <div class="fw-bold text-white fs-5">{{ user.order_count }}</div>
+                            <div class="small text-secondary">Đơn hàng</div>
+                        </td>
+                        <td class="text-end">
+                            <div class="metric-value text-deposit fw-bold">+{{ user.total_deposited|intcomma }}</div>
+                            <div class="small text-secondary">VNĐ</div>
+                        </td>
+                        <td class="text-end">
+                            <div class="metric-value text-spending fw-bold">-{{ user.total_spent|intcomma }}</div>
+                            <div class="small text-secondary">VNĐ</div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-secondary opacity-50">
+                                <i class="bi bi-people fs-1 d-block mb-3"></i>
+                                Không tìm thấy người dùng nào phù hợp.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.nav-item-custom').forEach(item => {
+            if(item.getAttribute('href').includes('users')) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    });
+</script>
+{% endblock %}

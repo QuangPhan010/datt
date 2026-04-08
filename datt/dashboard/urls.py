@@ -25,4 +25,7 @@ urlpatterns = [
     
     # Order Management
     path('orders/', views.orders_list, name='orders_list'),
+
+    # User Management
+    path('users/', views.users_list, name='users_list'),
 ]

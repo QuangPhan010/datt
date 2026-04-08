@@ -3,36 +3,81 @@
 
 {% block content %}
 <style>
-.register-done-card{
-  max-width:480px;
-  width:100%;
-  padding:36px;
-  border-radius:18px;
-  text-align:center;
-  background:#fff;
-  box-shadow:0 14px 40px rgba(229,57,53,.25);
+.register-done-card {
+  max-width: 500px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.05);
+  transition: 0.3s;
 }
 
-.register-done-icon{
-  font-size:56px;
-  color:#22c55e;
+.register-done-card:hover {
+  border-color: rgba(255, 0, 0, 0.3);
+  transform: translateY(-5px);
+}
+
+.register-done-icon {
+  font-size: 64px;
+  color: #22c55e;
+  filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.4));
+  margin-bottom: 20px;
+}
+
+.success-title {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.success-text {
+  color: #888;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.btn-nexora {
+  background: #ff0000;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  transition: 0.3s;
+}
+
+.btn-nexora:hover {
+  background: #cc0000;
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+  color: #fff;
 }
 </style>
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
   <div class="register-done-card">
 
-    <div class="register-done-icon mb-3">
+    <div class="register-done-icon">
       <i class="bi bi-check-circle-fill"></i>
     </div>
 
-    <h3 class="mb-2">Chúc mừng!</h3>
+    <h2 class="success-title mb-3">Đăng ký thành công!</h2>
 
-    <p class="text-muted mt-2">
-      Tài khoản của bạn đã được tạo thành công. Bây giờ bạn có thể đăng nhập để bắt đầu sử dụng dịch vụ.
+    <p class="success-text mb-4">
+      Chào mừng bạn đến với <strong>Nexora</strong>. <br>
+      Tài khoản của bạn đã được khởi tạo. Hãy đăng nhập để khám phá các dịch vụ bảo mật cao cấp của chúng tôi ngay bây giờ.
     </p>
 
-    <a href="{% url 'users:login' %}" class="btn btn-danger mt-3"> Đăng nhập ngay </a>
+    <a href="{% url 'users:login' %}" class="btn btn-nexora"> 
+      <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập ngay 
+    </a>
 
   </div>
 </div>

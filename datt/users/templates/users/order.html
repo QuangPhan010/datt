@@ -1,0 +1,262 @@
+{% extends "shops/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Lịch sử đơn hàng | Nexora{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<style>
+    .order-item-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    .order-table th {
+        background: rgba(255, 255, 255, 0.02) !important;
+        color: #888 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px 20px;
+        border: none;
+    }
+    .order-table td {
+        background: transparent !important;
+        padding: 20px;
+        vertical-align: middle;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        color: #ccc;
+    }
+    .order-id-link {
+        color: #ff0000;
+        font-weight: 700;
+        text-decoration: none;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .btn-view-order {
+        background: rgba(255, 0, 0, 0.1);
+        border: 1px solid rgba(255, 0, 0, 0.2);
+        color: #ff0000;
+        border-radius: 10px;
+        padding: 6px 15px;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+    .btn-view-order:hover {
+        background: #ff0000;
+        color: #fff;
+    }
+    /* Modal Styling */
+    .modal-content {
+        background: #0f0f0f;
+        border: 1px solid rgba(255, 0, 0, 0.2);
+        border-radius: 20px;
+        color: #fff;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.1);
+    }
+    .modal-header { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .modal-footer { border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .item-row {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="profile-page">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="sidebar-card">
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item">
+                            <a href="{% url 'users:profile' %}">
+                                <i class="bi bi-person"></i> Tài khoản
+                            </a>
+                        </li>
+                        <li class="sidebar-item active">
+                            <a href="{% url 'users:order_list' %}">
+                                <i class="bi bi-bag-check"></i> Lịch sử đơn hàng
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'users:wallet_index' %}">
+                                <i class="bi bi-wallet2"></i> Lịch sử giao dịch
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'users:password_change' %}">
+                                <i class="bi bi-shield-lock"></i> Mật khẩu và bảo mật
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <div class="content-card">
+                    <h5 class="section-title">
+                        <i class="bi bi-bag-check me-2 text-danger"></i> Đơn hàng của tôi
+                    </h5>
+
+                    <div class="table-responsive">
+                        <table class="table order-table text-white">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Phương thức</th>
+                                    <th>Tổng tiền</th>
+                                    <th class="text-end">Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <span class="order-id-link">#{{ order.order_id }}</span>
+                                    </td>
+                                    <td class="small opacity-75">
+                                        {{ order.created_at|date:"d/m/Y H:i" }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-dark border border-secondary border-opacity-25 px-3 py-2">
+                                            {{ order.get_payment_method_display }}
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold">
+                                        {{ order.final_price|intcomma }} VNĐ
+                                    </td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-view-order" data-bs-toggle="modal" data-bs-target="#orderModal{{ order.id }}">
+                                            <i class="bi bi-eye me-1"></i> Xem chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-secondary">
+                                        <i class="bi bi-cart-x d-block fs-1 mb-3 opacity-25"></i>
+                                        Bạn chưa thực hiện đơn đặt hàng nào.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function forceCloseModal(modalId) {
+        // Find modal instance
+        const modalElement = document.getElementById(modalId);
+        if (!modalElement) return;
+
+        // Try standard Bootstrap close if possible
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+
+        // Manual cleanup for backdrop and classes if standard fails
+        modalElement.classList.remove('show');
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.style.display = 'none';
+
+        // Remove backdrops manually
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(b => b.remove());
+        
+        // Remove body overflow hidden
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
+
+    // Escape Key Listener
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                forceCloseModal(modal.id);
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block modals %}
+    {% for order in orders %}
+    <!-- Modal for this specific order -->
+    <div class="modal fade" id="orderModal{{ order.id }}" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết đơn hàng #{{ order.order_id }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="forceCloseModal('orderModal{{ order.id }}')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <h6 class="text-secondary text-uppercase small fw-bold mb-3">Sản phẩm đã mua</h6>
+                        {% for item in order.items.all %}
+                        <div class="item-row d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; opacity: 0.8;">
+                                    <i class="bi bi-box-seam text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ item.product.name }}</div>
+                                    <div class="small text-secondary">Gói: {{ item.plan_name }} | SL: {{ item.quantity }}</div>
+                                    
+                                    <!-- Download Link -->
+                                    {% with item.download_grants.first as grant %}
+                                    {% if grant and grant.order.payment_status == 'Paid' %}
+                                    <div class="mt-2">
+                                        <a href="{% url 'shops:download_by_token' grant.token %}" class="btn btn-sm btn-success py-1 px-3" style="font-size: 0.75rem;">
+                                            <i class="bi bi-download me-1"></i> Tải xuống file
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    {% endwith %}
+
+                                    <!-- Product Keys -->
+                                    {% if item.assigned_keys.all %}
+                                    <div class="mt-2 p-2 rounded bg-dark border border-secondary border-opacity-25">
+                                        <div class="small text-secondary text-uppercase fw-bold mb-1" style="font-size: 0.65rem;">Thông tin sản phẩm / Key:</div>
+                                        {% for key in item.assigned_keys.all %}
+                                        <div class="font-monospace small text-info">{{ key.key_data }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold text-info">{{ item.get_total_price|intcomma }} VNĐ</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

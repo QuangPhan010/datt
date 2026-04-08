@@ -11,6 +11,20 @@ function formatVN(num) {
 }
 
 function updateCartItem(itemId, action) {
+    const qtyInput = document.getElementById(`qty-${itemId}`);
+    const currentQty = parseInt(qtyInput.value);
+    const stock = parseInt(qtyInput.getAttribute('data-stock')) || 0;
+
+    if (action === 'increase' && currentQty >= stock) {
+        Swal.fire({
+            title: 'Hết hàng',
+            text: `Số lượng tối đa có sẵn là ${stock}`,
+            icon: 'warning',
+            confirmButtonColor: '#ff0000'
+        });
+        return;
+    }
+
     fetch(cartConfig.updateCartUrl, {
         method: 'POST',
         headers: {

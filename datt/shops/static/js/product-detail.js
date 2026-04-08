@@ -1,6 +1,7 @@
 let currentPrice = 0;
+let currentStock = 0;
 function formatVN(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function selectPlan(el) {
@@ -10,9 +11,41 @@ function selectPlan(el) {
 
     // Update data
     currentPrice = parseFloat(el.getAttribute('data-price'));
+    currentStock = parseInt(el.getAttribute('data-stock')) || 0;
     const planId = el.getAttribute('data-id');
 
     document.getElementById('selectedPlanId').value = planId;
+
+    // Reset quantity if it exceeds new stock
+    const qtyInput = document.getElementById('purchaseQty');
+    if (parseInt(qtyInput.value) > currentStock) {
+        qtyInput.value = currentStock > 0 ? 1 : 0;
+    }
+
+    updateTotal();
+}
+
+function changeQty(delta) {
+    const input = document.getElementById('purchaseQty');
+    let val = parseInt(input.value) + delta;
+    
+    if (val < 1) val = 1;
+
+    if (val > currentStock) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hết hàng',
+                text: `Số lượng tối đa có sẵn là ${currentStock}`,
+                icon: 'warning',
+                confirmButtonColor: '#ff0000'
+            });
+        } else {
+            alert(`Chỉ còn ${currentStock} sản phẩm trong kho.`);
+        }
+        return;
+    }
+
+    input.value = val;
     updateTotal();
 }
 

@@ -1,4 +1,4 @@
-from .models import Profile, FavoriteMusic
+from .models import Profile
 from django import forms
 from django.contrib.auth.models import User
 
@@ -42,18 +42,6 @@ class ProfileUpdateForm(forms.ModelForm):
             user.email = self.cleaned_data['email']
             user.save()
         return profile
-
-class FavoriteMusicForm(forms.ModelForm):
-    class Meta:
-        model = FavoriteMusic
-        fields = ('title', 'artist', 'audio_file', 'spotify_url', 'youtube_url')
-        widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Song title', 'class': 'form-control'}),
-            'artist': forms.TextInput(attrs={'placeholder': 'Artist name', 'class': 'form-control'}),
-            'audio_file': forms.FileInput(attrs={'class': 'form-control', 'accept': 'audio/*'}),
-            'spotify_url': forms.URLInput(attrs={'placeholder': 'Spotify URL (optional)', 'class': 'form-control'}),
-            'youtube_url': forms.URLInput(attrs={'placeholder': 'YouTube URL (optional)', 'class': 'form-control'}),
-        }
 
 class LoginForm(forms.Form):
     username = forms.CharField()

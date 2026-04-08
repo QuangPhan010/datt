@@ -1,48 +1,146 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% load humanize %}
-
 {% block title %}Quản lý giao dịch | Nexora Admin{% endblock %}
-
 {% block extra_head %}
 <style>
+    .form-control-custom {
+        background: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        border-radius: 12px !important;
+        padding: 10px 15px !important;
+        transition: 0.3s;
+    }
+
+    .form-control-custom:focus {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border-color: #ff0000 !important;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.2) !important;
+        outline: none;
+    }
+
+    .form-control-custom::placeholder {
+        color: #aaa !important;
+        opacity: 0.7;
+    }
+
+    .form-control-custom option {
+        background: #1a1a1a !important;
+        color: #fff !important;
+    }
+
+    .modal-body label {
+        color: #bbb !important;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
     .transaction-card {
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 24px;
         padding: 30px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     }
 
+    /* Status Badges */
     .status-badge {
-        padding: 6px 12px;
-        border-radius: 30px;
-        font-size: 0.75rem;
-        font-weight: 700;
+        padding: 6px 16px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        display: inline-block;
+        min-width: 110px;
+        text-align: center;
     }
 
-    .status-pending { color: #ffc107; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2); }
-    .status-completed { color: #28a745; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2); }
-    .status-failed { color: #dc3545; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2); }
-    .status-expired { color: #6c757d; background: rgba(108, 117, 125, 0.1); border: 1px solid rgba(108, 117, 125, 0.2); }
+    .status-pending { color: #f6ad55; background: rgba(246, 173, 85, 0.1); border: 1px solid rgba(246, 173, 85, 0.2); }
+    .status-completed { color: #68d391; background: rgba(104, 211, 145, 0.1); border: 1px solid rgba(104, 211, 145, 0.2); }
+    .status-failed { color: #fc8181; background: rgba(252, 129, 129, 0.1); border: 1px solid rgba(252, 129, 129, 0.2); }
 
-    .table-tx th {
-        background: rgba(255, 255, 255, 0.03) !important;
-        color: #888 !important;
+    /* Table Reset & Styling */
+    .table-tx {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #eee !important;
+        --bs-table-border-color: rgba(255, 255, 255, 0.05) !important;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        width: 100%;
+        margin-top: -12px; /* Pull up to match spacing */
+    }
+
+    .table-tx thead th {
+        background: transparent !important;
+        color: #666 !important;
         text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-        padding: 15px 20px;
-        border: none;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 15px 25px;
+        border: none !important;
+    }
+
+    .table-tx tbody tr {
+        background: rgba(255, 255, 255, 0.02) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .table-tx tbody tr:hover {
+        background: rgba(255, 0, 0, 0.05) !important;
+        transform: translateY(-2px) scale(1.005);
+        border-color: rgba(255, 0, 0, 0.2) !important;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 0, 0, 0.05);
     }
 
     .table-tx td {
-        padding: 20px;
+        padding: 20px 25px;
         vertical-align: middle;
-        border-color: rgba(255, 255, 255, 0.05) !important;
-        color: #ccc;
+        border: none !important;
+        background: transparent !important; /* Force transparent cells */
+    }
+
+    .table-tx td:first-child { border-radius: 16px 0 0 16px; border-left: 1px solid rgba(255, 255, 255, 0.05) !important; }
+    .table-tx td:last-child { border-radius: 0 16px 16px 0; border-right: 1px solid rgba(255, 255, 255, 0.05) !important; }
+
+    /* Hover effect on border */
+    .table-tx tbody tr:hover td:first-child { border-left: 1px solid rgba(255, 0, 0, 0.3) !important; }
+    .table-tx tbody tr:hover td:last-child { border-right: 1px solid rgba(255, 0, 0, 0.3) !important; }
+
+    .user-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .btn-action:hover {
+        transform: scale(1.1);
+    }
+
+    .currency-text {
+        font-family: 'JetBrains Mono', monospace;
+        color: #ff0000;
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
     }
 
     .user-info {
@@ -68,6 +166,7 @@
         border-radius: 8px;
         transition: 0.3s;
     }
+
 </style>
 {% endblock %}
 
@@ -78,6 +177,44 @@
             <h4 class="fw-bold mb-1 text-white">Quản lý nạp tiền</h4>
             <div class="small text-secondary">Duyệt và kiểm tra các yêu cầu nạp tiền từ người dùng</div>
         </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="transaction-card mb-4 p-3">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="small text-secondary mb-1">Tìm kiếm giao dịch</label>
+                <input type="text" name="search" class="form-control form-control-custom" placeholder="Username, Email, Note..." value="{{ filters.search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="small text-secondary mb-1">Trạng thái</label>
+                <select name="status" class="form-select form-control-custom">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Pending" {% if filters.status == 'Pending' %}selected{% endif %}>Chờ thanh toán</option>
+                    <option value="Completed" {% if filters.status == 'Completed' %}selected{% endif %}>Đã nạp tiền</option>
+                    <option value="Failed" {% if filters.status == 'Failed' %}selected{% endif %}>Thất bại</option>
+                    <option value="Expired" {% if filters.status == 'Expired' %}selected{% endif %}>Hết hạn</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="small text-secondary mb-1">Phương thức</label>
+                <select name="method" class="form-select form-control-custom">
+                    <option value="">Tất cả phương thức</option>
+                    <option value="Bank Transfer" {% if filters.method == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+                    <option value="Momo" {% if filters.method == 'Momo' %}selected{% endif %}>Ví MoMo</option>
+                    <option value="ZaloPay" {% if filters.method == 'ZaloPay' %}selected{% endif %}>Ví ZaloPay</option>
+                    <option value="VNPAY" {% if filters.method == 'VNPAY' %}selected{% endif %}>Cổng VNPAY</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-danger flex-grow-1 fw-bold">
+                    <i class="bi bi-filter me-2"></i> LỌC
+                </button>
+                <a href="{% url 'dashboard:transactions_list' %}" class="btn btn-outline-secondary px-3">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
     </div>
 
     <div class="transaction-card">
@@ -106,7 +243,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="fw-bold text-info">{{ req.amount|intcomma }} VNĐ</td>
+                        <td class="fw-bold currency-text">{{ req.amount|intcomma }} VNĐ</td>
                         <td>
                             <span class="badge bg-dark border border-secondary">{{ req.payment_method }}</span>
                         </td>

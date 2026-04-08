@@ -1,0 +1,112 @@
+.admin-product-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.product-thumb-sm {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.table-custom-admin {
+    --bs-table-bg: transparent !important;
+    --bs-table-color: #ddd !important;
+    background: transparent !important;
+}
+
+.table-custom-admin th {
+    background: rgba(255, 255, 255, 0.03) !important;
+    color: #888 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 15px 20px;
+    border: none;
+}
+
+.table-custom-admin td {
+    padding: 15px 20px;
+    vertical-align: middle;
+    border-color: rgba(255, 255, 255, 0.03) !important;
+    color: #ccc !important;
+    background: transparent !important;
+}
+
+.table-custom-admin tr:hover td {
+    background: rgba(255, 0, 0, 0.05) !important;
+    color: #fff !important;
+}
+
+/* Category Panel */
+.category-panel {
+    background: rgba(255, 0, 0, 0.02);
+    border: 1px solid rgba(255, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+}
+
+/* Modal Styling */
+.modal-content-custom {
+    background: #111 !important;
+    border: 1px solid rgba(255, 0, 0, 0.2) !important;
+    border-radius: 24px !important;
+}
+
+.form-control-custom {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+}
+
+.form-control-custom:focus {
+    border-color: #ff0000 !important;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2) !important;
+}
+
+/* Plan Row Styling */
+.plan-row {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease;
+}
+
+.plan-row:hover {
+    border-color: rgba(255, 0, 0, 0.2) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.form-check-input:checked {
+    background-color: #ff0000 !important;
+    border-color: #ff0000 !important;
+}
+
+/* File Input Styling */
+input[type="file"]::file-selector-button {
+    background: #ff0000 !important;
+    color: white !important;
+    border: none !important;
+    padding: 5px 15px !important;
+    border-radius: 5px !important;
+    margin-right: 15px !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #cc0000 !important;
+}
+
+.modal-body label {
+    color: #888 !important;
+    font-weight: 500;
+    margin-bottom: 5px;
+}

@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('profile/', views.profile, name='profile'),
     path('edit/', views.edit, name='edit'),
+    path('orders/', views.user_order_list, name='order_list'),
 
     # Wallet URLs
     path('wallet/', views.wallet_index, name='wallet_index'),

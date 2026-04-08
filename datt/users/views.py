@@ -123,8 +123,13 @@ def edit(request):
         profile_form = ProfileEditForm(instance=profile)
     return render(request, 'users/edit.html', {'user_form': user_form, 'profile_form': profile_form})
 
+@login_required
 def profile(request):
-    return render(request, 'users/profile.html')
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
+    return render(request, 'users/profile.html', {'profile': profile})
 
 
 def password_reset_request(request):
@@ -216,6 +221,11 @@ def wallet_index(request):
         'balance': request.user.profile.balance
     }
     return render(request, 'users/wallet/index.html', context)
+
+@login_required
+def user_order_list(request):
+    orders = request.user.orders.all().order_by('-created_at')
+    return render(request, 'users/order.html', {'orders': orders})
 
 @login_required
 def topup_index(request):

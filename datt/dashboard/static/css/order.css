@@ -1,0 +1,122 @@
+.order-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.table-orders {
+    background-color: transparent !important;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.table-orders thead th {
+    background: rgba(255, 255, 255, 0.03) !important;
+    color: #888 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 15px 20px;
+    border: none;
+}
+
+.table-orders tbody tr {
+    background-color: transparent !important;
+}
+
+.table-orders td {
+    background-color: transparent !important;
+    padding: 20px;
+    vertical-align: middle;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: #ccc;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.customer-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    border: 1px solid #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+
+.order-id {
+    font-family: 'Courier New', Courier, monospace;
+    color: #ff3c3c;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.btn-detail {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    color: #ff3c3c;
+    border-radius: 10px;
+    padding: 5px 15px;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.btn-detail:hover {
+    background: #ff0000;
+    color: #fff;
+}
+
+/* Modal Styling */
+.modal-content {
+    background: #121212;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 20px;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 25px;
+}
+
+.modal-title {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 25px;
+}
+
+.item-row {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 12px;
+    transition: 0.3s;
+}
+
+.item-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 0, 0, 0.2);
+}
+
+.text-dim {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.text-bright {
+    color: #fff !important;
+}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.text import slugify
@@ -56,7 +57,11 @@ class Product(models.Model):
         return self.plans.filter(is_active=True).order_by('price').first()
 
     def get_plans_data(self):
-        return list(self.plans.values('id', 'plan_name', 'price', 'duration_type', 'duration_value', 'is_renewable', 'is_active'))
+        return list(self.plans.values('id', 'plan_name', 'price', 'stock', 'duration_type', 'duration_value', 'is_renewable', 'is_active'))
+
+    @property
+    def total_stock(self):
+        return self.plans.aggregate(Sum('stock'))['stock__sum'] or 0
 
     def __str__(self):
         return self.name
@@ -71,6 +76,7 @@ class Plan(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='plans', null=True) # Allow null for migration
     plan_name = models.CharField(max_length=100, default='')
     price = models.BigIntegerField(default=0)
+    stock = models.PositiveIntegerField(default=0)
     duration_type = models.CharField(max_length=20, choices=DURATION_CHOICES, default='monthly')
     duration_value = models.IntegerField(null=True, blank=True, help_text="Số tháng/năm. Lifetime để trống.")
     is_renewable = models.BooleanField(default=True)
@@ -174,7 +180,10 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.order_id:
-            self.order_id = f"NX{timezone.now().strftime('%y%m%d%H%M%S')}"
+            import random
+            import string
+            random_suffix = ''.join(random.choices(string.digits, k=4))
+            self.order_id = f"NX{timezone.now().strftime('%y%m%d%H%M%S')}{random_suffix}"
         super().save(*args, **kwargs)
 
     def __str__(self):

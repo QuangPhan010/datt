@@ -69,28 +69,31 @@
     margin-bottom: 0;
 }
 
+.transaction-table,
+.transaction-table thead,
+.transaction-table tbody,
+.transaction-table tr,
+.transaction-table th, 
+.transaction-table td {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
+    vertical-align: middle;
+}
+
 .transaction-table th {
-    background: rgba(255, 255, 255, 0.02);
-    border: none;
-    color: #666;
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: #666 !important;
     text-transform: uppercase;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1.5px;
-    padding: 18px 20px;
+    padding: 16px 20px;
 }
 
 .transaction-table td {
-    border-color: rgba(255, 255, 255, 0.03);
-    vertical-align: middle;
-    color: #ccc;
     padding: 16px 20px;
-    font-size: 0.9rem;
-}
-
-.transaction-table tr:hover td {
-    background: rgba(255, 255, 255, 0.01);
-    color: #fff;
 }
 
 /* Status Badges */
