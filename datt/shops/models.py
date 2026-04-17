@@ -86,6 +86,102 @@ class Plan(models.Model):
     def __str__(self):
         return f"{self.product.name if self.product else 'N/A'} - {self.plan_name}"
 
+class WishlistItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlist_items')
+    notify_enabled = models.BooleanField(default=True)
+    min_discount_percent = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'product'], name='unique_wishlist_item'),
+        ]
+        indexes = [
+            models.Index(fields=['product', 'notify_enabled'], name='wishlist_product_notify_idx'),
+        ]
+
+    def __str__(self):
+        return f"Wishlist {self.user_id} - {self.product_id}"
+
+class FlashSale(models.Model):
+    STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('active', 'Active'),
+        ('ended', 'Ended'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='flash_sales')
+    sale_price = models.DecimalField(max_digits=12, decimal_places=2)
+    start_at = models.DateTimeField()
+    end_at = models.DateTimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['status', 'start_at', 'end_at'], name='flashsale_status_time_idx'),
+        ]
+
+    def __str__(self):
+        return f"FlashSale {self.product_id} ({self.status})"
+
+class Notification(models.Model):
+    TYPE_FLASH_SALE_WISHLIST = 'FLASH_SALE_WISHLIST'
+
+    SENT_VIA_IN_APP = 'in_app'
+    SENT_VIA_PUSH = 'push'
+    SENT_VIA_EMAIL = 'email'
+
+    TYPE_CHOICES = [
+        (TYPE_FLASH_SALE_WISHLIST, 'Flash sale wishlist'),
+    ]
+    SENT_VIA_CHOICES = [
+        (SENT_VIA_IN_APP, 'In-app'),
+        (SENT_VIA_PUSH, 'Push'),
+        (SENT_VIA_EMAIL, 'Email'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='notifications')
+    flash_sale = models.ForeignKey(FlashSale, on_delete=models.CASCADE, related_name='notifications')
+    is_read = models.BooleanField(default=False)
+    sent_via = models.CharField(max_length=20, choices=SENT_VIA_CHOICES, default=SENT_VIA_IN_APP)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'product', 'flash_sale', 'type'], name='unique_notification_flashsale'),
+        ]
+        indexes = [
+            models.Index(fields=['user', 'is_read', '-created_at'], name='notif_user_read_created_idx'),
+        ]
+
+    def __str__(self):
+        return f"Notification {self.user_id} - {self.type}"
+
+class NotificationLog(models.Model):
+    STATUS_CHOICES = [
+        ('queued', 'Queued'),
+        ('sent', 'Sent'),
+        ('failed', 'Failed'),
+    ]
+
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='logs')
+    channel = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    error = models.TextField(null=True, blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"NotificationLog {self.notification_id} - {self.channel} ({self.status})"
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)

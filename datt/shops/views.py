@@ -1,14 +1,17 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from .models import Product, Category, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey, DownloadGrant
+from .models import (
+    Product, Category, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey, DownloadGrant,
+    WishlistItem, FlashSale, Notification
+)
 from .services import grant_downloads_for_order
 
 def get_cart_data(request):
@@ -357,4 +360,153 @@ def get_cart_count(request):
         cart = request.session.get('cart', {})
         count = sum(item['quantity'] for item in cart.values())
     return JsonResponse({'status': 'success', 'count': count})
+
+# --- PAGES ---
+@login_required
+def wishlist_page(request):
+    return render(request, 'shops/wishlist.html')
+
+@login_required
+def notifications_page(request):
+    return render(request, 'shops/notifications.html')
+
+# --- WISHLIST APIs ---
+@login_required
+@require_http_methods(["POST", "DELETE"])
+def wishlist_item(request, product_id):
+    if request.method == "POST":
+        product = get_object_or_404(Product, id=product_id)
+        item, created = WishlistItem.objects.get_or_create(user=request.user, product=product)
+        return JsonResponse({
+            'status': 'success',
+            'created': created,
+            'item': {
+                'id': item.id,
+                'product_id': product.id,
+                'notify_enabled': item.notify_enabled,
+                'min_discount_percent': item.min_discount_percent,
+            }
+        })
+
+    deleted, _ = WishlistItem.objects.filter(user=request.user, product_id=product_id).delete()
+    if not deleted:
+        return JsonResponse({'status': 'error', 'message': 'Wishlist item not found.'}, status=404)
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@require_http_methods(["PATCH"])
+def wishlist_update_notify(request, product_id):
+    try:
+        data = json.loads(request.body or "{}")
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON payload.'}, status=400)
+
+    item = WishlistItem.objects.filter(user=request.user, product_id=product_id).first()
+    if not item:
+        return JsonResponse({'status': 'error', 'message': 'Wishlist item not found.'}, status=404)
+
+    if 'notify_enabled' in data:
+        notify_val = data.get('notify_enabled')
+        if isinstance(notify_val, bool):
+            item.notify_enabled = notify_val
+        elif isinstance(notify_val, str):
+            item.notify_enabled = notify_val.strip().lower() in ('true', '1', 'yes')
+        elif notify_val is None:
+            item.notify_enabled = False
+        else:
+            item.notify_enabled = bool(notify_val)
+
+    if 'min_discount_percent' in data:
+        min_discount = data.get('min_discount_percent')
+        if min_discount is None or min_discount == '':
+            item.min_discount_percent = None
+        else:
+            try:
+                min_discount = int(min_discount)
+            except (ValueError, TypeError):
+                return JsonResponse({'status': 'error', 'message': 'min_discount_percent must be an integer.'}, status=400)
+            if min_discount < 0 or min_discount > 100:
+                return JsonResponse({'status': 'error', 'message': 'min_discount_percent must be between 0 and 100.'}, status=400)
+            item.min_discount_percent = min_discount
+
+    item.save()
+    return JsonResponse({
+        'status': 'success',
+        'item': {
+            'id': item.id,
+            'product_id': item.product_id,
+            'notify_enabled': item.notify_enabled,
+            'min_discount_percent': item.min_discount_percent,
+        }
+    })
+
+@login_required
+@require_http_methods(["GET"])
+def wishlist_list(request):
+    items = WishlistItem.objects.filter(user=request.user).select_related('product').order_by('-created_at')
+    data = [
+        {
+            'id': item.id,
+            'product_id': item.product_id,
+            'product_name': item.product.name,
+            'thumbnail': item.product.thumbnail,
+            'notify_enabled': item.notify_enabled,
+            'min_discount_percent': item.min_discount_percent,
+        }
+        for item in items
+    ]
+    return JsonResponse({'status': 'success', 'items': data})
+
+# --- FLASH SALE APIs ---
+@require_http_methods(["GET"])
+def flash_sales_active(request):
+    now = timezone.now()
+    sales = FlashSale.objects.filter(status='active', start_at__lte=now, end_at__gte=now).select_related('product')
+    data = [
+        {
+            'id': sale.id,
+            'product_id': sale.product_id,
+            'product_name': sale.product.name,
+            'sale_price': str(sale.sale_price),
+            'start_at': sale.start_at.isoformat(),
+            'end_at': sale.end_at.isoformat(),
+        }
+        for sale in sales
+    ]
+    return JsonResponse({'status': 'success', 'items': data})
+
+# --- NOTIFICATION APIs ---
+@login_required
+@require_http_methods(["GET"])
+def notifications_list(request):
+    items = Notification.objects.filter(user=request.user).order_by('-created_at')
+    data = [
+        {
+            'id': item.id,
+            'type': item.type,
+            'title': item.title,
+            'message': item.message,
+            'product_id': item.product_id,
+            'flash_sale_id': item.flash_sale_id,
+            'is_read': item.is_read,
+            'sent_via': item.sent_via,
+            'created_at': item.created_at.isoformat(),
+        }
+        for item in items
+    ]
+    return JsonResponse({'status': 'success', 'items': data})
+
+@login_required
+@require_http_methods(["PATCH"])
+def notifications_mark_read(request, notification_id):
+    updated = Notification.objects.filter(user=request.user, id=notification_id, is_read=False).update(is_read=True)
+    if not updated:
+        return JsonResponse({'status': 'error', 'message': 'Notification not found.'}, status=404)
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@require_http_methods(["POST"])
+def notifications_mark_all_read(request):
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'success'})
 

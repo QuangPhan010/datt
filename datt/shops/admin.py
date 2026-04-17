@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Category, Product, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey
+from .models import (
+    Category, Product, Plan, Cart, CartItem, Order, OrderItem, Coupon, ProductKey,
+    WishlistItem, FlashSale, Notification, NotificationLog
+)
 from django.contrib import messages
 
 # --- Product Management Inlines & Admins ---
@@ -54,3 +57,7 @@ class ProductKeyAdmin(admin.ModelAdmin):
 
 admin.site.register(Cart)
 admin.site.register(CartItem)
+admin.site.register(WishlistItem)
+admin.site.register(FlashSale)
+admin.site.register(Notification)
+admin.site.register(NotificationLog)

@@ -90,6 +90,11 @@
                                 <button type="button" class="btn btn-outline-danger flex-grow-1 py-3" onclick="handleAddToCart()">
                                     <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
                                 </button>
+                                {% if request.user.is_authenticated %}
+                                <button type="button" class="btn btn-outline-light py-3" id="wishlist-toggle" data-product-id="{{ product.id }}">
+                                    <i class="bi bi-heart me-2"></i>Wishlist
+                                </button>
+                                {% endif %}
                                 <form action="#" method="POST" id="purchaseForm" class="flex-grow-1">
                                     {% csrf_token %}
                                     <input type="hidden" name="plan_id" id="selectedPlanId">
@@ -153,6 +158,63 @@
         });
     }
 </script>
+
+{% if request.user.is_authenticated %}
+<script>
+    function setWishlistButton(isInWishlist) {
+        const btn = document.getElementById('wishlist-toggle');
+        if (!btn) return;
+        if (isInWishlist) {
+            btn.classList.remove('btn-outline-light');
+            btn.classList.add('btn-danger');
+            btn.innerHTML = '<i class=\"bi bi-heart-fill me-2\"></i>Đã thích';
+            btn.dataset.inWishlist = 'true';
+        } else {
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-outline-light');
+            btn.innerHTML = '<i class=\"bi bi-heart me-2\"></i>Wishlist';
+            btn.dataset.inWishlist = 'false';
+        }
+    }
+
+    function loadWishlistState(productId) {
+        fetch('/wishlist')
+            .then(response => response.json())
+            .then(data => {
+                const items = data.items || [];
+                const exists = items.some(item => item.product_id === productId);
+                setWishlistButton(exists);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('wishlist-toggle');
+        if (!btn) return;
+        const productId = parseInt(btn.dataset.productId, 10);
+        loadWishlistState(productId);
+
+        btn.addEventListener('click', () => {
+            const inWishlist = btn.dataset.inWishlist === 'true';
+            fetch(`/wishlist/${productId}`, {
+                method: inWishlist ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    setWishlistButton(!inWishlist);
+                    showToast(inWishlist ? 'Đã bỏ khỏi wishlist.' : 'Đã thêm vào wishlist.');
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra.', 'error');
+                }
+            });
+        });
+    });
+</script>
+{% endif %}
 
 <script src="{% static 'js/product-detail.js' %}"></script>
 {% endblock %}

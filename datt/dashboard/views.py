@@ -1,14 +1,17 @@
 import json
+from decimal import Decimal, InvalidOperation
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Sum, Count, F, Q, OuterRef, Subquery
 from django.db.models.functions import Coalesce, TruncDate
 
-from shops.models import Product, Category, Plan, Order, OrderItem
+from shops.models import Product, Category, Plan, Order, OrderItem, FlashSale
+from shops.services import get_product_original_price
+from django.utils.dateparse import parse_datetime
 from users.models import Transaction, TopUpRequest
 
 # --- HELPERS ---
@@ -466,3 +469,109 @@ def users_list(request):
             'search': search_query
         }
     })
+
+# --- FLASH SALE MANAGEMENT API ---
+@superuser_required_ajax
+@require_http_methods(["POST"])
+def flash_sales_create(request):
+    try:
+        data = json.loads(request.body or "{}")
+        product_id = data.get('product_id')
+        sale_price = data.get('sale_price')
+        start_at_raw = data.get('start_at')
+        end_at_raw = data.get('end_at')
+
+        if not product_id or sale_price is None or not start_at_raw or not end_at_raw:
+            return JsonResponse({'status': 'error', 'message': 'Missing required fields.'}, status=400)
+
+        product = get_object_or_404(Product, pk=product_id)
+        start_at = parse_datetime(start_at_raw)
+        end_at = parse_datetime(end_at_raw)
+        if not start_at or not end_at:
+            return JsonResponse({'status': 'error', 'message': 'Invalid datetime format.'}, status=400)
+        if timezone.is_naive(start_at):
+            start_at = timezone.make_aware(start_at)
+        if timezone.is_naive(end_at):
+            end_at = timezone.make_aware(end_at)
+
+        if end_at <= start_at:
+            return JsonResponse({'status': 'error', 'message': 'end_at must be after start_at.'}, status=400)
+
+        original_price = get_product_original_price(product)
+        if original_price is None:
+            return JsonResponse({'status': 'error', 'message': 'Product has no active price.'}, status=400)
+
+        try:
+            sale_price_val = Decimal(str(sale_price))
+        except (InvalidOperation, TypeError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid sale_price.'}, status=400)
+        if sale_price_val >= Decimal(str(original_price)):
+            return JsonResponse({'status': 'error', 'message': 'sale_price must be less than original price.'}, status=400)
+
+        now = timezone.now()
+        status = 'scheduled'
+        if start_at <= now <= end_at:
+            status = 'active'
+        elif end_at <= now:
+            status = 'ended'
+
+        flash_sale = FlashSale.objects.create(
+            product=product,
+            sale_price=sale_price_val,
+            start_at=start_at,
+            end_at=end_at,
+            status=status,
+        )
+
+        return JsonResponse({'status': 'success', 'id': flash_sale.id, 'flash_sale_status': flash_sale.status})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+@superuser_required_ajax
+@require_http_methods(["PATCH"])
+def flash_sales_update(request, pk):
+    try:
+        flash_sale = get_object_or_404(FlashSale, pk=pk)
+        data = json.loads(request.body or "{}")
+
+        if 'sale_price' in data:
+            try:
+                sale_price_val = Decimal(str(data.get('sale_price')))
+            except (InvalidOperation, TypeError):
+                return JsonResponse({'status': 'error', 'message': 'Invalid sale_price.'}, status=400)
+            original_price = get_product_original_price(flash_sale.product)
+            if original_price is None:
+                return JsonResponse({'status': 'error', 'message': 'Product has no active price.'}, status=400)
+            if sale_price_val >= Decimal(str(original_price)):
+                return JsonResponse({'status': 'error', 'message': 'sale_price must be less than original price.'}, status=400)
+            flash_sale.sale_price = sale_price_val
+
+        if 'start_at' in data:
+            start_at = parse_datetime(data.get('start_at'))
+            if not start_at:
+                return JsonResponse({'status': 'error', 'message': 'Invalid start_at.'}, status=400)
+            if timezone.is_naive(start_at):
+                start_at = timezone.make_aware(start_at)
+            flash_sale.start_at = start_at
+
+        if 'end_at' in data:
+            end_at = parse_datetime(data.get('end_at'))
+            if not end_at:
+                return JsonResponse({'status': 'error', 'message': 'Invalid end_at.'}, status=400)
+            if timezone.is_naive(end_at):
+                end_at = timezone.make_aware(end_at)
+            flash_sale.end_at = end_at
+
+        if flash_sale.end_at <= flash_sale.start_at:
+            return JsonResponse({'status': 'error', 'message': 'end_at must be after start_at.'}, status=400)
+
+        if 'status' in data:
+            status = data.get('status')
+            if status not in dict(FlashSale.STATUS_CHOICES):
+                return JsonResponse({'status': 'error', 'message': 'Invalid status.'}, status=400)
+            flash_sale.status = status
+
+        flash_sale.save()
+        return JsonResponse({'status': 'success', 'flash_sale_status': flash_sale.status})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
